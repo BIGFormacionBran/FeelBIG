@@ -1,6 +1,6 @@
 name: PHP Preview Server
 on: 
-  workflow_dispatch: # Se activa manualmente desde la pestaña "Actions"
+  workflow_dispatch:
 
 jobs:
   serve:
@@ -18,4 +18,8 @@ jobs:
         run: sudo npm install -g localtunnel
 
       - name: Start PHP Server and Tunnel
-        run: | php -S 0.0.0.0:8080 & lt --port 8080 | grep -o 'https://[^ ]*' | tee url.txt
+        run: |
+          php -S 0.0.0.0:8080 & 
+          sleep 5
+          echo "--- URL_START ---"
+          lt --port 8080
