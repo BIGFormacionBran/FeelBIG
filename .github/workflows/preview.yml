@@ -20,6 +20,6 @@ jobs:
       - name: Start PHP Server and Tunnel
         run: |
           php -S 0.0.0.0:8080 & 
-          sleep 5
-          # Esto ayuda al buscador del .bat a encontrar la URL exacta
-          lt --port 8080 | grep -o 'https://[^ ]*'
+          sleep 8
+          # Imprimimos la URL de forma aislada para facilitar la captura
+          lt --port 8080 | grep -o 'https://[a-zA-Z0-9-]*\.loca\.lt'
