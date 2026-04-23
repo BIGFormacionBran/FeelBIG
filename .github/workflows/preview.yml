@@ -5,9 +5,13 @@ on:
 jobs:
   serve:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -21,11 +25,15 @@ jobs:
         run: |
           php -S 0.0.0.0:8080 & 
           sleep 5
-          # Generamos la URL y la guardamos en un archivo temporal
-          lt --port 8080 > url.txt &
-          sleep 5
-          # Extraemos la URL y la mostramos claramente
-          export TUNNEL_URL=$(grep -o 'https://[^ ]*' url.txt)
-          echo "URL_DETECTADA=$TUNNEL_URL"
-          # Mantenemos el proceso vivo
-          tail -f url.txt
+          lt --port 8080 > url_preview.txt &
+          sleep 8
+          
+          # Configurar git y subir el archivo con la URL al repo
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add url_preview.txt
+          git commit -m "update: serve url"
+          git push
+          
+          # Mantener el tunnel vivo
+          tail -f url_preview.txt
