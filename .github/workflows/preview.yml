@@ -25,15 +25,25 @@ jobs:
         run: |
           php -S 0.0.0.0:8080 & 
           sleep 5
-          lt --port 8080 > url_preview.txt &
-          sleep 8
+          RUNNER_IP=$(curl -s https://ifconfig.me)
+          lt --port 8080 > url_raw.txt &
+          sleep 12
           
-          # Configurar git y subir el archivo con la URL al repo
+          # Extraer URL
+          TUNNEL_URL=$(grep -o 'https://[^ ]*' url_raw.txt)
+          
+          # Crear tunnel.json (esto sobrescribe el anterior siempre)
+          echo "{" > tunnel.json
+          echo "  \"url\": \"$TUNNEL_URL\"," >> tunnel.json
+          echo "  \"ip\": \"$RUNNER_IP\"," >> tunnel.json
+          echo "  \"status\": \"active\"," >> tunnel.json
+          echo "  \"last_update\": \"$(date)\"" >> tunnel.json
+          echo "}" >> tunnel.json
+          
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add url_preview.txt
-          git commit -m "update: serve url"
+          git add tunnel.json
+          git commit -m "update: tunnel connection data"
           git push
           
-          # Mantener el tunnel vivo
-          tail -f url_preview.txt
+          tail -f url_raw.txt
