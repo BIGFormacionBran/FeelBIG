@@ -20,6 +20,12 @@ jobs:
       - name: Start PHP Server and Tunnel
         run: |
           php -S 0.0.0.0:8080 & 
-          sleep 8
-          # Imprimimos la URL de forma aislada para facilitar la captura
-          lt --port 8080 | grep -o 'https://[a-zA-Z0-9-]*\.loca\.lt'
+          sleep 5
+          # Generamos la URL y la guardamos en un archivo temporal
+          lt --port 8080 > url.txt &
+          sleep 5
+          # Extraemos la URL y la mostramos claramente
+          export TUNNEL_URL=$(grep -o 'https://[^ ]*' url.txt)
+          echo "URL_DETECTADA=$TUNNEL_URL"
+          # Mantenemos el proceso vivo
+          tail -f url.txt
