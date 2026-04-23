@@ -1,0 +1,29 @@
+name: PHP Preview Server
+on: 
+  workflow_dispatch: # Se activa manualmente desde la pestaña "Actions"
+
+jobs:
+  serve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install LocalTunnel
+        run: sudo npm install -g localtunnel
+
+      - name: Start PHP Server and Tunnel
+        run: |
+          # 1. Levantamos PHP en el puerto 8080 en segundo plano
+          php -S 0.0.0.0:8080 & 
+          
+          # 2. Lanzamos el túnel y mostramos la URL por pantalla
+          echo "---------------------------------------------------"
+          echo "LA URL DE PREVISUALIZACIÓN APARECERÁ ABAJO:"
+          echo "---------------------------------------------------"
+          lt --port 8080
