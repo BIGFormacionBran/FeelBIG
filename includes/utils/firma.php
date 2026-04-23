@@ -1,7 +1,7 @@
 <?php
 function renderInfoFooter() {
     $fecha = date('d/m/Y');
-    $empresa = "Feel BiG Group S.L.";
+    $empresa = "Academia trinidad S.L.";
     
     return "
         <div class='info-container-global'>
