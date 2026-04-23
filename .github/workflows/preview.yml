@@ -1,0 +1,25 @@
+name: PHP Preview Server
+on: 
+  workflow_dispatch:
+
+jobs:
+  serve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install LocalTunnel
+        run: sudo npm install -g localtunnel
+
+      - name: Start PHP Server and Tunnel
+        run: |
+          php -S 0.0.0.0:8080 & 
+          sleep 5
+          echo "Tunnel URL:"
+          lt --port 8080
