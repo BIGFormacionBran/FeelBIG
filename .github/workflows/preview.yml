@@ -18,12 +18,4 @@ jobs:
         run: sudo npm install -g localtunnel
 
       - name: Start PHP Server and Tunnel
-        run: |
-          # 1. Levantamos PHP en el puerto 8080 en segundo plano
-          php -S 0.0.0.0:8080 & 
-          
-          # 2. Lanzamos el túnel y mostramos la URL por pantalla
-          echo "---------------------------------------------------"
-          echo "LA URL DE PREVISUALIZACIÓN APARECERÁ ABAJO:"
-          echo "---------------------------------------------------"
-          lt --port 8080
+        run: | php -S 0.0.0.0:8080 & lt --port 8080 | grep -o 'https://[^ ]*' | tee url.txt
