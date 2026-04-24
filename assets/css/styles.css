@@ -269,6 +269,21 @@ body {
     font-size: 14px;
 }
 
+.nav-link::after{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background-color: var(--color-principal);
+    left: 0;
+    bottom: -24px;
+    transition: width .3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
 @media (max-width: 480px) {
     .auth-wrapper {
         padding: 0;
