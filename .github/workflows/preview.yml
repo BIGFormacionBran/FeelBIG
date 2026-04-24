@@ -1,49 +1,12 @@
-name: PHP Preview Server
-on: 
-  workflow_dispatch:
-
+name: Sync to Hugging Face
+on:
+  push:
+    branches: [main] # Se activa cada vez que subes algo
 jobs:
-  serve:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Install LocalTunnel
-        run: sudo npm install -g localtunnel
-
-      - name: Start PHP Server and Tunnel
+      - name: Trigger Hugging Face Rebuild
         run: |
-          php -S 0.0.0.0:8080 & 
-          sleep 5
-          RUNNER_IP=$(curl -s https://ifconfig.me)
-          lt --port 8080 > url_raw.txt &
-          sleep 12
-          
-          # Extraer URL
-          TUNNEL_URL=$(grep -o 'https://[^ ]*' url_raw.txt)
-          
-          # Crear tunnel.json (esto sobrescribe el anterior siempre)
-          echo "{" > tunnel.json
-          echo "  \"url\": \"$TUNNEL_URL\"," >> tunnel.json
-          echo "  \"ip\": \"$RUNNER_IP\"," >> tunnel.json
-          echo "  \"status\": \"active\"," >> tunnel.json
-          echo "  \"last_update\": \"$(date)\"" >> tunnel.json
-          echo "}" >> tunnel.json
-          
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git add tunnel.json
-          git commit -m "update: tunnel connection data"
-          git push
-          
-          tail -f url_raw.txt
+          curl -X POST https://huggingface.co/api/spaces/TU_USUARIO/feelbig-preview/restart \
+               -H "Authorization: Bearer ${{ secrets.HF_TOKEN }}"
