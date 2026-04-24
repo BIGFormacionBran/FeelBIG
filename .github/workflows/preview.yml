@@ -1,12 +1,12 @@
 name: Sync to Hugging Face
 on:
   push:
-    branches: [main] # Se activa cada vez que subes algo
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Hugging Face Rebuild
+      - name: Trigger Hugging Face Restart
         run: |
-          curl -X POST https://huggingface.co/api/spaces/TU_USUARIO/feelbig-preview/restart \
+          curl -X POST https://huggingface.co/api/spaces/BIGFormacionBran/feelbig-preview/restart \
                -H "Authorization: Bearer ${{ secrets.HF_TOKEN }}"
