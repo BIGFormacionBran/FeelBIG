@@ -46,6 +46,7 @@ body {
 }
 
 .nav-link {
+    position: relative;
     text-decoration: none;
     color: var(--color-texto);
     font-size: 14px;
@@ -55,6 +56,21 @@ body {
 
 .nav-link:hover {
     color: var(--color-principal);
+}
+
+.nav-link::after{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background-color: var(--color-principal);
+    left: 0;
+    bottom: -24px;
+    transition: width .3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
 }
 
 .user-menu {
@@ -267,21 +283,6 @@ body {
     margin-bottom: 15px;
     color: var(--color-blanco);
     font-size: 14px;
-}
-
-.nav-link::after{
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 3px;
-    background-color: var(--color-principal);
-    left: 0;
-    bottom: -24px;
-    transition: width .3s ease;
-}
-
-.nav-link:hover::after {
-    width: 100%;
 }
 
 @media (max-width: 480px) {
