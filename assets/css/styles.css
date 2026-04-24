@@ -265,14 +265,8 @@ body {
 
 .footer-content {
     margin-bottom: 15px;
-    color: var(--color-texto);
+    color: var(--color-blanco);
     font-size: 14px;
-}
-
-/* Ajuste para que la firma ocupe todo el ancho inferior */
-.main-footer .info-container-global {
-    width: 100%;
-    padding: 10px 0;
 }
 
 @media (max-width: 480px) {
