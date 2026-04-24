@@ -1,6 +1,14 @@
 <footer class="main-footer">
-        <p>&copy; <?php echo date('Y'); ?> Feel BiG - Todos los derechos reservados.</p>
-    </footer>
-    <script src="assets/js/scripts.js"></script>
-</body>
-</html>
+    <div class="footer-container">
+        <div class="footer-content">
+            <p>&copy; <?php echo date('Y'); ?> <strong>Feel BiG</strong> - Todos los derechos reservados.</p>
+        </div>
+        
+        <?php 
+        // Reutilizamos la firma corporativa definida en firma.php
+        if(function_exists('renderInfoFooter')) {
+            echo renderInfoFooter(); 
+        }
+        ?>
+    </div>
+</footer>
