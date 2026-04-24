@@ -239,6 +239,13 @@ body {
     font-size: 13px;
 }
 
+.container-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    min-height: 60vh;
+}
+
 @media (max-width: 480px) {
     .auth-wrapper {
         padding: 0;
