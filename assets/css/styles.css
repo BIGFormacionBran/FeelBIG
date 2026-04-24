@@ -246,6 +246,35 @@ body {
     min-height: 60vh;
 }
 
+
+/* --- FOOTER --- */
+.main-footer {
+    background-color: var(--color-blanco);
+    border-top: 1px solid var(--color-border);
+    margin-top: auto; /* Empuja el footer al final si usas flexbox en el body */
+    padding: 20px 0 0 0;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-content {
+    margin-bottom: 15px;
+    color: var(--color-texto);
+    font-size: 14px;
+}
+
+/* Ajuste para que la firma ocupe todo el ancho inferior */
+.main-footer .info-container-global {
+    width: 100%;
+    padding: 10px 0;
+}
+
 @media (max-width: 480px) {
     .auth-wrapper {
         padding: 0;
