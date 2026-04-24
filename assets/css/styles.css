@@ -15,6 +15,101 @@ body {
     margin: 0;
 }
 
+/* --- NUEVA CABECERA --- */
+.main-header {
+    background-color: var(--color-blanco);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0 20px;
+    height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-logo-img {
+    height: 40px;
+    display: block;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--color-texto);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--color-principal);
+}
+
+.user-menu {
+    position: relative;
+    cursor: pointer;
+}
+
+.user-icon-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.user-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--color-texto);
+    transition: color 0.2s;
+}
+
+.user-icon-wrapper:hover .user-icon {
+    color: var(--color-principal);
+}
+
+.user-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: var(--color-blanco);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    min-width: 150px;
+    padding: 10px 0;
+}
+
+.user-icon-wrapper:hover .user-dropdown {
+    display: block;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: var(--color-texto);
+    font-size: 14px;
+}
+
+.user-dropdown a:hover {
+    background-color: var(--color-fondo);
+    color: var(--color-secundario);
+}
+/* ---------------------- */
+
 .auth-wrapper {
     display: flex;
     justify-content: center;
@@ -144,7 +239,6 @@ body {
     font-size: 13px;
 }
 
-
 @media (max-width: 480px) {
     .auth-wrapper {
         padding: 0;
@@ -167,5 +261,9 @@ body {
 
     .input-box input {
         font-size: 16px; /* Evita zoom en iOS */
+    }
+
+    .nav-menu {
+        display: none; /* Oculta navegación en móviles muy pequeños */
     }
 }
