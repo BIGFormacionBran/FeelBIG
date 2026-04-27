@@ -1,10 +1,11 @@
 <?php
 $title = "Minijuegos Saludables";
 $viewAllLink = "index.php?page=minijuegos";
+// El link ahora se genera automáticamente en el renderizador usando el ID o un slug
 $items = [
-    ["name" => "Salud Canarias Gaming", "img" => "game1.jpg", "link" => "https://saludcanariasgaming.bigformacion.com/", "badge" => "Interactivo"],
-    ["name" => "Reto Nutrición", "img" => "game2.jpg", "link" => "#", "badge" => "Interactivo"],
-    ["name" => "BiG Memory", "img" => "game3.jpg", "link" => "#", "badge" => "Memoria"]
+    ["id" => "1", "name" => "Salud Canarias Gaming", "img" => "game1.jpg", "badge" => "Interactivo"],
+    ["id" => "2", "name" => "Reto Nutrición", "img" => "game2.jpg", "badge" => "Interactivo"],
+    ["id" => "3", "name" => "BiG Memory", "img" => "game3.jpg", "badge" => "Memoria"]
 ];
 
 include __DIR__ . '/../carousel_template.php';

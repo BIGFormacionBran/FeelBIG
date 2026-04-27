@@ -345,14 +345,21 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .carousel-main-viewport {
     position: relative;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-evenly;
     overflow: hidden;
     padding: 15px 0;
 }
 
 .carousel-track {
     display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-evenly;
+    min-width: 1000px;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    gap: 20px;
 }
 
 .carousel-slide {
@@ -379,9 +386,16 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .thumb {
     width: 100%;
     height: 160px;
-    background-size: cover;
-    background-position: center;
     position: relative;
+    overflow: hidden;
+}
+
+.thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
 }
 
 .card-content {
