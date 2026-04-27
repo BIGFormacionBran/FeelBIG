@@ -1,3 +1,7 @@
+<?php 
+require_once 'includes/utils/navigation_engine.php';
+$menuItems = getDynamicMenu();
+?>
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
@@ -7,11 +11,12 @@
         </div>
 
         <nav class="nav-menu">
-            <a href="index.php?page=actividad-fisica" class="nav-link">Actividad Física</a>
-            <a href="index.php?page=alimentacion" class="nav-link">Alimentación</a>
-            <a href="index.php?page=bienestar" class="nav-link">Bienestar</a>
-            <a href="index.php?page=salud" class="nav-link">Salud</a>
-            <a href="index.php?page=minijuegos" class="nav-link">Minijuegos</a>
+            <a href="index.php?page=home" class="nav-link">Home</a>
+            <?php foreach ($menuItems as $item): ?>
+                <a href="index.php?page=<?php echo $item['slug']; ?>" class="nav-link">
+                    <?php echo $item['title']; ?>
+                </a>
+            <?php endforeach; ?>
         </nav>
 
         <div class="user-menu">
