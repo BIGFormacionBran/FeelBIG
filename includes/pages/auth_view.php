@@ -1,5 +1,4 @@
 <?php
-// Detectamos el modo según la URL
 $is_registro = (isset($_GET['page']) && $_GET['page'] === 'registro');
 $titulo = $is_registro ? "Crear cuenta" : "Iniciar sesión";
 $btn_text = $is_registro ? "Registrarme" : "Entrar";
@@ -49,6 +48,9 @@ $action = $is_registro ? "process_registro.php" : "auth.php";
             </form>
         </div>
 
-        <?php if(function_exists('renderInfoFooter')) echo renderInfoFooter(); ?>
+        <?php 
+        // Corregido: Uso de la función de firma disponible en render_util.php
+        if(function_exists('render_signature_util')) echo render_signature_util(); 
+        ?>
     </div>
 </div>

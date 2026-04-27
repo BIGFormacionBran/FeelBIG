@@ -1,13 +1,22 @@
+<?php
+// Obtenemos los breadcrumbs dinámicos
+$crumbs = get_breadcrumbs_manager($page);
+?>
 <nav class="breadcrumb-container">
     <ul class="breadcrumb-list">
-        <li class="breadcrumb-item">
-            <a href="index.php?page=home">Home</a>
-            <span class="breadcrumb-separator">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M9 18l6-6-6-6"></path></svg>
-            </span>
-        </li>
-        <li class="breadcrumb-item">
-            <span class="breadcrumb-current"><?php echo $pageConfig['title']; ?></span>
-        </li>
+        <?php if ($crumbs): ?>
+            <?php foreach ($crumbs as $crumb): ?>
+                <li class="breadcrumb-item">
+                    <?php if ($crumb['link']): ?>
+                        <a href="<?php echo $crumb['link']; ?>"><?php echo $crumb['title']; ?></a>
+                        <span class="breadcrumb-separator">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M9 18l6-6-6-6"></path></svg>
+                        </span>
+                    <?php else: ?>
+                        <span class="breadcrumb-current"><?php echo $crumb['title']; ?></span>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </ul>
 </nav>

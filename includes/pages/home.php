@@ -1,5 +1,6 @@
 <?php
-require_once 'includes/utils/component_engine.php';
+// Aseguramos que las utilidades de renderizado estén disponibles
+require_once 'includes/utils/render_util.php';
 ?>
 
 <section class="hero-feelbig">
@@ -9,7 +10,7 @@ require_once 'includes/utils/component_engine.php';
 
 <div class="home-dynamic-container">
     <?php 
-        // Renderiza automáticamente todo lo que esté en esta carpeta
-        renderAutoComponents('includes/components/home_modules'); 
+        // Corregido: Nombre de función sincronizado con render_util.php
+        render_auto_components_util('includes/components/home_modules'); 
     ?>
 </div>

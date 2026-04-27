@@ -1,6 +1,7 @@
 <?php 
-require_once 'includes/utils/navigation_engine.php';
-$menuItems = getDynamicMenu();
+// Corregido: Referencia al manager correcto y función existente
+require_once 'includes/managers/navigation_manager.php';
+$menuItems = get_main_menu_manager();
 ?>
 <header class="main-header">
     <div class="header-container">
