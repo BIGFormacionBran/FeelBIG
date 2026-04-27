@@ -11,7 +11,6 @@ $menuItems = getDynamicMenu();
         </div>
 
         <nav class="nav-menu">
-            <a href="index.php?page=home" class="nav-link">Home</a>
             <?php foreach ($menuItems as $item): ?>
                 <a href="index.php?page=<?php echo $item['slug']; ?>" class="nav-link">
                     <?php echo $item['title']; ?>
