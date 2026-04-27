@@ -34,6 +34,15 @@ body {
 
 a { text-decoration: none; color: inherit; transition: var(--transition); }
 
+/* --- CONTENEDOR GLOBAL DE CONTENIDO (MAIN) --- */
+.main-content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 20px;
+    flex-grow: 1; /* Asegura que el footer se mantenga abajo */
+}
+
 /* --- HEADER & NAVEGACIÓN --- */
 .main-header {
     background-color: var(--color-blanco);
@@ -69,7 +78,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .nav-link:hover { color: var(--color-principal); }
 
-/* Subrayado animado del patrón original */
 .nav-link::after {
     content: "";
     position: absolute;
@@ -77,11 +85,39 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     height: 3px;
     background-color: var(--color-principal);
     left: 0;
-    bottom: -22px;
+    bottom: -19px;
     transition: width 0.3s ease;
 }
 
 .nav-link:hover::after { width: 100%; }
+
+/* --- BREADCRUMBS (MIGAS DE PAN) --- */
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--color-texto-muted);
+}
+
+.breadcrumbs a {
+    color: var(--color-principal);
+    font-weight: 500;
+}
+
+.breadcrumbs a:hover {
+    color: var(--color-secundario);
+    text-decoration: underline;
+}
+
+.breadcrumbs .separator {
+    color: var(--color-border);
+}
+
+.breadcrumbs .current {
+    color: var(--color-texto);
+}
 
 /* --- MENU DE USUARIO --- */
 .user-menu { position: relative; cursor: pointer; }
@@ -124,7 +160,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .user-dropdown a:hover {
     background-color: var(--color-fondo);
-    color: #DC2626; /* Rojo para el logout */
+    color: #DC2626;
 }
 
 /* --- AUTH WRAPPER (LOGIN/REGISTRO) --- */
@@ -160,7 +196,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     letter-spacing: -0.5px;
 }
 
-/* Form Inputs */
 .input-box {
     position: relative;
     width: 100%;
@@ -182,7 +217,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     box-shadow: 0 0 0 3px var(--color-principal-soft);
 }
 
-/* BOTÓN OJO (Toggle Password) Corregido */
 .btn-ojo {
     position: absolute;
     right: 8px;
@@ -206,7 +240,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .btn-ojo svg { width: 20px; height: 20px; }
 
-/* BOTÓN PRIMARIO (Patrón Original) */
 .btn-primario {
     display: inline-flex;
     text-transform: uppercase;
@@ -247,11 +280,13 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .enlace-personalizado:hover { color: var(--color-secundario); transform: translateY(-2px);}
 
 /* --- HOME & CARRUSEL --- */
-.container-page {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-    min-height: 60vh;
+.hero-feelbig {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: var(--color-blanco);
+    border-radius: var(--radio);
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
 }
 
 .home-module-wrapper { margin-bottom: 50px; }

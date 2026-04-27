@@ -14,12 +14,16 @@
         <?php if (in_array($page, $auth_pages)): ?>
             <?php include 'includes/pages/auth_view.php'; ?>
         <?php else: ?>
-            <?php 
-                include 'includes/components/header.php';
-                if (!$pageConfig['is_root']) include 'includes/components/breadcrumbs.php';
-                include $pageConfig['path'];
-                include 'includes/components/footer.php';
-            ?>
+            <?php include 'includes/components/header.php'; ?>
+            
+            <div class="main-content-wrapper">
+                <?php 
+                    if (!$pageConfig['is_root']) include 'includes/components/breadcrumbs.php';
+                    include $pageConfig['path'];
+                ?>
+            </div>
+
+            <?php include 'includes/components/footer.php'; ?>
         <?php endif; ?>
     </div>
     <script src="assets/js/main.js"></script>
