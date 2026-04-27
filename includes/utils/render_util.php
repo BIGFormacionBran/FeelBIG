@@ -18,3 +18,18 @@ function render_auto_components_util($folder) {
         include $component;
     }
 }
+
+function render_page_layout_manager($page, $pageConfig, $auth_pages) {
+    if (in_array($page, $auth_pages)) {
+        include 'includes/pages/auth_view.php';
+    } else {
+        include 'includes/components/header.php';
+        echo '<div class="main-content-wrapper">';
+            if (!$pageConfig['is_root']) {
+                include 'includes/components/breadcrumbs.php';
+            }
+            include $pageConfig['path'];
+        echo '</div>';
+        include 'includes/components/footer.php';
+    }
+}

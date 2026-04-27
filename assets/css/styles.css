@@ -40,7 +40,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     margin: 0 auto;
     width: 100%;
     padding: 20px;
-    flex-grow: 1; /* Asegura que el footer se mantenga abajo */
+    flex-grow: 1;
 }
 
 /* --- HEADER & NAVEGACIÓN --- */
@@ -92,31 +92,37 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .nav-link:hover::after { width: 100%; }
 
 /* --- BREADCRUMBS (MIGAS DE PAN) --- */
-.breadcrumbs {
+.breadcrumb-container {
+    margin-bottom: 20px;
+}
+
+.breadcrumb-list {
     display: flex;
+    flex-flow: row;
     align-items: center;
     gap: 8px;
-    margin-bottom: 20px;
-    font-size: 13px;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-separator {
+    display: flex;
+    align-items: center;
     color: var(--color-texto-muted);
+    opacity: 0.6;
 }
 
-.breadcrumbs a {
-    color: var(--color-principal);
-    font-weight: 500;
+.breadcrumb-separator svg {
+    width: 14px;
+    height: 14px;
 }
 
-.breadcrumbs a:hover {
-    color: var(--color-secundario);
-    text-decoration: underline;
-}
-
-.breadcrumbs .separator {
-    color: var(--color-border);
-}
-
-.breadcrumbs .current {
-    color: var(--color-texto);
+.breadcrumb-current {
+    font-size: 14px;
+    color: var(--color-texto-muted);
 }
 
 /* --- MENU DE USUARIO --- */
@@ -278,6 +284,36 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 }
 
 .enlace-personalizado:hover { color: var(--color-secundario); transform: translateY(-2px);}
+
+/* --- PAGINAS DE NAVEGACION --- */
+.container-page {
+    background-color: var(--color-blanco);
+    padding: 40px;
+    border-radius: var(--radio);
+    box-shadow: var(--shadow-sm);
+    min-height: 400px;
+}
+
+.section-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: var(--color-texto);
+}
+
+.section-header .subtitle {
+    color: var(--color-texto-muted);
+    margin-top: 5px;
+    font-size: 16px;
+}
+
+.content-placeholder {
+    margin-top: 30px;
+    padding: 20px;
+    border: 2px dashed var(--color-border);
+    border-radius: 8px;
+    text-align: center;
+    color: var(--color-texto-muted);
+}
 
 /* --- HOME & CARRUSEL --- */
 .hero-feelbig {
