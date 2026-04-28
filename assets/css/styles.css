@@ -264,7 +264,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 }
 
 .btn-ojo:hover, .btn-ojo:focus {
-    background: rgba(0, 0, 0, 0.05);
     color: var(--color-principal);
 }
 
