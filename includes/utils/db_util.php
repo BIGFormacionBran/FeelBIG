@@ -5,8 +5,18 @@ class Database {
     private $conn;
 
     private function __construct() {
-        // Leemos el archivo .env manualmente para no depender de librerías externas
-        $env = parse_ini_file(__DIR__ . '/../../.env');
+        $path = __DIR__ . '/../../.env';
+        
+        if (!file_exists($path)) {
+            // Esto te confirmará si el Docker falló al crear el archivo
+            die("Error: El archivo .env no existe en la ruta: " . $path);
+        }
+
+        $env = parse_ini_file($path);
+        
+        if (!$env) {
+            die("Error: El archivo .env está vacío o mal formado.");
+        }
         
         try {
             $this->conn = new PDO(
@@ -16,8 +26,8 @@ class Database {
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
         } catch (PDOException $e) {
-            // No mostramos el error real al usuario para no filtrar el HOST o el USER
-            die("Error crítico de infraestructura. Contacte con el administrador.");
+            // Si llega aquí, el archivo existe pero los datos (user/pass) están mal
+            die("Error de conexión PDO: " . $e->getMessage()); 
         }
     }
 
