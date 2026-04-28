@@ -7,17 +7,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $correo = $_POST['usuario'];
     $pass = $_POST['password'];
 
-    echo "<script>console.log('--- INICIO DEBUG REGISTRO ---');</script>";
-
     $dao = new UsuarioDAO();
-    $resultado = $dao->registrar($nombre, $correo, $pass);
-
-    if ($resultado) {
-        echo "<script>console.log('REGISTRO COMPLETADO. Puedes volver atrás.');</script>";
-    } else {
-        echo "<script>console.error('EL REGISTRO NO SE PUDO REALIZAR.');</script>";
+    
+    // Al no pasar el cuarto parámetro, usará el 3 definido en el DAO
+    if ($dao->registrar($nombre, $correo, $pass)) {
+        // Intentar login automático tras registro exitoso
+        $user = $dao->login($correo, $pass); 
+        if ($user) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['nombre'];
+            $_SESSION['user_role'] = $user['id_tipo_cuenta'];
+            
+            header("Location: index.php?page=home");
+            exit();
+        }
     }
-
-    // MATAMOS EL PROCESO AQUÍ PARA QUE NO REDIRIJA Y PUEDAS VER LA CONSOLA
-    die("<hr><h3>Debug Finalizado</h3><p>Revisa la consola del navegador (F12) para ver los pasos 1 al 5.</p><a href='index.php?page=registro'>Volver al formulario</a>");
+    
+    // Si falla el registro o el login posterior, vuelve con error
+    header("Location: index.php?page=registro&error=1");
+    exit();
 }
