@@ -1,5 +1,8 @@
 <?php
 function render_card_item_util($item) {
+    // Generación automática: index.php?page=item&type=minijuego&id=1
+    // Usamos 'item' como página global y pasamos los parámetros necesarios
+    $detailLink = "index.php?page=item&type=" . ($item['type'] ?? 'default') . "&id=" . $item['id'];
     ?>
     <div class="card-item">
         <div class="thumb">
@@ -15,8 +18,9 @@ function render_card_item_util($item) {
                     <p class="card-date"><strong>Fecha:</strong> <?php echo $item['fecha']; ?></p>
                 <?php endif; ?>
             </div>
-            
-            <div class="btn-primario btn-card" onclick="<?php render_individual_page($item); ?>">MÁS INFORMACIÓN</div>
+            <a href="<?php render_individual_page($item); ?>">
+                <div class="btn-primario btn-card">MÁS INFORMACIÓN</div>
+            </a>
         </div>
     </div>
     <?php
