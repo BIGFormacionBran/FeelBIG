@@ -6,17 +6,14 @@ class Database {
 
     private function __construct() {
         $path = __DIR__ . '/../../.env';
+        echo "<script>console.log('Buscando .env en: " . addslashes($path) . "');</script>";
         
         if (!file_exists($path)) {
-            // Esto te confirmará si el Docker falló al crear el archivo
-            die("Error: El archivo .env no existe en la ruta: " . $path);
+            echo "<script>console.error('ERROR: Archivo .env no encontrado');</script>";
+            die();
         }
 
         $env = parse_ini_file($path);
-        
-        if (!$env) {
-            die("Error: El archivo .env está vacío o mal formado.");
-        }
         
         try {
             $this->conn = new PDO(
@@ -25,9 +22,10 @@ class Database {
                 $env['DB_PASS'],
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
+            echo "<script>console.log('Conexión PDO establecida correctamente');</script>";
         } catch (PDOException $e) {
-            // Si llega aquí, el archivo existe pero los datos (user/pass) están mal
-            die("Error de conexión PDO: " . $e->getMessage()); 
+            echo "<script>console.error('Fallo PDO: " . addslashes($e->getMessage()) . "');</script>";
+            die();
         }
     }
 

@@ -7,9 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $correo = $_POST['usuario'];
     $pass = $_POST['password'];
 
+    echo "<script>console.log('Iniciando proceso de registro para: $correo');</script>";
+
     $dao = new UsuarioDAO();
     if ($dao->registrar($nombre, $correo, $pass)) {
-        // Obtenemos el usuario recién creado para tener su ID y Rol
         $user = $dao->login($correo, $pass); 
         if ($user) {
             $_SESSION['user_id'] = $user['id'];
@@ -19,6 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
     }
-    header("Location: index.php?page=registro&error=1");
+    
+    // Si llegamos aquí es que algo falló
+    echo "<script>
+        console.error('El registro falló. Revisa los mensajes anteriores en la consola.');
+        setTimeout(function(){ 
+            window.location.href = 'index.php?page=registro&error=1'; 
+        }, 3000); // Pausa de 3 segundos para que puedas leer la consola antes de que redirija
+    </script>";
     exit();
 }
