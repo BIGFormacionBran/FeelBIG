@@ -3,18 +3,18 @@ session_start();
 require_once 'includes/daos/UsuarioDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $usuario = $_POST['usuario']; // Correo
+    $nombre = $_POST['nombre'];
+    $correo = $_POST['usuario'];
     $pass = $_POST['password'];
 
     $dao = new UsuarioDAO();
-    $user = $dao->login($usuario, $pass);
-
-    if ($user) {
+    if ($dao->registrar($nombre, $correo, $pass)) {
+        // Auto-login tras registro
+        $user = $dao->login($correo, $pass);
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['nombre'];
         header("Location: index.php?page=home");
     } else {
-        header("Location: index.php?page=login&error=1");
+        header("Location: index.php?page=registro&error=1");
     }
     exit();
 }
