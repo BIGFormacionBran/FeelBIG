@@ -260,9 +260,10 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     align-items: center;
     border-radius: 50%;
     transition: all 0.2s;
+    z-index: 2;
 }
 
-.btn-ojo:hover {
+.btn-ojo:hover, .btn-ojo:focus {
     background: rgba(0, 0, 0, 0.05);
     color: var(--color-principal);
 }
