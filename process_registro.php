@@ -9,12 +9,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $dao = new UsuarioDAO();
     if ($dao->registrar($nombre, $correo, $pass)) {
-        // Auto-login tras registro
-        $user = $dao->login($correo, $pass);
-        $_SESSION['user_id'] = $user['id'];
-        header("Location: index.php?page=home");
-    } else {
-        header("Location: index.php?page=registro&error=1");
+        // Obtenemos el usuario recién creado para tener su ID y Rol
+        $user = $dao->login($correo, $pass); 
+        if ($user) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['nombre'];
+            $_SESSION['user_role'] = $user['id_tipo_cuenta'];
+            header("Location: index.php?page=home");
+            exit();
+        }
     }
+    header("Location: index.php?page=registro&error=1");
     exit();
 }
