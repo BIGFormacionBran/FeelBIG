@@ -1,19 +1,18 @@
 <?php 
-// Corregido: Referencia al manager correcto y función existente
 require_once 'includes/managers/navigation_manager.php';
 $menuItems = get_main_menu_manager();
 ?>
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
-            <a href="index.php?page=home">
+            <a href="/home">
                 <img src="assets/img/logo.png" alt="Feel BiG" class="header-logo-img">
             </a>
         </div>
 
         <nav class="nav-menu">
             <?php foreach ($menuItems as $item): ?>
-                <a href="index.php?page=<?php echo $item['slug']; ?>" class="nav-link">
+                <a href="/<?php echo $item['slug']; ?>" class="nav-link">
                     <?php echo $item['title']; ?>
                 </a>
             <?php endforeach; ?>

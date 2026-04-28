@@ -2,3 +2,13 @@
     Order allow,deny
     Deny from all
 </Files>
+
+# --- Nueva lógica de rutas amigables ---
+RewriteEngine On
+
+# Evita que se aplique la regla si el archivo o carpeta existe físicamente (CSS, JS, imágenes)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirige todo a index.php pasando la ruta en la variable 'route'
+RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]

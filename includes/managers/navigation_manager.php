@@ -21,7 +21,7 @@ function get_breadcrumbs_manager($currentPage) {
     if (in_array($currentPage, $exclude)) return null;
 
     return [
-        ['title' => 'Home', 'link' => 'index.php?page=home'],
+        ['title' => 'Home', 'link' => '/home'],
         ['title' => ucwords(str_replace('-', ' ', $currentPage)), 'link' => null]
     ];
 }
