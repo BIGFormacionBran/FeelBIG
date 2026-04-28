@@ -1,23 +1,22 @@
 <?php
-/**
- * Genera la URL para el carrusel o el HTML de la página vacía
- */
 function render_individual_page($item = null) {
-    // Si hay item, es una llamada desde el carrusel para obtener el enlace
+    // Si la función recibe un item (llamada desde el carrusel), devuelve el enlace
     if ($item !== null) {
-        return "index.php?page=item&type=" . ($item['type'] ?? 'default') . "&id=" . $item['id'];
+        return "index.php?page=individual_view&type=" . ($item['type'] ?? 'default') . "&id=" . $item['id'];
     }
 
-    // Si NO hay item, es el ruteador cargando la página individual vacía
-    $itemId = $_GET['id'] ?? '---';
-    $itemType = $_GET['type'] ?? '---';
-
-    echo '<div class="container-page-individual">
-            <div class="section-header-individual">
-                <h1>Cargando item: ' . htmlspecialchars($itemId) . '</h1>
-                <p class="subtitle">Categoría: ' . htmlspecialchars($itemType) . '</p>
+    // Si la función se llama sin parámetros (llamada desde individual_view.php), pinta la página
+    $itemId = $_GET['id'] ?? 'N/A';
+    $itemType = $_GET['type'] ?? 'N/A';
+    ?>
+    <div class="container-page">
+        <div class="section-header">
+            <h1>Cargando: <?php echo htmlspecialchars($itemId); ?></h1>
+            <p class="subtitle">Tipo de contenido: <?php echo htmlspecialchars($itemType); ?></p>
+        </div>
+        <div class="content-placeholder">
+            <p>Generando vista individual automática para el item...</p>
             </div>
-            <div class="content-placeholder-individual">
-                </div>
-          </div>';
+    </div>
+    <?php
 }

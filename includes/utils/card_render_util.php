@@ -1,7 +1,5 @@
 <?php
 function render_card_item_util($item) {
-    // Llamamos a la función para que nos devuelva la URL
-    $detailLink = render_individual_page($item); 
     ?>
     <div class="card-item">
         <div class="thumb">
@@ -17,7 +15,7 @@ function render_card_item_util($item) {
                     <p class="card-date"><strong>Fecha:</strong> <?php echo $item['fecha']; ?></p>
                 <?php endif; ?>
             </div>
-            <a href="<?php echo $detailLink; ?>">
+            <a href="<?php echo render_individual_page($item); ?>">
                 <div class="btn-primario btn-card">MÁS INFORMACIÓN</div>
             </a>
         </div>
