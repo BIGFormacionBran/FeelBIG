@@ -6,11 +6,13 @@ class Database {
 
     private function __construct() {
         $path = __DIR__ . '/../../.env';
-        echo "<script>console.log('Buscando .env en: " . addslashes($path) . "');</script>";
+        
+        // Log de ruta
+        echo "<script>console.log('1. Buscando .env en: " . addslashes($path) . "');</script>";
         
         if (!file_exists($path)) {
             echo "<script>console.error('ERROR: Archivo .env no encontrado');</script>";
-            die();
+            die("<p style='color:red'>Detenido: .env no encontrado. Revisa la consola (F12).</p>");
         }
 
         $env = parse_ini_file($path);
@@ -22,10 +24,10 @@ class Database {
                 $env['DB_PASS'],
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
-            echo "<script>console.log('Conexión PDO establecida correctamente');</script>";
+            echo "<script>console.log('2. Conexión PDO EXITOSA');</script>";
         } catch (PDOException $e) {
-            echo "<script>console.error('Fallo PDO: " . addslashes($e->getMessage()) . "');</script>";
-            die();
+            echo "<script>console.error('ERROR PDO: " . addslashes($e->getMessage()) . "');</script>";
+            die("<p style='color:red'>Detenido: Error de conexión DB. Revisa la consola (F12).</p>");
         }
     }
 
