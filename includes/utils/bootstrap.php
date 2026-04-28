@@ -4,6 +4,7 @@ session_start();
 // 1. Cargar CAPA UTILS
 require_once 'includes/utils/assets_util.php';
 require_once 'includes/utils/render_util.php';
+require_once 'includes/utils/individual_render_util.php';
 
 // 2. Cargar CAPA MANAGERS
 require_once 'includes/managers/router_manager.php';
