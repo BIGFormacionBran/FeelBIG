@@ -27,4 +27,15 @@ class ContenidoDAO {
         $stmt->execute([$nombre_real]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // NUEVO MÉTODO AÑADIDO:
+    public function get_categoria_por_item_id($itemId) {
+        $stmt = $this->db->prepare("
+            SELECT C.* FROM CATEGORIA C 
+            INNER JOIN CONTENIDO CONT ON CONT.id_categoria = C.id 
+            WHERE CONT.id = ? LIMIT 1
+        ");
+        $stmt->execute([$itemId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

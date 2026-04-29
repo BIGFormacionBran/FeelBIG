@@ -50,6 +50,12 @@ class MainManager {
         return array_map([$this, 'map_to_card'], $items);
     }
 
+    // NUEVO MÉTODO AÑADIDO:
+    public function get_category_by_item_id($itemId) {
+        // Obtenemos la categoría a la que pertenece un item
+        return $this->contenidoDao->get_categoria_por_item_id($itemId);
+    }
+
     private function map_to_card($row) {
         return [
             'id'          => $row['id'],

@@ -3,7 +3,10 @@ require_once __DIR__ . '/../managers/main_manager.php';
 
 function render_individual_page($item = null) {
     if ($item !== null) {
-        return "/" . ($item['type'] ?? 'default') . "/" . str_replace(' ', '-', $item['name']);
+        $manager = new MainManager();
+        $categoria = $manager->get_category_by_item_id($item['id']);
+        $catSlug = $categoria ? strtolower(str_replace(' ', '-', $categoria['nombre'])) : 'contenido';
+        return "/" . $catSlug . "/" . str_replace(' ', '-', $item['name']);
     }
 
     global $routeParts;
