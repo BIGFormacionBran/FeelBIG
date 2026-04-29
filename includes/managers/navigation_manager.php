@@ -1,14 +1,15 @@
 <?php
+
 function get_main_menu_manager() {
     $path = __DIR__ . '/../pages/main_nav';
     if (!is_dir($path)) return [];
-    $files = scandir($path);
+    
     $menu = [];
-    foreach ($files as $file) {
-        if (strpos($file, '.php') !== false) {
+    foreach (array_diff(scandir($path), ['.', '..']) as $file) {
+        if (str_ends_with($file, '.php')) {
             $slug = str_replace('.php', '', $file);
             $menu[] = [
-                'slug' => $slug,
+                'slug'  => $slug,
                 'title' => ucwords(str_replace('-', ' ', $slug))
             ];
         }
@@ -17,11 +18,30 @@ function get_main_menu_manager() {
 }
 
 function get_breadcrumbs_manager($currentPage) {
-    $exclude = ['home', 'login', 'registro'];
-    if (in_array($currentPage, $exclude)) return null;
+    global $routeParts;
 
-    return [
-        ['title' => 'Home', 'link' => '/home'],
-        ['title' => ucwords(str_replace('-', ' ', $currentPage)), 'link' => null]
-    ];
+    if (in_array($currentPage, ['home', 'login', 'registro'])) return null;
+
+    $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
+
+    if ($currentPage === 'individual_view' && isset($routeParts[1])) {
+        // Nivel categoría (ej: Minijuegos)
+        $breadcrumbs[] = [
+            'title' => ucwords(str_replace('-', ' ', $routeParts[0])),
+            'link'  => '/' . $routeParts[0]
+        ];
+        // Nivel detalle (ej: Salud Canarias Gaming)
+        $breadcrumbs[] = [
+            'title' => str_replace('-', ' ', $routeParts[1]),
+            'link'  => null
+        ];
+    } else {
+        // Página estática normal
+        $breadcrumbs[] = [
+            'title' => ucwords(str_replace('-', ' ', $currentPage)),
+            'link'  => null
+        ];
+    }
+
+    return $breadcrumbs;
 }
