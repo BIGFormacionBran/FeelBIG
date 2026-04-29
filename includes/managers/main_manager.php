@@ -78,15 +78,39 @@ class MainManager {
     }
 
     public function get_breadcrumbs($currentPage, $routeParts) {
+        // No mostrar en páginas raíz de sistema
         if (in_array($currentPage, ['home', 'login', 'registro'])) return null;
+
         $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
 
+        // Caso Vista Individual: /categoria-slug/nombre-contenido
         if ($currentPage === 'individual_view' && isset($routeParts[1])) {
-            $breadcrumbs[] = ['title' => ucwords(str_replace('-', ' ', $routeParts[0])), 'link' => '/' . $routeParts[0]];
-            $breadcrumbs[] = ['title' => str_replace('-', ' ', $routeParts[1]), 'link' => null];
-        } else {
-            $breadcrumbs[] = ['title' => ucwords(str_replace('-', ' ', $currentPage)), 'link' => null];
+            $categorySlug = $routeParts[0]; // ej: minijuegos
+            $itemSlug = $routeParts[1];     // ej: Salud-Canarias-Gaming
+
+            // Intentamos obtener el nombre real de la categoría para el título
+            $categoryTitle = ucwords(str_replace('-', ' ', $categorySlug));
+            
+            // 1. Añadimos el nivel de la categoría (ej: Minijuegos)
+            $breadcrumbs[] = [
+                'title' => $categoryTitle, 
+                'link' => '/' . $categorySlug
+            ];
+
+            // 2. Añadimos el nivel del contenido actual (ej: Salud Canarias Gaming)
+            $breadcrumbs[] = [
+                'title' => str_replace('-', ' ', $itemSlug), 
+                'link' => null
+            ];
+        } 
+        // Caso Vista de Categoría o Páginas Simples: /alimentacion
+        else {
+            $breadcrumbs[] = [
+                'title' => ucwords(str_replace('-', ' ', $currentPage)), 
+                'link' => null
+            ];
         }
+
         return $breadcrumbs;
     }
 
