@@ -1,8 +1,18 @@
 <?php
 session_start();
 
-// Definimos la raíz del proyecto
+// --- GESTIÓN DE ERRORES PRO ---
 $base_path = dirname(__DIR__, 2);
+$log_file = $base_path . '/logs/php_error.log';
+
+if (!is_dir($base_path . '/logs')) {
+    mkdir($base_path . '/logs', 0755, true);
+}
+
+ini_set('display_errors', 0); // No mostrar al usuario
+ini_set('log_errors', 1);     // Activar log
+ini_set('error_log', $log_file); // Ruta del archivo
+error_reporting(E_ALL);
 
 // 1. Cargar CAPA UTILS
 require_once $base_path . '/includes/utils/assets_util.php';
@@ -35,6 +45,6 @@ if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages)) {
     exit();
 }
 
-// 5. Cargar Configuración de página (Funciones dentro de main_manager o router_manager)
+// 5. Cargar Configuración de página
 $pageConfig = get_page_config_manager($page);
 $main_css = get_minified_css_util();
