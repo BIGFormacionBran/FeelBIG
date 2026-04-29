@@ -5,7 +5,7 @@ $viewAllLink = "/minijuegos";
 $items = [
     [
         "id"          => "1", 
-        "type"        => "minijuegos", // Coincide con el nombre del archivo 01_minijuegos
+        "type"        => "minijuegos", 
         "name"        => "Salud Canarias Gaming", 
         "img"         => "game1.jpg", 
         "badge"       => "Interactivo",

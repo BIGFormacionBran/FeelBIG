@@ -19,6 +19,10 @@ global $routeParts;
 $routeParts = explode('/', $cleanRoute);
 $page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
 
+if (count($routeParts) === 2) {
+    $page = 'individual_view';
+}
+
 $auth_pages = ['login', 'registro'];
 
 // 4. Lógica de Sesión

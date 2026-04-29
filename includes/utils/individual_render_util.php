@@ -1,36 +1,28 @@
 <?php
 
 function render_individual_page($item = null) {
-    // Si recibimos un item, generamos la URL amigable para el href
     if ($item !== null) {
-        return "/individual_view/" . ($item['type'] ?? 'default') . "/" . $item['id'];
+        return "/" . ($item['type'] ?? 'default') . "/" . $item['name'];
     }
 
-    // Si NO recibimos item, es que estamos DENTRO de la página de detalles
-    // Usamos la variable global $routeParts creada en bootstrap.php
     global $routeParts;
     
-    // URL esperada: /individual_view/minijuegos/1
-    // $routeParts[0] = 'individual_view'
-    // $routeParts[1] = 'minijuegos' (el tipo)
-    // $routeParts[2] = '1' (el ID)
-    
-    $itemType = $routeParts[1] ?? null;
-    $itemId = $routeParts[2] ?? null;
+    $itemType = $routeParts[0] ?? null;
+    $itemName = $routeParts[1] ?? null;
 
-    if ($itemId && $itemType) {
+    if ($itemType && $itemName) {
         $directory = __DIR__ . '/../components/home_modules/';
         $files = glob($directory . "*" . $itemType . ".php");
 
         if (!empty($files)) {
             ob_start();
-            include $files[0]; // Esto carga el array $items del archivo correspondiente
+            include $files[0];
             ob_end_clean();
 
             $foundItem = null;
             if (isset($items)) {
                 foreach ($items as $item) {
-                    if ($item['id'] == $itemId) {
+                    if ($item['name'] === $itemName) {
                         $foundItem = $item;
                         break;
                     }
