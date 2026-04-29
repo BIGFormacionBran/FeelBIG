@@ -33,6 +33,23 @@ class MainManager {
         return $row ? $this->map_to_card($row) : null;
     }
 
+    public function get_items_by_category_name($catName) {
+        $categorias = $this->contenidoDao->get_home_structure();
+        $targetId = null;
+
+        foreach ($categorias as $cat) {
+            if (strtolower($cat['nombre']) === strtolower($catName)) {
+                $targetId = $cat['id'];
+                break;
+            }
+        }
+
+        if (!$targetId) return [];
+
+        $items = $this->contenidoDao->get_contenidos_by_categoria($targetId);
+        return array_map([$this, 'map_to_card'], $items);
+    }
+
     private function map_to_card($row) {
         return [
             'id'          => $row['id'],

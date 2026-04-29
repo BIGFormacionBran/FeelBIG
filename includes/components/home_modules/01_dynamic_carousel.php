@@ -3,13 +3,14 @@ require_once __DIR__ . '/../../managers/main_manager.php';
 require_once __DIR__ . '/../../utils/card_render_util.php';
 
 $manager = new MainManager();
-$sections = $manager->get_home_data();
+// Obtenemos solo los items de la categoría "Minijuegos"
+// Asumimos que el Manager tiene un método para filtrar o buscamos por nombre
+$minijuegos = $manager->get_items_by_category_name('Minijuegos');
 
-foreach ($sections as $section):
-    $title = $section['title'];
-    $viewAllLink = "/" . $section['slug'];
-    $items = $section['items'];
-    $carouselID = 'carousel_' . uniqid();
+if (!empty($minijuegos)):
+    $title = "Minijuegos Saludables";
+    $viewAllLink = "/minijuegos";
+    $carouselID = 'carousel_minijuegos'; // ID fijo o único para este módulo
 ?>
 <div class="home-module-wrapper carrusel-contenedor-global" id="<?php echo $carouselID; ?>">
     <div class="module-header">
@@ -25,7 +26,7 @@ foreach ($sections as $section):
         </div>
 
         <div class="carousel-track">
-            <?php foreach ($items as $item): ?>
+            <?php foreach ($minijuegos as $item): ?>
                 <div class="carousel-slide">
                     <?php render_card_item_util($item); ?>
                 </div>
@@ -38,9 +39,9 @@ foreach ($sections as $section):
     </div>
 
     <div class="carousel-dots">
-        <?php foreach ($items as $i => $item): ?>
+        <?php foreach ($minijuegos as $i => $item): ?>
             <div class="dot <?php echo $i === 0 ? 'active' : ''; ?>" onclick="gotoSlide('<?php echo $carouselID; ?>', <?php echo $i; ?>)"></div>
         <?php endforeach; ?>
     </div>
 </div>
-<?php endforeach; ?>
+<?php endif; ?>
