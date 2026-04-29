@@ -8,7 +8,7 @@ function render_individual_page($item = null) {
     global $routeParts;
     
     $itemType = $routeParts[0] ?? null;
-    $itemName = $routeParts[1] ?? null;
+    $itemName = isset($routeParts[1]) ? urldecode($routeParts[1]) : null;
 
     if ($itemType && $itemName) {
         $directory = __DIR__ . '/../components/home_modules/';
@@ -22,7 +22,7 @@ function render_individual_page($item = null) {
             $foundItem = null;
             if (isset($items)) {
                 foreach ($items as $item) {
-                    if ($item['name'] === $itemName) {
+                    if (trim($item['name']) === trim($itemName)) {
                         $foundItem = $item;
                         break;
                     }
