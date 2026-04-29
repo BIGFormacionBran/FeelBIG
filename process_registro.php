@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre'];
+            $_SESSION['user_role'] = $user['id_tipo_cuenta'] ?? 3;
             header("Location: /home");
             exit();
         }
