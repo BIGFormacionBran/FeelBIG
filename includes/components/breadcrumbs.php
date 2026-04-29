@@ -1,8 +1,15 @@
 <?php
-require_once 'includes/managers/main_manager.php';
+// 1. Usar ruta absoluta para evitar errores de carga
+require_once dirname(__DIR__, 2) . '/includes/managers/main_manager.php';
+
+// 2. Traer las variables globales definidas en bootstrap.php
+global $page, $routeParts;
+
 $manager = new MainManager();
-// Usamos el método del MainManager pasando las variables globales que vienen de bootstrap
-$crumbs = $manager->get_breadcrumbs($page, $routeParts);
+
+// 3. Validar que las variables existen antes de usarlas para evitar el Warning
+$safe_route_parts = isset($routeParts) ? $routeParts : [];
+$crumbs = $manager->get_breadcrumbs($page, $safe_route_parts);
 ?>
 <div class="breadcrumb-container">
     <div class="breadcrumb-list">
