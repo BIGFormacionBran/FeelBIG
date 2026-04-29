@@ -1,6 +1,7 @@
 <?php 
-require_once 'includes/managers/navigation_manager.php';
-$menuItems = get_main_menu_manager();
+require_once 'includes/managers/main_manager.php';
+$manager = new MainManager();
+$menuItems = $manager->get_main_menu();
 ?>
 <header class="main-header">
     <div class="header-container">
@@ -13,7 +14,7 @@ $menuItems = get_main_menu_manager();
         <nav class="nav-menu">
             <?php foreach ($menuItems as $item): ?>
                 <a href="/<?php echo $item['slug']; ?>" class="nav-link">
-                    <?php echo $item['title']; ?>
+                    <?php echo htmlspecialchars($item['title']); ?>
                 </a>
             <?php endforeach; ?>
         </nav>

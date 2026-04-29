@@ -1,6 +1,15 @@
 <?php
-require_once __DIR__ . '/../utils/card_render_util.php';
-$carouselID = 'carousel_' . uniqid();
+require_once __DIR__ . '/../../managers/main_manager.php';
+require_once __DIR__ . '/../../utils/card_render_util.php';
+
+$manager = new MainManager();
+$sections = $manager->get_home_data();
+
+foreach ($sections as $section):
+    $title = $section['title'];
+    $viewAllLink = "/" . $section['slug'];
+    $items = $section['items'];
+    $carouselID = 'carousel_' . uniqid();
 ?>
 <div class="home-module-wrapper carrusel-contenedor-global" id="<?php echo $carouselID; ?>">
     <div class="module-header">
@@ -34,3 +43,4 @@ $carouselID = 'carousel_' . uniqid();
         <?php endforeach; ?>
     </div>
 </div>
+<?php endforeach; ?>

@@ -1,5 +1,8 @@
 <?php
-$crumbs = get_breadcrumbs_manager($page);
+require_once 'includes/managers/main_manager.php';
+$manager = new MainManager();
+// Usamos el método del MainManager pasando las variables globales que vienen de bootstrap
+$crumbs = $manager->get_breadcrumbs($page, $routeParts);
 ?>
 <div class="breadcrumb-container">
     <div class="breadcrumb-list">
