@@ -2,7 +2,7 @@
 
 function render_individual_page($item = null) {
     if ($item !== null) {
-        return "/" . ($item['type'] ?? 'default') . "/" . $item['name'];
+        return "/" . ($item['type'] ?? 'default') . "/" . str_replace(' ', '-', $item['name']);
     }
 
     global $routeParts;
@@ -22,7 +22,7 @@ function render_individual_page($item = null) {
             $foundItem = null;
             if (isset($items)) {
                 foreach ($items as $item) {
-                    if (trim($item['name']) === trim($itemName)) {
+                    if (str_replace(' ', '-', trim($item['name'])) === $itemName) {
                         $foundItem = $item;
                         break;
                     }
