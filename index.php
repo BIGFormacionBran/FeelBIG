@@ -1,4 +1,12 @@
-<?php require_once 'includes/utils/bootstrap.php'; ?>
+<?php
+// Activamos errores para ver exactamente qué falla si hay un 500
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Forzamos la ruta absoluta al bootstrap
+require_once __DIR__ . '/includes/utils/bootstrap.php'; 
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
