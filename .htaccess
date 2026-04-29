@@ -5,6 +5,7 @@
 
 # --- Nueva lógica de rutas amigables ---
 RewriteEngine On
+RewriteBase /
 
 # Evita que se aplique la regla si el archivo o carpeta existe físicamente (CSS, JS, imágenes)
 RewriteCond %{REQUEST_FILENAME} !-f
