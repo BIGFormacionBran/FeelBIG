@@ -11,11 +11,11 @@ require_once 'includes/managers/router_manager.php';
 require_once 'includes/managers/navigation_manager.php';
 
 // 3. Lógica de Enrutamiento Amigable
-// Capturamos 'route' (definida en .htaccess). Si no existe, es 'home'.
 $rawRoute = $_GET['route'] ?? 'home';
 $cleanRoute = trim($rawRoute, '/');
 
-// Separamos por si hay subrutas (ej: minijuegos/poker)
+// Definimos como global para que individual_render_util pueda leer el ID
+global $routeParts;
 $routeParts = explode('/', $cleanRoute);
 $page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
 
@@ -23,7 +23,6 @@ $auth_pages = ['login', 'registro'];
 
 // 4. Lógica de Sesión
 if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages)) {
-    // Redirigimos a la nueva URL amigable
     header("Location: /login");
     exit();
 }

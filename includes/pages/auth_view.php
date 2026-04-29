@@ -1,5 +1,6 @@
 <?php
-$is_registro = (isset($_GET['page']) && $_GET['page'] === 'registro');
+// Detectamos la página usando la variable $page definida en bootstrap
+$is_registro = ($page === 'registro');
 $titulo = $is_registro ? "Crear cuenta" : "Iniciar sesión";
 $btn_text = $is_registro ? "Registrarme" : "Entrar";
 $action = $is_registro ? "process_registro.php" : "auth.php";
@@ -44,13 +45,11 @@ if ($error_code === '1') {
                     <input type="password" name="password" id="passInput" placeholder="Contraseña" required minlength="6">
                     <button type="button" class="btn-ojo" id="toggleBtn" aria-label="Mostrar contraseña">                        
                         <svg class="icon-open" viewBox="0 0 24 24" fill="currentColor">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M20.293 2.293a1 1 0 1 1 1.414 1.414l-18 18a1 1 0 0 1-1.414-1.414l3.446-3.446c-.238-.188-.47-.387-.694-.6L1.31 12.722a.985.985 0 0 1 0-1.436l3.734-3.527c3.15-2.976 7.77-3.542 11.48-1.697l3.768-3.768zm-5.275 5.275c-2.852-1.138-6.23-.596-8.582 1.627l-2.974 2.808 2.974 2.809c.233.22.476.423.727.61l1.391-1.39a4 4 0 0 1 5.478-5.478l.986-.986zm-2.5 2.5a2.001 2.001 0 0 0-2.45 2.45l2.45-2.45z"></path>
-                            <path d="M22.69 11.285 19.7 8.463l-1.414 1.414 2.251 2.126-2.973 2.809a8.099 8.099 0 0 1-6.377 2.164l-1.712 1.712c3.268.833 6.876.02 9.48-2.44l3.733-3.527a.985.985 0 0 0 0-1.436z"></path>
-                            <path d="M15.997 12.167a4 4 0 0 1-3.83 3.83l3.83-3.83z"></path>
+                            <path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0-4c7 0 11 8 11 8s-4 8-11 8-11-8-11-8 4-8 11-8zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"/>
                         </svg>
                         
                         <svg class="icon-closed" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
-                            <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            <path d="M2 3.41L3.41 2l18.59 18.59L20.59 22l-2.22-2.22A11.12 11.12 0 0112 21c-7 0-10-7-10-7a13.3 13.3 0 012.35-3.41L2 3.41zM12 17c2.76 0 5-2.24 5-5a4.91 4.91 0 00-.24-1.52L13.52 13.72A3 3 0 019.28 9.48l-1.84-1.84A4.91 4.91 0 007 12c0 2.76 2.24 5 5 5zm8.56-4.32A13.32 13.32 0 0022 12s-3-7-10-7a11.11 11.11 0 00-4.08.77l1.52 1.52A5.05 5.05 0 0112 7c2.76 0 5 2.24 5 5 0 .61-.11 1.19-.31 1.72l1.87 1.96z"/>
                         </svg>
                     </button>
                 </div>
@@ -58,7 +57,7 @@ if ($error_code === '1') {
                 <button type="submit" class="btn-primario"><?php echo $btn_text; ?></button>
 
                 <div class="auth-footer-links">
-                    <a href="index.php?page=<?php echo $is_registro ? 'login' : 'registro'; ?>" class="enlace-personalizado">
+                    <a href="/<?php echo $is_registro ? 'login' : 'registro'; ?>" class="enlace-personalizado">
                         <?php echo $is_registro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'; ?>
                     </a>
                 </div>

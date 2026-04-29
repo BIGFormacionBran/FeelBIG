@@ -25,7 +25,7 @@ $menuItems = get_main_menu_manager();
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <div class="user-dropdown">
-                    <a href="logout.php">Cerrar Sesión</a>
+                    <a href="/logout.php">Cerrar Sesión</a>
                 </div>
             </div>
         </div>

@@ -1,44 +1,50 @@
 <?php
 
 function render_individual_page($item = null) {
-    // Si la función recibe un item (llamada desde el carrusel), devuelve el enlace
+    // Si recibimos un item, generamos la URL amigable para el href
     if ($item !== null) {
-        return "index.php?page=individual_view&type=" . ($item['type'] ?? 'default') . "&id=" . $item['id'];
+        return "/individual_view/" . ($item['type'] ?? 'default') . "/" . $item['id'];
     }
 
-    // Lógica para mostrar la página individual
-    $itemId = $_GET['id'] ?? null;
-    $itemType = $_GET['type'] ?? null;
+    // Si NO recibimos item, es que estamos DENTRO de la página de detalles
+    // Usamos la variable global $routeParts creada en bootstrap.php
+    global $routeParts;
+    
+    // URL esperada: /individual_view/minijuegos/1
+    // $routeParts[0] = 'individual_view'
+    // $routeParts[1] = 'minijuegos' (el tipo)
+    // $routeParts[2] = '1' (el ID)
+    
+    $itemType = $routeParts[1] ?? null;
+    $itemId = $routeParts[2] ?? null;
 
     if ($itemId && $itemType) {
-        // 1. Buscamos el archivo que contiene el tipo (ej: 01_minijuegos.php)
         $directory = __DIR__ . '/../components/home_modules/';
         $files = glob($directory . "*" . $itemType . ".php");
 
         if (!empty($files)) {
-            // 2. Cargamos el archivo para tener el array $items (bloqueamos el include para que no pinte el carrusel)
             ob_start();
-            include $files[0];
+            include $files[0]; // Esto carga el array $items del archivo correspondiente
             ob_end_clean();
 
-            // 3. Buscamos el ítem específico por ID
             $foundItem = null;
-            foreach ($items as $item) {
-                if ($item['id'] == $itemId) {
-                    $foundItem = $item;
-                    break;
+            if (isset($items)) {
+                foreach ($items as $item) {
+                    if ($item['id'] == $itemId) {
+                        $foundItem = $item;
+                        break;
+                    }
                 }
             }
 
             if ($foundItem) {
-                // 4. Mandamos el item al util de renderizado final
                 render_individual_view_util($foundItem);
                 return;
             }
         }
     }
 
-    echo "<p>Ítem no encontrado.</p>";
+    echo "<div class='error-container'><h2>Ítem no encontrado</h2><a href='/home'>Volver al inicio</a></div>";
 }
 
 function render_individual_view_util($data) {
@@ -60,7 +66,7 @@ function render_individual_view_util($data) {
         <?php endif; ?>
 
         <div class="creiss-featured-image">
-            <img src="assets/img/<?php echo $item['img'] ?? $data['img']; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
+            <img src="assets/img/<?php echo $data['img']; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
             <?php if (isset($data['badge'])): ?>
                 <span class="badge-float"><?php echo htmlspecialchars($data['badge']); ?></span>
             <?php endif; ?>

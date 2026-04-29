@@ -12,7 +12,6 @@
 <body>
     <div class="body-section">
         <?php 
-            // El cascarón solo pide renderizar el contenido
             render_page_layout_manager($page, $pageConfig, $auth_pages); 
         ?>
     </div>
