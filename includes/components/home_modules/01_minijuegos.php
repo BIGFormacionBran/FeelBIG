@@ -1,6 +1,6 @@
 <?php
 $title = "Minijuegos Saludables";
-$viewAllLink = "index.php?page=minijuegos";
+$viewAllLink = "/minijuegos";
 
 $items = [
     [

@@ -18,12 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['nombre'];
             $_SESSION['user_role'] = $user['id_tipo_cuenta'];
             
-            header("Location: index.php?page=home");
+            header("Location: /home");
             exit();
         }
     }
     
     // Si falla el registro o el login posterior, vuelve con error
-    header("Location: index.php?page=registro&error=1");
+    header("Location: /registro&error=1");
     exit();
 }

@@ -13,13 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre'];
-            header("Location: index.php?page=home");
+            header("Location: /home");
         } else {
-            header("Location: index.php?page=login&error=1");
+            header("Location: /login&error=1");
         }
     } catch (Exception $e) {
         // Si el DAO lanza excepción de base de datos
-        header("Location: index.php?page=login&error=db");
+        header("Location: /login&error=db");
     }
     exit();
 }
