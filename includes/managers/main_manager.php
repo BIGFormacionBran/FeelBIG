@@ -77,8 +77,10 @@ class MainManager {
         $categorias = $this->contenidoDao->get_home_structure();
         return array_map(function($cat) {
             return [
-                'slug'  => str_replace(' ', '-', strtolower($cat['nombre'])),
-                'title' => $cat['nombre']
+                'id'          => $cat['id'],
+                'slug'        => str_replace(' ', '-', strtolower($cat['nombre'])),
+                'title'       => $cat['nombre'],
+                'descripcion' => $cat['descripcion'] 
             ];
         }, $categorias);
     }
