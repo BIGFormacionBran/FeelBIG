@@ -8,7 +8,7 @@ $minijuegos = $manager->get_items_by_category_name('Minijuegos');
 
 if (!empty($minijuegos)):
     $title = "Minijuegos Saludables";
-    $viewAllLink = "/minijuegos";
+    $viewAllLink = "minijuegos.php"; // Ajusta a tu ruta real
     $carouselID = 'carousel_minijuegos'; 
 ?>
 <div class="home-module-wrapper carrusel-contenedor-global" id="<?php echo $carouselID; ?>">
@@ -42,12 +42,10 @@ if (!empty($minijuegos)):
     </div>
 
     <div class="carousel-dots">
-        <?php 
-        // Solo creamos tantos puntos como elementos haya (aunque el JS limite el scroll)
-        foreach ($minijuegos as $i => $item): 
-        ?>
+        <?php foreach ($minijuegos as $i => $item): ?>
             <div class="dot <?php echo $i === 0 ? 'active' : ''; ?>" 
-                 onclick="gotoSlide('<?php echo $carouselID; ?>', <?php echo $i; ?>)"></div>
+                 onclick="gotoSlide('<?php echo $carouselID; ?>', <?php echo $i; ?>)">
+            </div>
         <?php endforeach; ?>
     </div>
 </div>
