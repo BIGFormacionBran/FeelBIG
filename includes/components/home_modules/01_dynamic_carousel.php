@@ -3,14 +3,13 @@ require_once __DIR__ . '/../../managers/main_manager.php';
 require_once __DIR__ . '/../../utils/card_render_util.php';
 
 $manager = new MainManager();
-// Obtenemos solo los items de la categoría "Minijuegos"
-// Asumimos que el Manager tiene un método para filtrar o buscamos por nombre
+// Obtenemos los items de la categoría "Minijuegos"
 $minijuegos = $manager->get_items_by_category_name('Minijuegos');
 
 if (!empty($minijuegos)):
     $title = "Minijuegos Saludables";
-    $viewAllLink = "/minijuegos";
-    $carouselID = 'carousel_minijuegos'; // ID fijo o único para este módulo
+    $viewAllLink = "minijuegos.php"; // Ajusta a tu ruta real
+    $carouselID = 'carousel_minijuegos'; 
 ?>
 <div class="home-module-wrapper carrusel-contenedor-global" id="<?php echo $carouselID; ?>">
     <div class="module-header">
@@ -22,7 +21,9 @@ if (!empty($minijuegos)):
 
     <div class="carousel-main-viewport">
         <div class="carousel-nav-arrow prev" onclick="moveCarousel('<?php echo $carouselID; ?>', -1)">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 18l-6-6 6-6"></path></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M15 18l-6-6 6-6"></path>
+            </svg>
         </div>
 
         <div class="carousel-track">
@@ -34,13 +35,17 @@ if (!empty($minijuegos)):
         </div>
 
         <div class="carousel-nav-arrow next" onclick="moveCarousel('<?php echo $carouselID; ?>', 1)">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M9 18l6-6-6-6"></path></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M9 18l6-6-6-6"></path>
+            </svg>
         </div>
     </div>
 
     <div class="carousel-dots">
         <?php foreach ($minijuegos as $i => $item): ?>
-            <div class="dot <?php echo $i === 0 ? 'active' : ''; ?>" onclick="gotoSlide('<?php echo $carouselID; ?>', <?php echo $i; ?>)"></div>
+            <div class="dot <?php echo $i === 0 ? 'active' : ''; ?>" 
+                 onclick="gotoSlide('<?php echo $carouselID; ?>', <?php echo $i; ?>)">
+            </div>
         <?php endforeach; ?>
     </div>
 </div>

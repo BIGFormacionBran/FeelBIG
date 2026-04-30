@@ -205,7 +205,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     letter-spacing: -0.5px;
 }
 
-/* Estilos para el banner de error que antes eran inline */
 .error-banner {
     color: #ff4d4d; 
     background: #ffe6e6; 
@@ -365,29 +364,26 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 /* Ajustes carrusel funcional */
 .carrusel-contenedor-global {
     position: relative;
+    width: 100%;
 }
 
 .carousel-main-viewport {
     position: relative;
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    justify-content: space-evenly;
     overflow: hidden;
     padding: 15px 0;
 }
 
 .carousel-track {
     display: flex;
-    flex-flow: row;
-    align-items: center;
-    justify-content: space-evenly;
-    min-width: 1000px;
+    flex-direction: row;
+    align-items: stretch;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: max-content;
 }
 
 .carousel-slide {
-    min-width: calc(33.333% - 14px);
+    width: 380px; /* Ancho fijo para cálculo preciso */
+    padding: 0 10px;
     flex-shrink: 0;
 }
 
@@ -475,7 +471,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
     color: var(--color-principal);
     transition: var(--transition);
 }
@@ -485,8 +481,8 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-blanco);
 }
 
-.carousel-nav-arrow.prev { left: 5px; }
-.carousel-nav-arrow.next { right: 5px; }
+.carousel-nav-arrow.prev { left: -20px; }
+.carousel-nav-arrow.next { right: -20px; }
 
 /* Dots de posición */
 .carousel-dots {
@@ -630,7 +626,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 /* --- RESPONSIVE --- */
 @media (max-width: 900px) {
-    .carousel-slide { min-width: calc(50% - 10px); }
+    .carousel-slide { width: 300px; }
     .creiss-single-header, .creiss-meta-flex, .creiss-body-content { padding: 20px; }
 }
 
@@ -638,9 +634,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     .nav-menu { display: none; }
     .header-container { justify-content: center; }
     .info-container-global { flex-direction: column; text-align: center; gap: 10px; }
-}
-
-@media (max-width: 600px) {
-    .carousel-slide { min-width: 100%; }
+    .carousel-slide { width: 100%; }
     .carousel-nav-arrow { display: none; }
 }
