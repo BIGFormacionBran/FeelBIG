@@ -1,7 +1,7 @@
-// 1. Inicialización
 (function() {
     "use strict";
 
+    // 1. Toggle de Password
     const initAuth = () => {
         const passInput = document.getElementById('passInput');
         const toggleBtn = document.getElementById('toggleBtn');
@@ -15,7 +15,7 @@
         }
     };
 
-    // --- MOTOR SWIPER ADAPTADO DE CREISS ---
+    // 2. Motor Swiper para FeelBig
     const initCarousels = () => {
         const sections = document.querySelectorAll('.feelbig-swiper-section');
         
@@ -24,46 +24,30 @@
             
             if (swiperEl && window.Swiper && !container.dataset.swiperReady) {
                 const totalSlides = swiperEl.querySelectorAll('.swiper-slide').length;
-                const canLoop = totalSlides > 3;
-
-                try {
-                    new Swiper(swiperEl, {
-                        observer: true,
-                        observeParents: true,
-                        watchOverflow: true,
-                        loop: canLoop,
-                        autoplay: (totalSlides > 1) ? { 
-                            delay: 5000,
-                            disableOnInteraction: false,
-                            pauseOnMouseEnter: true 
-                        } : false,
-                        spaceBetween: 20,
-                        slidesPerView: 1,
-                        navigation: {
-                            nextEl: container.querySelector('.swiper-button-next'),
-                            prevEl: container.querySelector('.swiper-button-prev'),
-                        },
-                        pagination: {
-                            el: container.querySelector('.swiper-pagination-custom'),
-                            clickable: true,
-                        },
-                        breakpoints: {
-                            768: { slidesPerView: Math.min(totalSlides, 2) },
-                            1024: { slidesPerView: Math.min(totalSlides, 3) }
-                        },
-                        on: {
-                            init: function() {
-                                container.dataset.swiperReady = 'true';
-                                if (totalSlides <= 1) {
-                                    const ctrls = [this.navigation.nextEl, this.navigation.prevEl, this.pagination.el];
-                                    ctrls.forEach(el => el && el.style.setProperty('display', 'none', 'important'));
-                                }
-                            }
+                
+                new Swiper(swiperEl, {
+                    loop: totalSlides > 3,
+                    spaceBetween: 20,
+                    slidesPerView: 1,
+                    autoplay: { delay: 5000, disableOnInteraction: false },
+                    navigation: {
+                        nextEl: container.querySelector('.swiper-button-next'),
+                        prevEl: container.querySelector('.swiper-button-prev'),
+                    },
+                    pagination: {
+                        el: container.querySelector('.swiper-pagination-custom'),
+                        clickable: true,
+                    },
+                    breakpoints: {
+                        768: { slidesPerView: Math.min(totalSlides, 2) },
+                        1024: { slidesPerView: Math.min(totalSlides, 3) }
+                    },
+                    on: {
+                        init: function() {
+                            container.dataset.swiperReady = 'true';
                         }
-                    });
-                } catch (e) {
-                    console.error("Error inicializando Swiper en FEELBIG:", e);
-                }
+                    }
+                });
             }
         });
     };
@@ -73,9 +57,5 @@
         initCarousels(); 
     };
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-    } else {
-        init();
-    }
+    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
 })();
