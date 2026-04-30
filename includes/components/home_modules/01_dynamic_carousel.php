@@ -3,18 +3,17 @@ require_once __DIR__ . '/../../managers/main_manager.php';
 require_once __DIR__ . '/../../utils/card_render_util.php';
 
 $manager = new MainManager();
-// Obtenemos los items de la categoría "Minijuegos"
 $minijuegos = $manager->get_items_by_category_name('Minijuegos');
 
 if (!empty($minijuegos)):
     $title = "Minijuegos Saludables";
-    $viewAllLink = "minijuegos.php"; // Ajusta a tu ruta real
+    $viewAllLink = "minijuegos.php";
     $carouselID = 'carousel_minijuegos_' . uniqid(); 
 ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<div class="home-module-wrapper carrusel-contenedor-global feelbig-swiper-section" id="<?php echo $carouselID; ?>" data-swiper-ready="false">
+<div class="home-module-wrapper feelbig-swiper-section" id="<?php echo $carouselID; ?>" data-swiper-ready="false">
     <div class="module-header">
         <h2><?php echo $title; ?></h2>
         <?php if (isset($viewAllLink)): ?>
