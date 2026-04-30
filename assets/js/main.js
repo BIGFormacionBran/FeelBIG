@@ -1,7 +1,7 @@
 // Variable global para los estados de los carruseles
 const carouselStates = {};
 
-// 1. Funciones de movimiento globales
+// 1. Funciones de movimiento
 window.moveCarousel = (id, direction) => {
     const container = document.getElementById(id);
     if (!container) return;
@@ -10,19 +10,21 @@ window.moveCarousel = (id, direction) => {
     const slides = track.querySelectorAll('.carousel-slide');
     if (slides.length === 0) return;
 
-    // Calcular dimensiones dinámicas
+    // Calcular ancho de una slide (incluyendo padding/gap si lo hubiera)
     const slideWidth = slides[0].offsetWidth;
-    const viewportWidth = container.querySelector('.carousel-main-viewport').offsetWidth;
     
-    // Cuántas slides se ven al mismo tiempo
+    // Calcular cuántas slides caben en el viewport actual
+    const viewportWidth = container.querySelector('.carousel-main-viewport').offsetWidth;
     const visibleSlides = Math.round(viewportWidth / slideWidth);
+    
+    // El índice máximo es el total de slides menos las que ya se ven
     const maxIndex = Math.max(0, slides.length - visibleSlides);
 
     if (!carouselStates[id]) carouselStates[id] = { index: 0 };
     
     carouselStates[id].index += direction;
 
-    // Lógica circular (bucle)
+    // Lógica de bucle infinito corregida
     if (carouselStates[id].index > maxIndex) carouselStates[id].index = 0;
     if (carouselStates[id].index < 0) carouselStates[id].index = maxIndex;
 
@@ -34,25 +36,22 @@ window.gotoSlide = (id, index) => {
     if (!container) return;
     const track = container.querySelector('.carousel-track');
     const slides = track.querySelectorAll('.carousel-slide');
-    if (slides.length === 0) return;
-    
     const slideWidth = slides[0].offsetWidth;
+
     carouselStates[id] = { index: index };
-    
     updateCarouselUI(id, track, slideWidth);
 };
 
 const updateCarouselUI = (id, track, width) => {
     track.style.transform = `translateX(-${carouselStates[id].index * width}px)`;
     
-    // Actualizar dots
     const dots = track.closest('.carrusel-contenedor-global').querySelectorAll('.dot');
     dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === carouselStates[id].index);
     });
 };
 
-// 2. Inicialización
+// 2. Lógica de inicialización
 (function() {
     "use strict";
 
@@ -72,7 +71,7 @@ const updateCarouselUI = (id, track, width) => {
     const initCarousels = () => {
         document.querySelectorAll('.carrusel-contenedor-global').forEach(carousel => {
             const id = carousel.id;
-            // Autoplay cada 5 segundos
+            // Autoreproducir cada 5 segundos
             setInterval(() => {
                 window.moveCarousel(id, 1);
             }, 5000);
@@ -84,9 +83,6 @@ const updateCarouselUI = (id, track, width) => {
         initCarousels(); 
     };
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-    } else {
-        init();
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+    else init();
 })();
