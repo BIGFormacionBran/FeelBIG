@@ -9,9 +9,12 @@ $minijuegos = $manager->get_items_by_category_name('Minijuegos');
 if (!empty($minijuegos)):
     $title = "Minijuegos Saludables";
     $viewAllLink = "minijuegos.php"; // Ajusta a tu ruta real
-    $carouselID = 'carousel_minijuegos'; 
+    $carouselID = 'carousel_minijuegos_' . uniqid(); 
 ?>
-<div class="home-module-wrapper carrusel-contenedor-global" id="<?php echo $carouselID; ?>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<div class="home-module-wrapper carrusel-contenedor-global feelbig-swiper-section" id="<?php echo $carouselID; ?>" data-swiper-ready="false">
     <div class="module-header">
         <h2><?php echo $title; ?></h2>
         <?php if (isset($viewAllLink)): ?>
@@ -19,34 +22,36 @@ if (!empty($minijuegos)):
         <?php endif; ?>
     </div>
 
-    <div class="carousel-main-viewport">
-        <div class="carousel-nav-arrow prev" onclick="moveCarousel('<?php echo $carouselID; ?>', -1)">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
-                <path d="M15 18l-6-6 6-6"></path>
-            </svg>
-        </div>
-
-        <div class="carousel-track">
-            <?php foreach ($minijuegos as $item): ?>
-                <div class="carousel-slide">
-                    <?php render_card_item_util($item); ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
-
-        <div class="carousel-nav-arrow next" onclick="moveCarousel('<?php echo $carouselID; ?>', 1)">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
-                <path d="M9 18l6-6-6-6"></path>
-            </svg>
-        </div>
-    </div>
-
-    <div class="carousel-dots">
-        <?php foreach ($minijuegos as $i => $item): ?>
-            <div class="dot <?php echo $i === 0 ? 'active' : ''; ?>" 
-                 onclick="gotoSlide('<?php echo $carouselID; ?>', <?php echo $i; ?>)">
+    <div class="contenedor-carrousel-eventos">
+        <div class="fila-principal-carrousel">
+            <div class="swiper-button-prev btn-nav-eventos">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                    <path d="M15 18l-6-6 6-6"></path>
+                </svg>
             </div>
-        <?php endforeach; ?>
+            
+            <div class="cuerpo-swiper">
+                <div class="swiper swiper-feelbig-generic">
+                    <div class="swiper-wrapper">
+                        <?php foreach ($minijuegos as $item): ?>
+                            <div class="swiper-slide">
+                                <?php render_card_item_util($item); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-button-next btn-nav-eventos">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="paginacion-externa">
+            <div class="swiper-pagination-custom"></div>
+        </div>
     </div>
 </div>
 <?php endif; ?>
