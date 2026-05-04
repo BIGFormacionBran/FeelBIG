@@ -134,4 +134,18 @@ class MainManager {
     public function get_user_by_id($id) {
         return $this->usuarioDao->getById($id);
     }
+
+    public function update_user_profile($id, $nombre, $correo, $password) {
+        $user = $this->get_user_by_id($id);
+        if (!$user) return "Error: Usuario no encontrado.";
+
+        // Solo actualizamos si el campo no está vacío, de lo contrario usamos el valor actual
+        $finalNombre = !empty($nombre) ? $nombre : $user['nombre'];
+        $finalCorreo = !empty($correo) ? $correo : $user['correo'];
+        $finalPass = !empty($password) ? $password : null;
+
+        $resultado = $this->usuarioDao->actualizarPerfil($id, $finalNombre, $finalCorreo, $finalPass);
+
+        return $resultado ? "Perfil actualizado correctamente." : "Error al actualizar el perfil.";
+    }
 }

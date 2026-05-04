@@ -1,6 +1,17 @@
 <?php
 require_once 'includes/managers/main_manager.php';
 $manager = new MainManager();
+$mensaje = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mensaje = $manager->update_user_profile(
+        $_SESSION['user_id'], 
+        $_POST['nombre'] ?? '', 
+        $_POST['correo'] ?? '', 
+        $_POST['new_pass'] ?? ''
+    );
+}
+
 // Obtenemos los datos completos del usuario desde la DB usando el ID de la sesión
 $userData = $manager->get_user_by_id($_SESSION['user_id']);
 ?>
@@ -22,8 +33,7 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
         </div>
 
         <div class="login-central-container">
-            <form action="includes/actions/update_user.php" method="POST">
-                
+            <form action="" method="POST">
                 <div class="input-box">
                     <label for="nombreInput">Nombre Completo</label>
                     <input type="text" name="nombre" id="nombreInput" placeholder="<?php echo htmlspecialchars($userData['nombre'] ?? ''); ?>">
@@ -55,5 +65,10 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
                 <button type="submit" class="btn-primario">Guardar Cambios</button>
             </form>
         </div>
+        <?php if (!empty($mensaje)): ?>
+            <div class="info-badge <?php echo strpos($mensaje, 'Error') !== false ? 'error' : 'success'; ?>" style="margin-bottom: 20px; border: 1px solid currentColor;">
+                <span><?php echo htmlspecialchars($mensaje); ?></span>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
