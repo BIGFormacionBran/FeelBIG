@@ -12,6 +12,14 @@ class UsuarioDAO {
         }
     }
 
+    public function getById($id) {
+        if (!$this->db) return null;
+        $sql = "SELECT * FROM USUARIO WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function registrar($nombre, $correo, $password, $id_tipo = 3) {
         if (!$this->db) return false;
         try {

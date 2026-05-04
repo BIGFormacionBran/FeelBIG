@@ -130,4 +130,8 @@ class MainManager {
     public function registrar($nombre, $correo, $pass) {
         return $this->usuarioDao->registrar($nombre, $correo, $pass);
     }
+
+    public function get_user_by_id($id) {
+        return $this->usuarioDao->getById($id);
+    }
 }
