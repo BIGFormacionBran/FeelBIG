@@ -76,7 +76,8 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     padding: 5px 0;
 }
 
-.nav-link:hover { color: var(--color-principal); }
+.nav-link:hover,
+.nav-link.active { color: var(--color-principal); }
 
 .nav-link::after {
     content: "";
@@ -89,7 +90,8 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     transition: width 0.3s ease;
 }
 
-.nav-link:hover::after { width: 100%; }
+.nav-link:hover::after,
+.nav-link.active::after { width: 100%; }
 
 /* --- BREADCRUMBS (MIGAS DE PAN) --- */
 .breadcrumb-container {
