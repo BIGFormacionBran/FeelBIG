@@ -354,6 +354,9 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 /* --- PAGINAS DE NAVEGACION --- */
 .container-page {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
     background-color: var(--color-blanco);
     padding: 40px;
     border-radius: var(--radio);
