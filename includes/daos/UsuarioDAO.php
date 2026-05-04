@@ -13,19 +13,12 @@ class UsuarioDAO {
     }
 
     /**
-     * Registra un nuevo usuario comprobando disponibilidad de nombre y correo.
+     * Registra un nuevo usuario. 
+     * Se apoya en las restricciones UNIQUE de la DB para nombre y correo.
      */
     public function registrar($nombre, $correo, $password, $id_tipo = 3) {
         if (!$this->db) return false;
         try {
-            // Comprobar si el nombre o el correo ya existen
-            $checkSql = "SELECT COUNT(*) FROM USUARIO WHERE nombre = ? OR correo = ?";
-            $checkStmt = $this->db->prepare($checkSql);
-            $checkStmt->execute([$nombre, $correo]);
-            if ($checkStmt->fetchColumn() > 0) {
-                return false; // Ya existe el nombre o el correo
-            }
-
             // Encriptación BCRYPT
             $hash = password_hash($password, PASSWORD_BCRYPT);
             
@@ -33,6 +26,7 @@ class UsuarioDAO {
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([$nombre, $correo, $hash, $id_tipo]);
         } catch (PDOException $e) {
+            // Si hay un error de duplicidad (23000), devuelve false
             return false;
         }
     }
