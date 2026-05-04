@@ -12,6 +12,15 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
     </div>
 
     <div class="main-column-padre">
+        <div class="info-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Los campos vacíos mantendrán su valor actual. Deja la contraseña en blanco si no deseas cambiarla.</span>
+        </div>
+
         <div class="login-central-container">
             <form action="includes/actions/update_user.php" method="POST">
                 
@@ -26,9 +35,6 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
                 </div>
 
                 <hr class="separator">
-                <p class="info-text">
-                    Los campos vacíos mantendrán su valor actual. Deja la contraseña en blanco si no deseas cambiarla.
-                </p>
 
                 <div class="input-box">
                     <label>Nueva Contraseña</label>
