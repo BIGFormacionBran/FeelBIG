@@ -8,6 +8,14 @@ $action = $is_registro ? "process_registro.php" : "auth.php";
 $error_code = $_GET['error'] ?? null;
 $mensaje_error = "";
 
+// Recuperamos datos de la sesión si existen
+$form_data = $_SESSION['form_data'] ?? [];
+$old_user = $form_data['usuario'] ?? '';
+$old_nombre = $form_data['nombre'] ?? '';
+
+// Una vez recuperados, los eliminamos de la sesión para que no persistan por siempre
+unset($_SESSION['form_data']);
+
 if ($error_code === '1') {
     $mensaje_error = $is_registro ? "El nombre de usuario o correo ya están en uso." : "Usuario o contraseña incorrectos.";
 } elseif ($error_code === 'db') {
@@ -33,12 +41,12 @@ if ($error_code === '1') {
             <form action="<?php echo $action; ?>" method="POST">
                 <?php if ($is_registro): ?>
                 <div class="input-box">
-                    <input type="text" name="nombre" placeholder="Nombre completo" required>
+                    <input type="text" name="nombre" placeholder="Nombre completo" value="<?php echo htmlspecialchars($old_nombre); ?>" required>
                 </div>
                 <?php endif; ?>
 
                 <div class="input-box">
-                    <input type="text" name="usuario" placeholder="<?php echo $is_registro ? 'Correo electrónico' : 'Correo o nombre de usuario'; ?>" required>
+                    <input type="text" name="usuario" placeholder="<?php echo $is_registro ? 'Correo electrónico' : 'Correo o nombre de usuario'; ?>" value="<?php echo htmlspecialchars($old_user); ?>" required>
                 </div>
 
                 <div class="input-box">

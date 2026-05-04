@@ -13,10 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre'];
-            // Opcional: añade el rol si lo necesitas
             $_SESSION['user_role'] = $user['id_tipo_cuenta'] ?? 3;
+            unset($_SESSION['form_data']); // Limpiamos si el login es exitoso
             header("Location: /home");
         } else {
+            $_SESSION['form_data'] = ['usuario' => $usuario];
             header("Location: /login?error=1");
         }
     } catch (Exception $e) {

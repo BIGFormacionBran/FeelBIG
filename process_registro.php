@@ -15,10 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre'];
             $_SESSION['user_role'] = $user['id_tipo_cuenta'] ?? 3;
+            unset($_SESSION['form_data']);
             header("Location: /home");
             exit();
         }
     }
+    
+    // Guardamos los datos en sesión para no perderlos
+    $_SESSION['form_data'] = [
+        'nombre' => $nombre,
+        'usuario' => $correo
+    ];
     
     header("Location: /registro?error=1");
     exit();
