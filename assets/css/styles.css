@@ -357,6 +357,10 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     min-height: 400px;
 }
 
+.section-header {
+    text-align: center;
+}
+
 .section-header h1 {
     margin: 0;
     font-size: 28px;
@@ -365,7 +369,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .section-header .subtitle {
     color: var(--color-texto-muted);
-    margin-top: 5px;
+    margin: 5px 0;
     font-size: 16px;
 }
 
