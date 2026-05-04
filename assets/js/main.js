@@ -15,7 +15,7 @@
         }
     };
 
-    // 2. Motor Swiper para FeelBig
+    // 2. Motor Swiper para FeelBig (Corregido con comportamiento Creiss)
     const initCarousels = () => {
         const sections = document.querySelectorAll('.feelbig-swiper-section');
         
@@ -24,30 +24,46 @@
             
             if (swiperEl && window.Swiper && !container.dataset.swiperReady) {
                 const totalSlides = swiperEl.querySelectorAll('.swiper-slide').length;
-                
-                new Swiper(swiperEl, {
-                    loop: totalSlides > 3,
-                    spaceBetween: 20,
-                    slidesPerView: 1,
-                    autoplay: { delay: 5000, disableOnInteraction: false },
-                    navigation: {
-                        nextEl: container.querySelector('.swiper-button-next'),
-                        prevEl: container.querySelector('.swiper-button-prev'),
-                    },
-                    pagination: {
-                        el: container.querySelector('.swiper-pagination-custom'),
-                        clickable: true,
-                    },
-                    breakpoints: {
-                        768: { slidesPerView: Math.min(totalSlides, 2) },
-                        1024: { slidesPerView: Math.min(totalSlides, 3) }
-                    },
-                    on: {
-                        init: function() {
-                            container.dataset.swiperReady = 'true';
+                const canLoop = totalSlides > 3;
+
+                try {
+                    new Swiper(swiperEl, {
+                        observer: true,
+                        observeParents: true,
+                        watchOverflow: true,
+                        loop: canLoop,
+                        spaceBetween: 20,
+                        slidesPerView: 1,
+                        autoplay: (totalSlides > 1) ? { 
+                            delay: 5000, 
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true 
+                        } : false,
+                        navigation: {
+                            nextEl: container.querySelector('.swiper-button-next'),
+                            prevEl: container.querySelector('.swiper-button-prev'),
+                        },
+                        pagination: {
+                            el: container.querySelector('.swiper-pagination-custom'),
+                            clickable: true,
+                        },
+                        breakpoints: {
+                            768: { slidesPerView: Math.min(totalSlides, 2) },
+                            1024: { slidesPerView: Math.min(totalSlides, 3) }
+                        },
+                        on: {
+                            init: function() {
+                                container.dataset.swiperReady = 'true';
+                                if (totalSlides <= 1) {
+                                    const ctrls = [this.navigation.nextEl, this.navigation.prevEl, this.pagination.el];
+                                    ctrls.forEach(el => el && el.style.setProperty('display', 'none', 'important'));
+                                }
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (e) {
+                    console.error("Error al inicializar Swiper:", e);
+                }
             }
         });
     };

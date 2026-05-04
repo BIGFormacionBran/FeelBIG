@@ -36,10 +36,10 @@ if (!empty($minijuegos)):
                         <div class="swiper-slide">
                             <div class="card-item">
                                 <div class="thumb">
-                                    <img src="<?php echo $item['imagen']; ?>" class="thumb-img" alt="<?php echo $item['titulo']; ?>">
+                                    <img src="<?php echo $item['img']; ?>" class="thumb-img" alt="<?php echo $item['name']; ?>">
                                 </div>
                                 <div class="card-content">
-                                    <h4><?php echo $item['titulo']; ?></h4>
+                                    <h4><?php echo $item['name']; ?></h4>
                                     <a href="ver_minijuego.php?id=<?php echo $item['id']; ?>" class="btn-card">
                                         Jugar ahora
                                     </a>
