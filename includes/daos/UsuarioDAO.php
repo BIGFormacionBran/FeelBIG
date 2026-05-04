@@ -13,12 +13,19 @@ class UsuarioDAO {
     }
 
     /**
-     * Registra un nuevo usuario.
-     * Se cambia el id_tipo por defecto a 3 (User).
+     * Registra un nuevo usuario comprobando disponibilidad de nombre y correo.
      */
     public function registrar($nombre, $correo, $password, $id_tipo = 3) {
         if (!$this->db) return false;
         try {
+            // Comprobar si el nombre o el correo ya existen
+            $checkSql = "SELECT COUNT(*) FROM USUARIO WHERE nombre = ? OR correo = ?";
+            $checkStmt = $this->db->prepare($checkSql);
+            $checkStmt->execute([$nombre, $correo]);
+            if ($checkStmt->fetchColumn() > 0) {
+                return false; // Ya existe el nombre o el correo
+            }
+
             // Encriptación BCRYPT
             $hash = password_hash($password, PASSWORD_BCRYPT);
             
@@ -26,17 +33,17 @@ class UsuarioDAO {
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([$nombre, $correo, $hash, $id_tipo]);
         } catch (PDOException $e) {
-            // Error de integridad o conexión
             return false;
         }
     }
 
-    public function login($correo, $password) {
+    public function login($identificador, $password) {
         if (!$this->db) throw new Exception("no_db");
         
-        $sql = "SELECT * FROM USUARIO WHERE correo = ?";
+        // Buscamos coincidencia en correo O en nombre
+        $sql = "SELECT * FROM USUARIO WHERE correo = ? OR nombre = ?";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$correo]);
+        $stmt->execute([$identificador, $identificador]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {

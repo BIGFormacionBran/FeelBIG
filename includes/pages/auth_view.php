@@ -9,7 +9,7 @@ $error_code = $_GET['error'] ?? null;
 $mensaje_error = "";
 
 if ($error_code === '1') {
-    $mensaje_error = $is_registro ? "El correo ya está registrado o hay un error de datos." : "Usuario o contraseña incorrectos.";
+    $mensaje_error = $is_registro ? "El nombre de usuario o correo ya están en uso." : "Usuario o contraseña incorrectos.";
 } elseif ($error_code === 'db') {
     $mensaje_error = "Error de conexión con la base de datos.";
 }
@@ -38,7 +38,7 @@ if ($error_code === '1') {
                 <?php endif; ?>
 
                 <div class="input-box">
-                    <input type="email" name="usuario" placeholder="Correo electrónico" required>
+                    <input type="text" name="usuario" placeholder="<?php echo $is_registro ? 'Correo electrónico' : 'Correo o nombre de usuario'; ?>" required>
                 </div>
 
                 <div class="input-box">
