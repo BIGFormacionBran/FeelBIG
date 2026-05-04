@@ -1,7 +1,7 @@
 <?php
-class MailUtil {
-    private static $primaryColor = "#e91e63";
+require_once __DIR__ . '/logger_util.php';
 
+class MailUtil {
     public static function enviar($destinatario, $asunto, $contenidoHtml) {
         $header = "
         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee;'>
@@ -14,28 +14,33 @@ class MailUtil {
             </div>
             <div style='background: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #888;'>
                 <p>© " . date('Y') . " Feel BiG. Todos los derechos reservados.</p>
-                <p>Este es un mensaje automático, por favor no respondas a este correo.</p>
             </div>
         </div>";
 
         $fullHtml = "<html><body>" . $header . $contenidoHtml . $footer . "</body></html>";
 
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= "From: Feel BiG <no-reply@feelbig.com>" . "\r\n";
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-type: text/html; charset=UTF-8',
+            'From: Feel BiG <no-reply@feelbig.com>',
+            'X-Mailer: PHP/' . phpversion()
+        ];
 
-        // --- SISTEMA DE LOGS ---
-        $resultado = mail($destinatario, $asunto, $fullHtml, $headers);
-        
-        if (!$resultado) {
-            $error_info = error_get_last();
-            $log_msg = "[" . date('Y-m-d H:i:s') . "] FALLO ENVÍO MAIL a: $destinatario. Error PHP: " . ($error_info['message'] ?? 'Sin mensaje de error específico.') . PHP_EOL;
-            file_put_contents(__DIR__ . '/../../error_log.txt', $log_msg, FILE_APPEND);
-        } else {
-            $log_msg = "[" . date('Y-m-d H:i:s') . "] ÉXITO ENVÍO MAIL a: $destinatario" . PHP_EOL;
-            file_put_contents(__DIR__ . '/../../error_log.txt', $log_msg, FILE_APPEND);
+        // Intentar envío
+        try {
+            $resultado = mail($destinatario, $asunto, $fullHtml, implode("\r\n", $headers));
+            
+            if ($resultado) {
+                Logger::info("Correo enviado con éxito a: $destinatario | Asunto: $asunto");
+            } else {
+                $error_php = error_get_last();
+                Logger::error("La función mail() devolvió FALSE al enviar a $destinatario. Info: " . ($error_php['message'] ?? 'Sin detalles'));
+            }
+            return $resultado;
+            
+        } catch (Exception $e) {
+            Logger::error("Excepción al intentar enviar correo a $destinatario: " . $e->getMessage());
+            return false;
         }
-
-        return $resultado;
     }
 }

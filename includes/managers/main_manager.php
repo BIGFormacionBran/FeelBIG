@@ -23,6 +23,8 @@ class MainManager {
         if ($this->registroPendienteDao->crear_temporal($nombre, $correo, $pass, $codigo)) {
             return $this->mailManager->enviarConfirmacionRegistro($correo, $nombre, $codigo);
         }
+
+        Logger::error("No se pudo crear el registro temporal en la base de datos para: $correo");
         return false;
     }
 
