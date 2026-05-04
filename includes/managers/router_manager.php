@@ -6,6 +6,7 @@ function get_page_config_manager($page) {
         'individual_view' => 'includes/pages/individual_view.php',
         'login'           => 'includes/pages/auth_view.php',
         'registro'        => 'includes/pages/auth_view.php',
+        'confirmacion'    => 'includes/pages/auth_view.php',
         'configuracion'   => 'includes/pages/user_config.php'
     ];
 

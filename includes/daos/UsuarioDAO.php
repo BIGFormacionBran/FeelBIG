@@ -24,6 +24,15 @@ class UsuarioDAO {
         if (!$this->db) return false;
         try {
             $hash = password_hash($password, PASSWORD_BCRYPT);
+            return $this->registrar_con_hash($nombre, $correo, $hash, $id_tipo);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function registrar_con_hash($nombre, $correo, $hash, $id_tipo = 3) {
+        if (!$this->db) return false;
+        try {
             $sql = "INSERT INTO USUARIO (nombre, correo, password, id_tipo_cuenta) VALUES (?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([$nombre, $correo, $hash, $id_tipo]);

@@ -1,17 +1,44 @@
 <?php
 require_once __DIR__ . '/../daos/ContenidoDAO.php';
 require_once __DIR__ . '/../daos/UsuarioDAO.php';
+require_once __DIR__ . '/../daos/RegistroPendienteDAO.php'; // NUEVO
+require_once __DIR__ . '/mail_manager.php';
 
 class MainManager {
     private $contenidoDao;
     private $usuarioDao;
-
+    private $registroPendienteDao; // NUEVO
+    private $mailManager;
+    
     public function __construct() {
         $this->contenidoDao = new ContenidoDAO();
         $this->usuarioDao = new UsuarioDAO();
+        $this->registroPendienteDao = new RegistroPendienteDAO(); // NUEVO
+        $this->mailManager = new MailManager();
     }
 
-    // --- CONTENIDO & HOME ---
+    // --- NUEVA LÓGICA DE REGISTRO TEMPORAL ---
+    public function iniciar_registro($nombre, $correo, $pass) {
+        $codigo = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        if ($this->registroPendienteDao->crear_temporal($nombre, $correo, $pass, $codigo)) {
+            return $this->mailManager->enviarConfirmacionRegistro($correo, $nombre, $codigo);
+        }
+        return false;
+    }
+
+    public function confirmar_registro($correo, $codigo) {
+        $datos = $this->registroPendienteDao->obtener_y_validar($correo, $codigo);
+        if ($datos) {
+            // Usamos el password que ya viene encriptado de la tabla temporal
+            if ($this->usuarioDao->registrar_con_hash($datos['nombre'], $datos['correo'], $datos['password'])) {
+                $this->registroPendienteDao->borrar_temporal($correo);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // --- CONTENIDO & HOME (IGUAL QUE ANTES) ---
     public function get_home_data() {
         $secciones = $this->contenidoDao->get_home_structure();
         $final_data = [];
@@ -50,9 +77,7 @@ class MainManager {
         return array_map([$this, 'map_to_card'], $items);
     }
 
-    // NUEVO MÉTODO AÑADIDO:
     public function get_category_by_item_id($itemId) {
-        // Obtenemos la categoría a la que pertenece un item
         return $this->contenidoDao->get_categoria_por_item_id($itemId);
     }
 
@@ -72,7 +97,7 @@ class MainManager {
         ];
     }
 
-    // --- NAVEGACIÓN ---
+    // --- NAVEGACIÓN (IGUAL QUE ANTES) ---
     public function get_main_menu() {
         $categorias = $this->contenidoDao->get_home_structure();
         return array_map(function($cat) {
@@ -86,43 +111,21 @@ class MainManager {
     }
 
     public function get_breadcrumbs($currentPage, $routeParts) {
-        // No mostrar en páginas raíz de sistema
         if (in_array($currentPage, ['home', 'login', 'registro', 'configuracion'])) return null;
-
         $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
-
-        // Caso Vista Individual: /categoria-slug/nombre-contenido
         if ($currentPage === 'individual_view' && isset($routeParts[1])) {
-            $categorySlug = $routeParts[0]; // ej: minijuegos
-            $itemSlug = $routeParts[1];     // ej: Salud-Canarias-Gaming
-
-            // Intentamos obtener el nombre real de la categoría para el título
+            $categorySlug = $routeParts[0];
+            $itemSlug = $routeParts[1];
             $categoryTitle = ucwords(str_replace('-', ' ', $categorySlug));
-            
-            // 1. Añadimos el nivel de la categoría (ej: Minijuegos)
-            $breadcrumbs[] = [
-                'title' => $categoryTitle, 
-                'link' => '/' . $categorySlug
-            ];
-
-            // 2. Añadimos el nivel del contenido actual (ej: Salud Canarias Gaming)
-            $breadcrumbs[] = [
-                'title' => str_replace('-', ' ', $itemSlug), 
-                'link' => null
-            ];
-        } 
-        // Caso Vista de Categoría o Páginas Simples: /alimentacion
-        else {
-            $breadcrumbs[] = [
-                'title' => ucwords(str_replace('-', ' ', $currentPage)), 
-                'link' => null
-            ];
+            $breadcrumbs[] = ['title' => $categoryTitle, 'link' => '/' . $categorySlug];
+            $breadcrumbs[] = ['title' => str_replace('-', ' ', $itemSlug), 'link' => null];
+        } else {
+            $breadcrumbs[] = ['title' => ucwords(str_replace('-', ' ', $currentPage)), 'link' => null];
         }
-
         return $breadcrumbs;
     }
 
-    // --- USUARIOS ---
+    // --- USUARIOS (IGUAL QUE ANTES) ---
     public function login($correo, $pass) {
         return $this->usuarioDao->login($correo, $pass);
     }
@@ -138,14 +141,10 @@ class MainManager {
     public function update_user_profile($id, $nombre, $correo, $password) {
         $user = $this->get_user_by_id($id);
         if (!$user) return "Error: Usuario no encontrado.";
-
-        // Solo actualizamos si el campo no está vacío, de lo contrario usamos el valor actual
         $finalNombre = !empty($nombre) ? $nombre : $user['nombre'];
         $finalCorreo = !empty($correo) ? $correo : $user['correo'];
         $finalPass = !empty($password) ? $password : null;
-
         $resultado = $this->usuarioDao->actualizarPerfil($id, $finalNombre, $finalCorreo, $finalPass);
-
         return $resultado ? "Perfil actualizado correctamente." : "Error al actualizar el perfil.";
     }
 }

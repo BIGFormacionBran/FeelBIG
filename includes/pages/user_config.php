@@ -47,7 +47,7 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
                 <div class="input-box">
                     <label for="passInput">Nueva Contraseña</label>
                     <div class="input-box">
-                        <input type="password" name="new_pass" id="passInput" placeholder="********">
+                        <input type="password" name="new_pass" id="passInput" placeholder="Contraseña">
                         <button type="button" class="btn-ojo" id="toggleBtn" aria-label="Mostrar contraseña">                        
                             <svg class="icon-open" viewBox="0 0 24 24" fill="currentColor">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M20.293 2.293a1 1 0 1 1 1.414 1.414l-18 18a1 1 0 0 1-1.414-1.414l3.446-3.446c-.238-.188-.47-.387-.694-.6L1.31 12.722a.985.985 0 0 1 0-1.436l3.734-3.527c3.15-2.976 7.77-3.542 11.48-1.697l3.768-3.768zm-5.275 5.275c-2.852-1.138-6.23-.596-8.582 1.627l-2.974 2.808 2.974 2.809c.233.22.476.423.727.61l1.391-1.39a4 4 0 0 1 5.478-5.478l.986-.986zm-2.5 2.5a2.001 2.001 0 0 0-2.45 2.45l2.45-2.45z"></path>

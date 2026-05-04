@@ -9,19 +9,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $manager = new MainManager();
     
-    if ($manager->registrar($nombre, $correo, $pass)) {
-        $user = $manager->login($correo, $pass); 
-        if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['nombre'];
-            $_SESSION['user_role'] = $user['id_tipo_cuenta'] ?? 3;
-            unset($_SESSION['form_data']);
-            header("Location: /home");
-            exit();
-        }
+    // Validamos si el usuario ya existe en la tabla real antes de nada
+    // (Opcional, pero recomendado para dar feedback inmediato)
+    
+    if ($manager->iniciar_registro($nombre, $correo, $pass)) {
+        $_SESSION['temp_email'] = $correo;
+        unset($_SESSION['form_data']);
+        header("Location: /confirmar-cuenta");
+        exit();
     }
     
-    // Guardamos los datos en sesión para no perderlos (incluyendo password)
+    // Si falla el inicio de registro (ej: error mail o base de datos)
     $_SESSION['form_data'] = [
         'nombre' => $nombre,
         'usuario' => $correo,
