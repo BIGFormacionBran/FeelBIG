@@ -9,23 +9,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $manager = new MainManager();
     
-    // Validamos si el usuario ya existe en la tabla real antes de nada
-    // (Opcional, pero recomendado para dar feedback inmediato)
-    
-    if ($manager->iniciar_registro($nombre, $correo, $pass)) {
-        $_SESSION['temp_email'] = $correo;
-        unset($_SESSION['form_data']);
-        header("Location: /confirmar-cuenta");
-        exit();
-    }
-    
-    // Si falla el inicio de registro (ej: error mail o base de datos)
+    // Guardamos en sesión por si hay error
     $_SESSION['form_data'] = [
         'nombre' => $nombre,
         'usuario' => $correo,
         'password' => $pass
     ];
-    
-    header("Location: /registro?error=1");
-    exit();
+
+    // Intentamos iniciar registro
+    $resultado = $manager->iniciar_registro($nombre, $correo, $pass);
+
+    if ($resultado === true) {
+        $_SESSION['temp_email'] = $correo;
+        unset($_SESSION['form_data']);
+        header("Location: /confirmacion"); // Asegúrate de que el slug sea /confirmacion
+        exit();
+    } else {
+        // Si entra aquí es que falló el Mail o la DB
+        header("Location: /registro?error=db"); 
+        exit();
+    }
 }

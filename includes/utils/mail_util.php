@@ -24,6 +24,18 @@ class MailUtil {
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         $headers .= "From: Feel BiG <no-reply@feelbig.com>" . "\r\n";
 
-        return mail($destinatario, $asunto, $fullHtml, $headers);
+        // --- SISTEMA DE LOGS ---
+        $resultado = mail($destinatario, $asunto, $fullHtml, $headers);
+        
+        if (!$resultado) {
+            $error_info = error_get_last();
+            $log_msg = "[" . date('Y-m-d H:i:s') . "] FALLO ENVÍO MAIL a: $destinatario. Error PHP: " . ($error_info['message'] ?? 'Sin mensaje de error específico.') . PHP_EOL;
+            file_put_contents(__DIR__ . '/../../error_log.txt', $log_msg, FILE_APPEND);
+        } else {
+            $log_msg = "[" . date('Y-m-d H:i:s') . "] ÉXITO ENVÍO MAIL a: $destinatario" . PHP_EOL;
+            file_put_contents(__DIR__ . '/../../error_log.txt', $log_msg, FILE_APPEND);
+        }
+
+        return $resultado;
     }
 }
