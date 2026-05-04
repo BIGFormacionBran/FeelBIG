@@ -17,7 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             unset($_SESSION['form_data']); // Limpiamos si el login es exitoso
             header("Location: /home");
         } else {
-            $_SESSION['form_data'] = ['usuario' => $usuario];
+            $_SESSION['form_data'] = [
+                'usuario' => $usuario,
+                'password' => $pass
+            ];
             header("Location: /login?error=1");
         }
     } catch (Exception $e) {

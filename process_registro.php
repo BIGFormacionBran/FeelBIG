@@ -21,10 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Guardamos los datos en sesión para no perderlos
+    // Guardamos los datos en sesión para no perderlos (incluyendo password)
     $_SESSION['form_data'] = [
         'nombre' => $nombre,
-        'usuario' => $correo
+        'usuario' => $correo,
+        'password' => $pass
     ];
     
     header("Location: /registro?error=1");
