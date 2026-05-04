@@ -34,10 +34,8 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
                     <input type="email" name="correo" id="correoInput" placeholder="<?php echo htmlspecialchars($userData['correo'] ?? ''); ?>">
                 </div>
 
-                <hr class="separator">
-
+                <label for="passInput">Nueva Contraseña</label>
                 <div class="input-box">
-                    <label for="passInput">Nueva Contraseña</label>
                     <input type="password" name="new_pass" id="passInput" placeholder="********">
                     <button type="button" class="btn-ojo" id="toggleBtn" aria-label="Mostrar contraseña">                        
                         <svg class="icon-open" viewBox="0 0 24 24" fill="currentColor">

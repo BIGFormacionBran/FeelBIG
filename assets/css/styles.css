@@ -198,13 +198,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     font-weight: 500;
 }
 
-.separator {
-    width: 100%;
-    border: 0;
-    border-top: 1px solid var(--color-border);
-    margin: 20px 0;
-}
-
 .input-box label {
     display: block;
     margin-bottom: 8px;
