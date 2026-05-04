@@ -7,7 +7,7 @@ $minijuegos = $manager->get_items_by_category_name('Minijuegos');
 
 if (!empty($minijuegos)):
     $title = "Minijuegos Saludables";
-    $viewAllLink = "minijuegos.php";
+    $viewAllLink = "minijuegos";
     $carouselID = 'fb_carousel_' . uniqid(); 
 ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
