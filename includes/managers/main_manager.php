@@ -87,7 +87,7 @@ class MainManager {
 
     public function get_breadcrumbs($currentPage, $routeParts) {
         // No mostrar en páginas raíz de sistema
-        if (in_array($currentPage, ['home', 'login', 'registro'])) return null;
+        if (in_array($currentPage, ['home', 'login', 'registro', 'configuracion'])) return null;
 
         $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
 

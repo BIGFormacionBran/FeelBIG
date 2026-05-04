@@ -5,7 +5,8 @@ function get_page_config_manager($page) {
         'home'            => 'includes/pages/home.php',
         'individual_view' => 'includes/pages/individual_view.php',
         'login'           => 'includes/pages/auth_view.php',
-        'registro'        => 'includes/pages/auth_view.php'
+        'registro'        => 'includes/pages/auth_view.php',
+        'configuracion'   => 'includes/pages/user_config.php'
     ];
 
     if (isset($staticPages[$page])) {
