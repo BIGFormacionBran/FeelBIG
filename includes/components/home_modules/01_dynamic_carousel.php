@@ -14,13 +14,12 @@ if (!empty($items)):
 <div class="home-module-wrapper feelbig-swiper-section" id="<?php echo $carouselID; ?>">
     <div class="module-header">
         <h2>Minijuegos Saludables</h2>
-        <a href="minijuegos" class="enlace-personalizado">Ver todos</a>
+        <a href="minijuegos" class="enlace-personalizado">Explorar todos los juegos</a>
     </div>
 
     <div class="carousel-flex-layout">
-        
         <div class="swiper-button-prev btn-nav-feelbig">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </div>
 
         <div class="swiper swiper-feelbig-generic">
@@ -34,9 +33,8 @@ if (!empty($items)):
         </div>
 
         <div class="swiper-button-next btn-nav-feelbig">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" transform="rotate(180 12 12)"/></svg>
         </div>
-
     </div>
 
     <div class="swiper-pagination-custom"></div>

@@ -16,17 +16,19 @@
 
     const initCarousels = () => {
         const sections = document.querySelectorAll('.feelbig-swiper-section');
-        
         sections.forEach((container) => {
             const swiperEl = container.querySelector('.swiper-feelbig-generic');
-            
             if (swiperEl && window.Swiper && !container.dataset.swiperReady) {
-                const totalSlides = swiperEl.querySelectorAll('.swiper-slide').length;
-
                 new Swiper(swiperEl, {
-                    slidesPerView: 1,
-                    spaceBetween: 20,
-                    loop: totalSlides > 3,
+                    slidesPerView: 'auto',
+                    spaceBetween: 30,
+                    centeredSlides: true,
+                    loop: true,
+                    speed: 800,
+                    autoplay: { 
+                        delay: 3000, 
+                        disableOnInteraction: false 
+                    },
                     navigation: {
                         nextEl: container.querySelector('.swiper-button-next'),
                         prevEl: container.querySelector('.swiper-button-prev'),
@@ -35,26 +37,12 @@
                         el: container.querySelector('.swiper-pagination-custom'),
                         clickable: true,
                     },
-                    breakpoints: {
-                        768: {
-                            slidesPerView: 2,
-                            spaceBetween: 20
-                        },
-                        1100: {
-                            slidesPerView: 3,
-                            spaceBetween: 30
-                        }
-                    }
                 });
                 container.dataset.swiperReady = "true";
             }
         });
     };
 
-    const init = () => { 
-        initAuth(); 
-        initCarousels(); 
-    };
-
+    const init = () => { initAuth(); initCarousels(); };
     document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
 })();

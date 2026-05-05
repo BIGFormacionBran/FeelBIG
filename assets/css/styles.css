@@ -382,104 +382,90 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-texto-muted);
 }
 
-/* --- HOME & CARRUSEL (CORRECCIÓN DEFINITIVA) --- */
-.home-module-wrapper { 
-    margin-bottom: 50px; 
-    width: 100%;
-}
+/* --- HOME & CARRUSEL - VERSIÓN FINAL OPTIMIZADA --- */
+.home-module-wrapper { margin-bottom: 60px; width: 100%; }
 
 .module-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 20px;
-    padding: 0 10px;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.module-header h2 { margin: 0; font-size: 24px; }
+.module-header h2 { 
+    font-size: 32px; 
+    font-weight: 700; 
+    margin: 0 0 10px 0; 
+    color: var(--color-texto);
+}
 
-/* Layout Maestro: Flecha - Swiper - Flecha */
+/* Layout: Flecha | Swiper | Flecha */
 .carousel-flex-layout {
     display: flex;
-    flex-flow: row nowrap;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    gap: 15px;
     width: 100%;
 }
 
-/* Contenedor Swiper: Limitamos el ancho para mostrar 3 cards de 320px + gaps */
 .swiper-feelbig-generic {
-    max-width: 1060px; 
-    width: 100%;
+    flex: 1;
     overflow: hidden;
-    padding: 15px 5px; /* Espacio para sombras */
+    padding: 15px 0;
 }
 
-.swiper-slide {
-    width: 320px; 
-    display: flex;
-    justify-content: center;
-}
+.swiper-slide { width: 320px; }
 
-.card-item {
-    width: 320px;
-    height: 480px; 
-    background: var(--color-blanco);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--color-border);
-}
-
-/* Flechas de navegación (Cuadradas y sutiles) */
+/* Flechas Circulares */
 .btn-nav-feelbig {
     position: relative !important;
-    width: 40px !important;
-    height: 40px !important;
-    background-color: var(--color-blanco) !important;
-    border: 1px solid var(--color-border) !important;
-    border-radius: 4px !important;
+    width: 50px !important;
+    height: 50px !important;
+    background: var(--color-blanco) !important;
+    border: 2px solid var(--color-principal) !important;
+    border-radius: 50% !important; /* Totalmente circular */
     color: var(--color-principal) !important;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
-    flex-shrink: 0;
+    transition: var(--transition);
     top: auto !important;
-    margin-top: 0 !important;
+    margin: 0 !important;
+    flex-shrink: 0;
 }
 
-.btn-nav-feelbig:hover {
-    border-color: var(--color-principal) !important;
-    background-color: #f8fcff !important;
+.btn-nav-feelbig:hover, .btn-nav-feelbig:focus {
+    background: var(--color-principal) !important;
+    color: var(--color-blanco) !important;
 }
 
-.btn-nav-feelbig svg { width: 20px; height: 20px; }
+.btn-nav-feelbig:active { transform: scale(0.9); }
 .btn-nav-feelbig::after { display: none !important; }
 
-/* Paginación (Puntos) */
+/* Paginación: Botones Circulares */
 .swiper-pagination-custom {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin-top: 20px;
+    gap: 12px;
+    margin-top: 30px;
 }
 
 .swiper-pagination-custom .swiper-pagination-bullet {
-    width: 8px;
-    height: 8px;
-    background: #ccc;
+    width: 14px;
+    height: 14px;
+    background: transparent;
+    border: 2px solid var(--color-principal);
+    border-radius: 50%;
     opacity: 1;
     cursor: pointer;
+    transition: var(--transition);
 }
 
 .swiper-pagination-custom .swiper-pagination-bullet-active {
     background: var(--color-principal);
+    transform: scale(1.2);
+}
+
+.swiper-pagination-custom .swiper-pagination-bullet:hover {
+    background: var(--color-principal-soft);
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */
@@ -603,7 +589,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .nav-menu { display: none; }
-    .header-container { justify-content: center; }
     .info-container-global { flex-direction: column; text-align: center; gap: 10px; }
     .btn-nav-feelbig { display: none; } /* Ocultar flechas en móvil para ganar espacio */
 }
