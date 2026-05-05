@@ -1,6 +1,8 @@
 <?php 
 require_once __DIR__ . '/../managers/content_manager.php';
-$manager = new MainManager();
+
+// Cambiamos el Manager para usar ContentManager en lugar de MainManager
+$manager = new ContentManager();
 $menuItems = $manager->get_main_menu();
 
 // Determinamos qué categoría debe estar activa

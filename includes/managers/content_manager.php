@@ -14,6 +14,20 @@ class ContentManager {
         }
     }
 
+    // NUEVO MÉTODO PARA GENERAR EL MENÚ PRINCIPAL
+    public function get_main_menu() {
+        Logger::info("ContentManager: Generando estructura del menú principal.");
+        $categorias = $this->get_home_structure();
+        
+        return array_map(function($cat) {
+            return [
+                'id'    => $cat['id'],
+                'slug'  => str_replace(' ', '-', strtolower($cat['nombre'])),
+                'title' => $cat['nombre']
+            ];
+        }, $categorias);
+    }
+
     public function get_home_structure() {
         Logger::info("ContentManager: Solicitando estructura de home.");
         $res = $this->contenidoDao->get_home_structure();
