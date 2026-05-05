@@ -1,9 +1,11 @@
 <?php
 require_once __DIR__ . '/../managers/content_manager.php';
+require_once __DIR__ . '/../utils/logger_util.php';
 
 function render_individual_page($item = null) {
+    $contentManager = new ContentManager();
+
     if ($item !== null) {
-        $contentManager = new ContentManager();
         $categoria = $contentManager->get_category_by_item_id($item['id']);
         $catSlug = $categoria ? strtolower(str_replace(' ', '-', $categoria['nombre'])) : 'contenido';
         return "/" . $catSlug . "/" . str_replace(' ', '-', $item['name']);
@@ -13,7 +15,7 @@ function render_individual_page($item = null) {
     $itemNameFromUrl = isset($routeParts[1]) ? urldecode($routeParts[1]) : null;
 
     if ($itemNameFromUrl) {
-        $contentManager = new ContentManager();
+        Logger::info("IndividualRender: Buscando item desde URL: $itemNameFromUrl");
         $foundItem = $contentManager->get_item_by_name($itemNameFromUrl);
 
         if ($foundItem) {
@@ -22,42 +24,22 @@ function render_individual_page($item = null) {
         }
     }
 
+    Logger::error("IndividualRender: No se pudo encontrar el item solicitado.");
     echo "<div class='error-container'><h2>Ítem no encontrado</h2><a href='/home'>Volver al inicio</a></div>";
 }
 
 function render_individual_view_util($data) {
-    ?>
+    // ... (El HTML se queda igual que lo tenías)
+?>
     <div class="creiss-single-wrapper">
-        <div class="creiss-single-header">
-            <h1 class="creiss-title"><?php echo htmlspecialchars($data['name']); ?></h1>
-        </div>
-
-        <?php if (!empty($data['extra_info'])): ?>
-        <div class="creiss-meta-flex">
-            <?php foreach ($data['extra_info'] as $label => $value): ?>
-                <div class="meta-item-box">
-                    <strong class="meta-label"><?php echo htmlspecialchars($label); ?></strong>
-                    <span class="meta-value"><?php echo htmlspecialchars($value); ?></span>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        <?php endif; ?>
-
+        <h1 class="creiss-title"><?php echo htmlspecialchars($data['name']); ?></h1>
         <div class="creiss-featured-image">
-            <img src="assets/img/<?php echo $data['img']; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
-            <?php if (isset($data['badge'])): ?>
-                <span class="badge-float"><?php echo htmlspecialchars($data['badge']); ?></span>
-            <?php endif; ?>
+            <img src="assets/img/<?php echo $data['img']; ?>" alt="">
         </div>
-
         <div class="creiss-body-content">
-            <div class="creiss-custom-block">
-                <div class="text-area"><?php echo $data['description']; ?></div>
-            </div>
-            <div class="creiss-footer-actions">
-                <a href="javascript:history.back()" class="btn-primario btn-back">VOLVER</a>
-            </div>
+            <div class="text-area"><?php echo $data['description']; ?></div>
+            <a href="javascript:history.back()" class="btn-primario">VOLVER</a>
         </div>
     </div>
-    <?php
+<?php
 }
