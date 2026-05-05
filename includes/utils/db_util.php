@@ -13,14 +13,21 @@ class Database {
             $user = ConfigUtil::get('DB_USER');
             $pass = ConfigUtil::get('DB_PASS');
 
+            // Si alguna variable llega vacía, ConfigUtil o el .env fallaron
+            if (!$host || !$name) {
+                throw new Exception("Configuración de base de datos incompleta en .env");
+            }
+
             $this->conn = new PDO(
                 "mysql:host=$host;dbname=$name;charset=utf8",
                 $user,
                 $pass,
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
-        } catch (PDOException $e) {
-            die("Error de conexión PDO."); 
+        } catch (Exception $e) {
+            // Esto escribirá el error real en feelbig/logs/php_error.log
+            error_log("Error de conexión BD: " . $e->getMessage());
+            die("Error de conexión PDO. Revisa los logs."); 
         }
     }
 

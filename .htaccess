@@ -7,6 +7,12 @@
 RewriteEngine On
 RewriteBase /
 
+# Mapeo de procesos (Ejecutan el PHP pero mantienen la URL limpia)
+RewriteRule ^register$ process_registro.php [L]
+RewriteRule ^register-confirm$ process_confirmacion.php [L]
+RewriteRule ^logout$ logout.php [L]
+RewriteRule ^login$ auth.php [L]
+
 # Evita que se aplique la regla si el archivo o carpeta existe físicamente (CSS, JS, imágenes)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
