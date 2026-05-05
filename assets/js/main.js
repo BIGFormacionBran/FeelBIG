@@ -24,12 +24,9 @@
                 const totalSlides = swiperEl.querySelectorAll('.swiper-slide').length;
 
                 new Swiper(swiperEl, {
-                    slidesPerView: 'auto',
-                    spaceBetween: 25,
-                    centeredSlides: false,
+                    slidesPerView: 1,
+                    spaceBetween: 20,
                     loop: totalSlides > 3,
-                    grabCursor: true,
-                    autoplay: { delay: 5000, disableOnInteraction: false },
                     navigation: {
                         nextEl: container.querySelector('.swiper-button-next'),
                         prevEl: container.querySelector('.swiper-button-prev'),
@@ -39,9 +36,14 @@
                         clickable: true,
                     },
                     breakpoints: {
-                        320: { slidesPerView: 1, spaceBetween: 10 },
-                        700: { slidesPerView: 2, spaceBetween: 20 },
-                        1100: { slidesPerView: 3, spaceBetween: 25 }
+                        768: {
+                            slidesPerView: 2,
+                            spaceBetween: 20
+                        },
+                        1100: {
+                            slidesPerView: 3,
+                            spaceBetween: 30
+                        }
                     }
                 });
                 container.dataset.swiperReady = "true";

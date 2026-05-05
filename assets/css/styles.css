@@ -382,8 +382,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-texto-muted);
 }
 
-/* --- HOME & CARRUSEL (CORREGIDO) --- */
-
+/* --- HOME & CARRUSEL (CORRECCIÓN DEFINITIVA) --- */
 .home-module-wrapper { 
     margin-bottom: 50px; 
     width: 100%;
@@ -392,9 +391,12 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .module-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     margin-bottom: 20px;
+    padding: 0 10px;
 }
+
+.module-header h2 { margin: 0; font-size: 24px; }
 
 /* Layout Maestro: Flecha - Swiper - Flecha */
 .carousel-flex-layout {
@@ -402,51 +404,51 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     flex-flow: row nowrap;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
     width: 100%;
 }
 
-/* Limitamos el ancho del swiper para que quepan 3 cards de 320px + gaps */
+/* Contenedor Swiper: Limitamos el ancho para mostrar 3 cards de 320px + gaps */
 .swiper-feelbig-generic {
-    max-width: 1050px; /* (320px * 3) + gaps */
+    max-width: 1060px; 
     width: 100%;
     overflow: hidden;
-    padding: 10px 5px;
+    padding: 15px 5px; /* Espacio para sombras */
 }
 
 .swiper-slide {
-    width: 320px; /* Forzado para Swiper slidesPerView: 'auto' */
+    width: 320px; 
     display: flex;
     justify-content: center;
 }
 
 .card-item {
     width: 320px;
-    height: 450px; /* Ajustado para que quepa bien el contenido */
+    height: 480px; 
     background: var(--color-blanco);
-    border-radius: var(--radio);
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: var(--transition);
     display: flex;
     flex-direction: column;
     border: 1px solid var(--color-border);
 }
 
-/* Flechas Cuadradas */
+/* Flechas de navegación (Cuadradas y sutiles) */
 .btn-nav-feelbig {
     position: relative !important;
-    width: 45px !important;
-    height: 45px !important;
+    width: 40px !important;
+    height: 40px !important;
     background-color: var(--color-blanco) !important;
-    border: 1px solid var(--color-border) !important; /* Borde sutil como la imagen */
-    border-radius: 4px !important; 
+    border: 1px solid var(--color-border) !important;
+    border-radius: 4px !important;
     color: var(--color-principal) !important;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s;
     flex-shrink: 0;
     top: auto !important;
     margin-top: 0 !important;
@@ -454,22 +456,30 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .btn-nav-feelbig:hover {
     border-color: var(--color-principal) !important;
-    background-color: var(--color-principal-soft) !important;
+    background-color: #f8fcff !important;
 }
 
-.btn-nav-feelbig svg {
-    width: 20px;
-    height: 20px;
-}
-
+.btn-nav-feelbig svg { width: 20px; height: 20px; }
 .btn-nav-feelbig::after { display: none !important; }
 
-/* Paginación */
+/* Paginación (Puntos) */
 .swiper-pagination-custom {
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin-top: 25px;
+    margin-top: 20px;
+}
+
+.swiper-pagination-custom .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background: #ccc;
+    opacity: 1;
+    cursor: pointer;
+}
+
+.swiper-pagination-custom .swiper-pagination-bullet-active {
+    background: var(--color-principal);
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */
