@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../managers/main_manager.php';
 require_once __DIR__ . '/../../utils/card_render_util.php';
 
 $manager = new MainManager();
-// Los datos vienen del manager, el carrusel solo los recibe y renderiza
 $items = $manager->get_items_by_category_name('Minijuegos');
 
 if (!empty($items)):
@@ -22,30 +21,34 @@ if (!empty($items)):
         <?php endif; ?>
     </div>
 
-    <div class="feelbig-carousel-container">
-        <div class="feelbig-carousel-row">
-            
-            <div class="swiper-button-prev btn-nav-feelbig"></div>
-            
-            <div class="swiper swiper-feelbig-generic">
-                <div class="swiper-wrapper">
-                    <?php foreach ($items as $item): ?>
-                        <div class="swiper-slide">
-                            <?php 
-                            // El carrusel es genérico: no conoce los datos, delega en la util
-                            render_card_item_util($item); 
-                            ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <div class="swiper-button-next btn-nav-feelbig"></div>
-        </div>
+    <div class="feelbig-carousel-parent">
         
-        <div class="pagination-feelbig">
-            <div class="swiper-pagination-custom"></div>
+        <div class="swiper-button-prev btn-nav-feelbig">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"></path>
+            </svg>
         </div>
+
+        <div class="swiper swiper-feelbig-generic">
+            <div class="swiper-wrapper">
+                <?php foreach ($items as $item): ?>
+                    <div class="swiper-slide">
+                        <?php render_card_item_util($item); ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="swiper-button-next btn-nav-feelbig">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"></path>
+            </svg>
+        </div>
+
+    </div>
+
+    <div class="pagination-feelbig">
+        <div class="swiper-pagination-custom"></div>
     </div>
 </div>
 <?php endif; ?>

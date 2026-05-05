@@ -382,7 +382,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-texto-muted);
 }
 
-/* --- HOME & CARRUSEL (CORREGIDO) --- */
+/* --- HOME & CARRUSEL --- */
 .hero-feelbig {
     text-align: center;
     padding: 60px 20px;
@@ -405,26 +405,31 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .module-header h2 { margin: 0; font-size: 22px; }
 
-.feelbig-carousel-container {
-    position: relative;
-    width: 100%;
-}
-
-.feelbig-carousel-row {
+/* Contenedor Padre solicitado */
+.feelbig-carousel-parent {
     display: flex;
+    flex-flow: row;
     align-items: center;
-    gap: 10px;
+    justify-content: space-around;
+    width: 100%;
 }
 
+/* Contenedor de Items */
 .swiper-feelbig-generic {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
     width: 100%;
-    padding: 10px 0 40px 0; /* Padding inferior para los dots */
+    margin: 0 10px;
 }
 
 .card-item {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    width: 320px; /* Medida solicitada */
+    min-height: 430px; /* Medida solicitada */
     background: var(--color-blanco);
     border-radius: var(--radio);
     overflow: hidden;
@@ -491,12 +496,12 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     border-radius: 4px;
 }
 
-/* Flechas Navegación Swiper */
+/* Flechas */
 .btn-nav-feelbig {
-    position: static;
+    position: relative;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     background: var(--color-blanco);
     border-radius: 50%;
     display: flex;
@@ -506,24 +511,26 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-principal);
     cursor: pointer;
     transition: var(--transition);
-    margin-top: -30px; /* Ajuste para centrar respecto a las cards */
+    z-index: 10;
 }
 
-.btn-nav-feelbig:after {
-    display: none; /* Quitamos el icono por defecto de swiper */
+.btn-nav-feelbig svg {
+    width: 24px;
+    height: 24px;
 }
+
+.btn-nav-feelbig:after { display: none; }
 
 .btn-nav-feelbig:hover {
     background: var(--color-principal);
     color: var(--color-blanco);
 }
 
-/* Paginación Swiper (Dots) */
+/* Paginación */
 .pagination-feelbig {
-    position: relative;
-    margin-top: -20px;
     display: flex;
     justify-content: center;
+    margin-top: 25px;
 }
 
 .swiper-pagination-custom .swiper-pagination-bullet {
@@ -531,12 +538,13 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     height: 10px;
     background: var(--color-border);
     opacity: 1;
-    transition: var(--transition);
+    margin: 0 5px;
+    cursor: pointer;
 }
 
 .swiper-pagination-custom .swiper-pagination-bullet-active {
     background: var(--color-principal);
-    transform: scale(1.3);
+    transform: scale(1.2);
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */

@@ -23,39 +23,31 @@
             const swiperEl = container.querySelector('.swiper-feelbig-generic');
             
             if (swiperEl && window.Swiper && !container.dataset.swiperReady) {
-                const slides = swiperEl.querySelectorAll('.swiper-slide');
-                const totalSlides = slides.length;
+                const totalSlides = swiperEl.querySelectorAll('.swiper-slide').length;
+                
+                // IMPORTANTE: Solo activar loop si hay suficientes slides para evitar el Warning
+                const shouldLoop = totalSlides > 3;
 
                 try {
                     new Swiper(swiperEl, {
                         observer: true,
                         observeParents: true,
                         watchOverflow: true,
-                        loop: totalSlides > 1, // Loop solo si hay más de uno
+                        loop: shouldLoop,
                         spaceBetween: 20,
-                        slidesPerView: 1,
-                        // Autodeslizamiento
+                        slidesPerView: "auto", // Permite que el CSS mande el ancho de 320px
+                        centeredSlides: false,
                         autoplay: { 
-                            delay: 4000, 
+                            delay: 5000, 
                             disableOnInteraction: false,
-                            pauseOnMouseEnter: true 
                         },
-                        // Flechas
                         navigation: {
                             nextEl: container.querySelector('.swiper-button-next'),
                             prevEl: container.querySelector('.swiper-button-prev'),
                         },
-                        // Paginación (Círculos)
                         pagination: {
                             el: container.querySelector('.swiper-pagination-custom'),
-                            type: 'bullets',
                             clickable: true,
-                        },
-                        // Responsivo
-                        breakpoints: {
-                            768: { slidesPerView: Math.min(totalSlides, 2) },
-                            1024: { slidesPerView: Math.min(totalSlides, 3) },
-                            1300: { slidesPerView: Math.min(totalSlides, 4) }
                         },
                         on: {
                             init: function() {
@@ -64,7 +56,7 @@
                         }
                     });
                 } catch (e) {
-                    console.error("Error al inicializar Swiper:", e);
+                    console.error("Error Swiper:", e);
                 }
             }
         });
