@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../managers/content_manager.php';
-require_once __DIR__ . '/../utils/logger_util.php';
 
 function render_individual_page($item = null) {
     $contentManager = new ContentManager();
@@ -15,21 +14,17 @@ function render_individual_page($item = null) {
     $itemNameFromUrl = isset($routeParts[1]) ? urldecode($routeParts[1]) : null;
 
     if ($itemNameFromUrl) {
-        Logger::info("IndividualRender: Buscando item desde URL: $itemNameFromUrl");
         $foundItem = $contentManager->get_item_by_name($itemNameFromUrl);
-
         if ($foundItem) {
             render_individual_view_util($foundItem);
             return;
         }
     }
 
-    Logger::error("IndividualRender: No se pudo encontrar el item solicitado.");
     echo "<div class='error-container'><h2>Ítem no encontrado</h2><a href='/home'>Volver al inicio</a></div>";
 }
 
 function render_individual_view_util($data) {
-    // ... (El HTML se queda igual que lo tenías)
 ?>
     <div class="creiss-single-wrapper">
         <h1 class="creiss-title"><?php echo htmlspecialchars($data['name']); ?></h1>

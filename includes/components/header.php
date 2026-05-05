@@ -1,5 +1,5 @@
 <?php 
-require_once 'includes/managers/main_manager.php';
+require_once __DIR__ . '/../managers/content_manager.php';
 $manager = new MainManager();
 $menuItems = $manager->get_main_menu();
 

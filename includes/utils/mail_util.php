@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/logger_util.php';
-
 class MailUtil {
     public static function enviar($destinatario, $asunto, $contenidoHtml) {
         $header = "
@@ -26,20 +24,9 @@ class MailUtil {
             'X-Mailer: PHP/' . phpversion()
         ];
 
-        // Intentar envío
         try {
-            $resultado = mail($destinatario, $asunto, $fullHtml, implode("\r\n", $headers));
-            
-            if ($resultado) {
-                Logger::info("Correo enviado con éxito a: $destinatario | Asunto: $asunto");
-            } else {
-                $error_php = error_get_last();
-                Logger::error("La función mail() devolvió FALSE al enviar a $destinatario. Info: " . ($error_php['message'] ?? 'Sin detalles'));
-            }
-            return $resultado;
-            
+            return mail($destinatario, $asunto, $fullHtml, implode("\r\n", $headers));
         } catch (Exception $e) {
-            Logger::error("Excepción al intentar enviar correo a $destinatario: " . $e->getMessage());
             return false;
         }
     }
