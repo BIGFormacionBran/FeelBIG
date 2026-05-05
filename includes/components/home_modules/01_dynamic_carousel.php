@@ -18,9 +18,8 @@ if (!empty($items)):
     </div>
 
     <div class="carousel-flex-layout">
-        
         <div class="swiper-button-prev btn-nav-feelbig">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </div>
 
         <div class="swiper swiper-feelbig-generic">
@@ -34,9 +33,8 @@ if (!empty($items)):
         </div>
 
         <div class="swiper-button-next btn-nav-feelbig">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
-
     </div>
 
     <div class="swiper-pagination-custom"></div>

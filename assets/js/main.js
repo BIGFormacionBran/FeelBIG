@@ -1,7 +1,6 @@
 (function() {
     "use strict";
 
-    // 1. Toggle de Password (Exactamente igual que estaba)
     const initAuth = () => {
         const passInput = document.getElementById('passInput');
         const toggleBtn = document.getElementById('toggleBtn');
@@ -15,7 +14,6 @@
         }
     };
 
-    // 2. Motor Swiper para FeelBig (Optimizado para requisitos)
     const initCarousels = () => {
         const sections = document.querySelectorAll('.feelbig-swiper-section');
         
@@ -24,29 +22,29 @@
             
             if (swiperEl && window.Swiper && !container.dataset.swiperReady) {
                 const totalSlides = swiperEl.querySelectorAll('.swiper-slide').length;
-                
-                // IMPORTANTE: Solo activar loop si hay suficientes slides para evitar el Warning
-                const shouldLoop = totalSlides > 3;
 
-                try {
-                    new Swiper(swiperEl, {
-                        slidesPerView: 'auto', // Respeta el ancho de 320px del CSS
-                        spaceBetween: 30,      // Espacio entre cards
-                        centeredSlides: false,
-                        loop: totalSlides > 3,
-                        autoplay: { delay: 4000, disableOnInteraction: false },
-                        navigation: {
-                            nextEl: container.querySelector('.swiper-button-next'),
-                            prevEl: container.querySelector('.swiper-button-prev'),
-                        },
-                        pagination: {
-                            el: container.querySelector('.swiper-pagination-custom'),
-                            clickable: true,
-                        }
-                    });
-                } catch (e) {
-                    console.error("Error Swiper:", e);
-                }
+                new Swiper(swiperEl, {
+                    slidesPerView: 'auto',
+                    spaceBetween: 25,
+                    centeredSlides: false,
+                    loop: totalSlides > 3,
+                    grabCursor: true,
+                    autoplay: { delay: 5000, disableOnInteraction: false },
+                    navigation: {
+                        nextEl: container.querySelector('.swiper-button-next'),
+                        prevEl: container.querySelector('.swiper-button-prev'),
+                    },
+                    pagination: {
+                        el: container.querySelector('.swiper-pagination-custom'),
+                        clickable: true,
+                    },
+                    breakpoints: {
+                        320: { slidesPerView: 1, spaceBetween: 10 },
+                        700: { slidesPerView: 2, spaceBetween: 20 },
+                        1100: { slidesPerView: 3, spaceBetween: 25 }
+                    }
+                });
+                container.dataset.swiperReady = "true";
             }
         });
     };

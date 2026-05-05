@@ -382,11 +382,18 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-texto-muted);
 }
 
-/* --- HOME & CARRUSEL (ESTRUCTURA SIMPLIFICADA) --- */
+/* --- HOME & CARRUSEL (CORREGIDO) --- */
 
 .home-module-wrapper { 
     margin-bottom: 50px; 
     width: 100%;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 /* Layout Maestro: Flecha - Swiper - Flecha */
@@ -394,29 +401,28 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    justify-content: center; /* Centrado horizontal */
-    gap: 20px; /* Espacio entre flechas y contenedor */
-    margin: 0 auto;
-    max-width: 1200px;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
 }
 
-/* El contenedor Swiper debe ser flexible para ocupar el centro */
+/* Limitamos el ancho del swiper para que quepan 3 cards de 320px + gaps */
 .swiper-feelbig-generic {
-    flex-grow: 1;
+    max-width: 1050px; /* (320px * 3) + gaps */
+    width: 100%;
     overflow: hidden;
-    padding: 10px 0; /* Solo para la sombra del hover */
+    padding: 10px 5px;
 }
 
-/* Medidas exactas de los Items */
 .swiper-slide {
+    width: 320px; /* Forzado para Swiper slidesPerView: 'auto' */
     display: flex;
-    justify-content: center; /* Centra la card dentro del slide */
-    width: auto; 
+    justify-content: center;
 }
 
 .card-item {
     width: 320px;
-    height: 430px;
+    height: 450px; /* Ajustado para que quepa bien el contenido */
     background: var(--color-blanco);
     border-radius: var(--radio);
     overflow: hidden;
@@ -424,16 +430,17 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     transition: var(--transition);
     display: flex;
     flex-direction: column;
+    border: 1px solid var(--color-border);
 }
 
-/* Flechas con medidas y estilos solicitados */
+/* Flechas Cuadradas */
 .btn-nav-feelbig {
-    position: relative !important; /* Anulamos el absolute de swiper */
+    position: relative !important;
     width: 45px !important;
     height: 45px !important;
     background-color: var(--color-blanco) !important;
-    border: 2px solid var(--color-principal);
-    border-radius: 1px !important; /* Cuadradas según pedido */
+    border: 1px solid var(--color-border) !important; /* Borde sutil como la imagen */
+    border-radius: 4px !important; 
     color: var(--color-principal) !important;
     display: flex;
     align-items: center;
@@ -441,21 +448,20 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     cursor: pointer;
     transition: var(--transition);
     flex-shrink: 0;
-    top: auto !important; /* Reseteo swiper */
+    top: auto !important;
     margin-top: 0 !important;
 }
 
 .btn-nav-feelbig:hover {
-    background-color: var(--color-principal) !important;
-    color: var(--color-blanco) !important;
+    border-color: var(--color-principal) !important;
+    background-color: var(--color-principal-soft) !important;
 }
 
 .btn-nav-feelbig svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
-/* Eliminar iconos por defecto de Swiper */
 .btn-nav-feelbig::after { display: none !important; }
 
 /* Paginación */
@@ -463,18 +469,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin-top: 20px;
-}
-
-.swiper-pagination-custom .swiper-pagination-bullet {
-    width: 10px;
-    height: 10px;
-    background: var(--color-border);
-    opacity: 1;
-}
-
-.swiper-pagination-custom .swiper-pagination-bullet-active {
-    background: var(--color-principal);
+    margin-top: 25px;
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */
