@@ -16,12 +16,19 @@ class RegistroPendienteDAO {
     public function crear_temporal($nombre, $correo, $password, $codigo) {
         if (!$this->db) return false;
 
-        Logger::info("RegistroPendienteDAO: Creando temporal para [$correo] con código [$codigo]");
+        Logger::info("RegistroPendienteDAO: Iniciando proceso para [$correo]");
 
         try {
-            // Limpiar registros expirados primero
+            // 1. ELIMINAR INTENTOS PREVIOS (Solución al error Duplicate Entry)
+            // Esto asegura que si el usuario reintenta, el código viejo se borre.
+            $sqlCleanup = "DELETE FROM REGISTRO_PENDIENTE WHERE correo = ?";
+            $stmtCleanup = $this->db->prepare($sqlCleanup);
+            $stmtCleanup->execute([$correo]);
+
+            // 2. Limpiar registros expirados (más de 1 hora)
             $this->db->query("DELETE FROM REGISTRO_PENDIENTE WHERE fecha < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
             
+            // 3. INSERTAR NUEVO REGISTRO
             $pass_hash = password_hash($password, PASSWORD_BCRYPT);
             
             $sql = "INSERT INTO REGISTRO_PENDIENTE (nombre, correo, password, codigo) VALUES (?, ?, ?, ?)";
@@ -29,7 +36,7 @@ class RegistroPendienteDAO {
             $res = $stmt->execute([$nombre, $correo, $pass_hash, $codigo]);
 
             if ($res) {
-                Logger::info("RegistroPendienteDAO: Registro guardado en DB correctamente.");
+                Logger::info("RegistroPendienteDAO: Nuevo código [$codigo] guardado correctamente para [$correo].");
                 return true;
             } else {
                 Logger::error("RegistroPendienteDAO: Error en execute: " . implode(" - ", $stmt->errorInfo()));
