@@ -81,11 +81,11 @@ if ($error_code === '1') {
 
                 <div class="auth-footer-links">
                     <?php if (!$is_confirmacion): ?>
-                        <a href="/<?php echo $is_registro ? 'login' : 'registro'; ?>" class="enlace-personalizado">
+                        <a href="/<?php echo $is_registro ? 'login' : 'register'; ?>" class="enlace-personalizado">
                             <?php echo $is_registro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'; ?>
                         </a>
                     <?php else: ?>
-                        <a href="/registro" class="enlace-personalizado">Volver al registro</a>
+                        <a href="/register" class="enlace-personalizado">Volver al registro</a>
                     <?php endif; ?>
                 </div>
             </form>
