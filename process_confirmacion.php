@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $correo = $_SESSION['temp_email'] ?? '';
 
     if (empty($correo) || empty($codigo)) {
-        header("Location: /registro");
+        header("Location: /register?error=codigo");
         exit();
     }
 
@@ -35,6 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    header("Location: /confirmacion?error=codigo");
+    header("Location: /register-confirm?error=codigo");
     exit();
 }

@@ -9,7 +9,7 @@ class ConfigUtil {
      */
     public static function get($key, $default = null) {
         if (self::$config === null) {
-            $path = __DIR__ . '/../../.env';
+            $path = dirname(__DIR__, 2) . '/.env';
             
             if (!file_exists($path)) {
                 // Si no existe, podrías lanzar una excepción o registrar un error

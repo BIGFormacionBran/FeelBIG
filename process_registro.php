@@ -22,11 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($resultado === true) {
         $_SESSION['temp_email'] = $correo;
         unset($_SESSION['form_data']);
-        header("Location: /confirmacion"); // Asegúrate de que el slug sea /confirmacion
+        header("Location: /register-confirm"); // Asegúrate de que el slug sea /register-confirm
         exit();
     } else {
         // Si entra aquí es que falló el Mail o la DB
-        header("Location: /registro?error=db"); 
+        header("Location: /register?error=db"); 
         exit();
     }
 }

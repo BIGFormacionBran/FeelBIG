@@ -37,7 +37,7 @@ if (count($routeParts) >= 2) {
     $page = 'individual_view';
 }
 
-$auth_pages = ['login', 'registro'];
+$auth_pages = ['login', 'register', 'register-confirm'];
 
 // 4. Lógica de Sesión
 if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages)) {

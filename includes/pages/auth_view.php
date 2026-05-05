@@ -1,7 +1,7 @@
 <?php
 // Detectamos la página usando la variable $page definida en bootstrap
-$is_registro = ($page === 'registro');
-$is_confirmacion = ($page === 'confirmacion'); 
+$is_registro = ($page === 'register');
+$is_confirmacion = ($page === 'register-confirm'); 
 
 $titulo = $is_registro ? "Crear cuenta" : ($is_confirmacion ? "Verificar código" : "Iniciar sesión");
 $btn_text = $is_registro ? "Registrarme" : ($is_confirmacion ? "Confirmar" : "Entrar");
