@@ -1,19 +1,19 @@
 <?php
 require_once __DIR__ . '/../daos/ContenidoDAO.php';
 require_once __DIR__ . '/../daos/UsuarioDAO.php';
-require_once __DIR__ . '/../daos/RegistroPendienteDAO.php'; // NUEVO
+require_once __DIR__ . '/../daos/RegistroPendienteDAO.php';
 require_once __DIR__ . '/mail_manager.php';
 
 class MainManager {
     private $contenidoDao;
     private $usuarioDao;
-    private $registroPendienteDao; // NUEVO
+    private $registroPendienteDao; 
     private $mailManager;
     
     public function __construct() {
         $this->contenidoDao = new ContenidoDAO();
         $this->usuarioDao = new UsuarioDAO();
-        $this->registroPendienteDao = new RegistroPendienteDAO(); // NUEVO
+        $this->registroPendienteDao = new RegistroPendienteDAO(); 
         $this->mailManager = new MailManager();
     }
 
