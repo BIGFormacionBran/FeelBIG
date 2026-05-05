@@ -23,7 +23,7 @@
                     slidesPerView: 'auto',
                     spaceBetween: 30,
                     centeredSlides: true,
-                    loop: true,
+                    loop: true, // Carrusel infinito
                     speed: 800,
                     autoplay: { 
                         delay: 3000, 
@@ -35,7 +35,8 @@
                     },
                     pagination: {
                         el: container.querySelector('.swiper-pagination-custom'),
-                        clickable: true,
+                        type: 'bullets',
+                        clickable: true, // Hace que los botones funcionen al click
                     },
                 });
                 container.dataset.swiperReady = "true";

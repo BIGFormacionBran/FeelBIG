@@ -413,15 +413,16 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .swiper-slide { width: 320px; }
 
-/* Flechas Circulares */
+/* --- FLECHAS Y BOTONES CORREGIDOS --- */
+
+/* Flechas Circulares (con ::after en lugar de SVG) */
 .btn-nav-feelbig {
     position: relative !important;
     width: 50px !important;
     height: 50px !important;
     background: var(--color-blanco) !important;
     border: 2px solid var(--color-principal) !important;
-    border-radius: 50% !important; /* Totalmente circular */
-    color: var(--color-principal) !important;
+    border-radius: 50% !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -432,15 +433,35 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     flex-shrink: 0;
 }
 
-.btn-nav-feelbig:hover, .btn-nav-feelbig:focus {
+/* Dibujo de la flecha con bordes */
+.btn-nav-feelbig::after {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-left: 3px solid currentColor;
+    border-bottom: 3px solid currentColor;
+    transition: var(--transition);
+}
+
+/* Orientación Izquierda */
+.swiper-button-prev.btn-nav-feelbig::after {
+    transform: rotate(45deg);
+    margin-left: 4px;
+}
+
+/* Orientación Derecha */
+.swiper-button-next.btn-nav-feelbig::after {
+    transform: rotate(-135deg);
+    margin-right: 4px;
+}
+
+.btn-nav-feelbig:hover {
     background: var(--color-principal) !important;
     color: var(--color-blanco) !important;
 }
 
-.btn-nav-feelbig:active { transform: scale(0.9); }
-.btn-nav-feelbig::after { display: none !important; }
-
-/* Paginación: Botones Circulares */
+/* Botones de Paginación (Puntos) */
 .swiper-pagination-custom {
     display: flex;
     justify-content: center;
@@ -448,6 +469,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     margin-top: 30px;
 }
 
+/* Estilo de los puntos */
 .swiper-pagination-custom .swiper-pagination-bullet {
     width: 14px;
     height: 14px;
@@ -457,15 +479,12 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     opacity: 1;
     cursor: pointer;
     transition: var(--transition);
+    margin: 0 !important; /* Reset de margen de swiper */
 }
 
+/* Punto Activo (Relleno) */
 .swiper-pagination-custom .swiper-pagination-bullet-active {
     background: var(--color-principal);
-    transform: scale(1.2);
-}
-
-.swiper-pagination-custom .swiper-pagination-bullet:hover {
-    background: var(--color-principal-soft);
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */
