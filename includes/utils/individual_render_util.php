@@ -25,11 +25,13 @@ function render_individual_page($item = null) {
 }
 
 function render_individual_view_util($data) {
+    // Si la imagen de la DB no empieza por http, asumimos que es local en assets/img/
+    $imgSrc = (strpos($data['img'], 'http') === 0) ? $data['img'] : '/assets/img/' . $data['img'];
 ?>
     <div class="creiss-single-wrapper">
         <h1 class="creiss-title"><?php echo htmlspecialchars($data['name']); ?></h1>
         <div class="creiss-featured-image">
-            <img src="assets/img/<?php echo $data['img']; ?>" alt="">
+            <img src="<?php echo $imgSrc; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
         </div>
         <div class="creiss-body-content">
             <div class="text-area"><?php echo $data['description']; ?></div>
