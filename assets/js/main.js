@@ -30,17 +30,11 @@
 
                 try {
                     new Swiper(swiperEl, {
-                        observer: true,
-                        observeParents: true,
-                        watchOverflow: true,
-                        loop: shouldLoop,
-                        spaceBetween: 20,
-                        slidesPerView: "auto", // Permite que el CSS mande el ancho de 320px
+                        slidesPerView: 'auto', // Respeta el ancho de 320px del CSS
+                        spaceBetween: 30,      // Espacio entre cards
                         centeredSlides: false,
-                        autoplay: { 
-                            delay: 5000, 
-                            disableOnInteraction: false,
-                        },
+                        loop: totalSlides > 3,
+                        autoplay: { delay: 4000, disableOnInteraction: false },
                         navigation: {
                             nextEl: container.querySelector('.swiper-button-next'),
                             prevEl: container.querySelector('.swiper-button-prev'),
@@ -48,11 +42,6 @@
                         pagination: {
                             el: container.querySelector('.swiper-pagination-custom'),
                             clickable: true,
-                        },
-                        on: {
-                            init: function() {
-                                container.dataset.swiperReady = 'true';
-                            }
                         }
                     });
                 } catch (e) {

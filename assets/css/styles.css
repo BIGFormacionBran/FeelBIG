@@ -382,136 +382,72 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-texto-muted);
 }
 
-/* --- HOME & CARRUSEL --- */
-.hero-feelbig {
-    text-align: center;
-    padding: 60px 20px;
-    background-color: var(--color-blanco);
-    border-radius: var(--radio);
-    margin-bottom: 30px;
-    box-shadow: var(--shadow-sm);
-}
+/* --- HOME & CARRUSEL (ESTRUCTURA SIMPLIFICADA) --- */
 
-.home-module-wrapper { margin-bottom: 50px; }
-
-.module-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    padding-left: 10px;
-    border-left: 4px solid var(--color-principal);
-}
-
-.module-header h2 { margin: 0; font-size: 22px; }
-
-/* Contenedor Padre solicitado */
-.feelbig-carousel-parent {
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    justify-content: space-around;
+.home-module-wrapper { 
+    margin-bottom: 50px; 
     width: 100%;
 }
 
-/* Contenedor de Items */
+/* Layout Maestro: Flecha - Swiper - Flecha */
+.carousel-flex-layout {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center; /* Centrado horizontal */
+    gap: 20px; /* Espacio entre flechas y contenedor */
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* El contenedor Swiper debe ser flexible para ocupar el centro */
 .swiper-feelbig-generic {
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    justify-content: space-between;
+    flex-grow: 1;
     overflow: hidden;
-    width: 100%;
-    margin: 0 10px;
+    padding: 10px 0; /* Solo para la sombra del hover */
+}
+
+/* Medidas exactas de los Items */
+.swiper-slide {
+    display: flex;
+    justify-content: center; /* Centra la card dentro del slide */
+    width: auto; 
 }
 
 .card-item {
-    display: flex;
-    flex-direction: column;
-    width: 320px; /* Medida solicitada */
-    min-height: 430px; /* Medida solicitada */
+    width: 320px;
+    height: 430px;
     background: var(--color-blanco);
     border-radius: var(--radio);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: var(--transition);
-}
-
-.card-item:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-md);
-}
-
-.thumb {
-    width: 100%;
-    height: 160px;
-    position: relative;
-    overflow: hidden;
-}
-
-.thumb-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-}
-
-.card-content {
-    padding: 15px;
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
-.card-info h4 {
-    margin: 0 0 10px 0;
-    font-size: 15px;
-    color: var(--color-texto);
-}
-
-.card-date {
-    font-size: 13px;
-    color: var(--color-texto-muted);
-    margin: 0;
-}
-
-.btn-card {
-    font-size: 12px;
-    padding: 10px;
-    width: 100%;
-    text-align: center;
-    margin-top: 15px;
-}
-
-.badge {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 4px 8px;
-    font-size: 10px;
-    border-radius: 4px;
-}
-
-/* Flechas */
+/* Flechas con medidas y estilos solicitados */
 .btn-nav-feelbig {
-    position: relative;
-    flex-shrink: 0;
-    width: 45px;
-    height: 45px;
-    background: var(--color-blanco);
-    border-radius: 50%;
+    position: relative !important; /* Anulamos el absolute de swiper */
+    width: 45px !important;
+    height: 45px !important;
+    background-color: var(--color-blanco) !important;
+    border: 2px solid var(--color-principal);
+    border-radius: 1px !important; /* Cuadradas según pedido */
+    color: var(--color-principal) !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-sm);
-    color: var(--color-principal);
     cursor: pointer;
     transition: var(--transition);
-    z-index: 10;
+    flex-shrink: 0;
+    top: auto !important; /* Reseteo swiper */
+    margin-top: 0 !important;
+}
+
+.btn-nav-feelbig:hover {
+    background-color: var(--color-principal) !important;
+    color: var(--color-blanco) !important;
 }
 
 .btn-nav-feelbig svg {
@@ -519,18 +455,15 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     height: 24px;
 }
 
-.btn-nav-feelbig:after { display: none; }
-
-.btn-nav-feelbig:hover {
-    background: var(--color-principal);
-    color: var(--color-blanco);
-}
+/* Eliminar iconos por defecto de Swiper */
+.btn-nav-feelbig::after { display: none !important; }
 
 /* Paginación */
-.pagination-feelbig {
+.swiper-pagination-custom {
     display: flex;
     justify-content: center;
-    margin-top: 25px;
+    gap: 8px;
+    margin-top: 20px;
 }
 
 .swiper-pagination-custom .swiper-pagination-bullet {
@@ -538,13 +471,10 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     height: 10px;
     background: var(--color-border);
     opacity: 1;
-    margin: 0 5px;
-    cursor: pointer;
 }
 
 .swiper-pagination-custom .swiper-pagination-bullet-active {
     background: var(--color-principal);
-    transform: scale(1.2);
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */

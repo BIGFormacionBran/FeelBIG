@@ -6,8 +6,6 @@ $manager = new MainManager();
 $items = $manager->get_items_by_category_name('Minijuegos');
 
 if (!empty($items)):
-    $title = "Minijuegos Saludables";
-    $viewAllLink = "minijuegos";
     $carouselID = 'fb_carousel_' . uniqid(); 
 ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -15,18 +13,14 @@ if (!empty($items)):
 
 <div class="home-module-wrapper feelbig-swiper-section" id="<?php echo $carouselID; ?>">
     <div class="module-header">
-        <h2><?php echo $title; ?></h2>
-        <?php if (isset($viewAllLink)): ?>
-            <a href="<?php echo $viewAllLink; ?>" class="enlace-personalizado">Ver todos</a>
-        <?php endif; ?>
+        <h2>Minijuegos Saludables</h2>
+        <a href="minijuegos" class="enlace-personalizado">Ver todos</a>
     </div>
 
-    <div class="feelbig-carousel-parent">
+    <div class="carousel-flex-layout">
         
         <div class="swiper-button-prev btn-nav-feelbig">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M15 18l-6-6 6-6"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"></path></svg>
         </div>
 
         <div class="swiper swiper-feelbig-generic">
@@ -40,15 +34,11 @@ if (!empty($items)):
         </div>
 
         <div class="swiper-button-next btn-nav-feelbig">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"></path></svg>
         </div>
 
     </div>
 
-    <div class="pagination-feelbig">
-        <div class="swiper-pagination-custom"></div>
-    </div>
+    <div class="swiper-pagination-custom"></div>
 </div>
 <?php endif; ?>
