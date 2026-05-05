@@ -13,7 +13,10 @@ function render_individual_page($item = null) {
     global $routeParts;
     $itemNameFromUrl = isset($routeParts[1]) ? urldecode($routeParts[1]) : null;
 
-    if ($itemNameFromUrl) {
+    // Corregido: Validamos que no sea una petición de recurso estático antes de buscar en DB
+    $invalidNames = ['img', 'assets', 'css', 'js', 'favicon.ico'];
+    
+    if ($itemNameFromUrl && !in_array(strtolower($itemNameFromUrl), $invalidNames)) {
         $foundItem = $contentManager->get_item_by_name($itemNameFromUrl);
         if ($foundItem) {
             render_individual_view_util($foundItem);

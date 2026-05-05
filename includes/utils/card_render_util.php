@@ -3,7 +3,7 @@ function render_card_item_util($item) {
     ?>
     <div class="card-item">
         <div class="thumb">
-            <img src="assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" class="thumb-img">
+            <img src="/assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" class="thumb-img">
             <?php if (isset($item['badge'])): ?>
                 <span class="badge"><?php echo $item['badge']; ?></span>
             <?php endif; ?>
