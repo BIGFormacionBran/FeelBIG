@@ -1,31 +1,42 @@
 <?php
+// feelbig\includes\daos\RegistroPendienteDAO.php
 require_once __DIR__ . '/../utils/db_util.php';
+require_once __DIR__ . '/../utils/logger_util.php';
 
 class RegistroPendienteDAO {
     private $db;
 
     public function __construct() {
-        try {
-            $this->db = Database::getConnection();
-        } catch (Exception $e) {
-            $this->db = null;
+        $this->db = Database::getConnection();
+        if (!$this->db) {
+            Logger::error("RegistroPendienteDAO: No se pudo establecer conexión con la base de datos.");
         }
     }
 
     public function crear_temporal($nombre, $correo, $password, $codigo) {
         if (!$this->db) return false;
-        
-        // Escenario: Borrar contenido antiguo (más de 1 hora)
-        $this->db->query("DELETE FROM REGISTRO_PENDIENTE WHERE fecha < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+
+        Logger::info("RegistroPendienteDAO: Creando temporal para [$correo] con código [$codigo]");
 
         try {
-            // ENCRIPTACIÓN: Los datos sensibles se guardan cifrados
+            // Limpiar registros expirados primero
+            $this->db->query("DELETE FROM REGISTRO_PENDIENTE WHERE fecha < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+            
             $pass_hash = password_hash($password, PASSWORD_BCRYPT);
             
             $sql = "INSERT INTO REGISTRO_PENDIENTE (nombre, correo, password, codigo) VALUES (?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$nombre, $correo, $pass_hash, $codigo]);
-        } catch (PDOException $e) {
+            $res = $stmt->execute([$nombre, $correo, $pass_hash, $codigo]);
+
+            if ($res) {
+                Logger::info("RegistroPendienteDAO: Registro guardado en DB correctamente.");
+                return true;
+            } else {
+                Logger::error("RegistroPendienteDAO: Error en execute: " . implode(" - ", $stmt->errorInfo()));
+                return false;
+            }
+        } catch (Exception $e) {
+            Logger::error("RegistroPendienteDAO: Excepción: " . $e->getMessage());
             return false;
         }
     }
@@ -35,7 +46,14 @@ class RegistroPendienteDAO {
         $sql = "SELECT * FROM REGISTRO_PENDIENTE WHERE correo = ? AND codigo = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$correo, $codigo]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($data) {
+            Logger::info("RegistroPendienteDAO: Código validado con éxito para [$correo]");
+        } else {
+            Logger::error("RegistroPendienteDAO: No se encontró coincidencia para [$correo] y código [$codigo]");
+        }
+        return $data;
     }
 
     public function borrar_temporal($correo) {
