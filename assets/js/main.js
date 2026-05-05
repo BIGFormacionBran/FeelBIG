@@ -18,28 +18,32 @@
         const sections = document.querySelectorAll('.feelbig-swiper-section');
         sections.forEach((container) => {
             const swiperEl = container.querySelector('.swiper-feelbig-generic');
-            if (swiperEl && window.Swiper && !container.dataset.swiperReady) {
+            // Verificamos si existe el elemento y si no ha sido inicializado
+            if (swiperEl && window.Swiper && !swiperEl.classList.contains('swiper-initialized')) {
                 new Swiper(swiperEl, {
                     slidesPerView: 'auto',
                     spaceBetween: 30,
                     centeredSlides: true,
-                    loop: true, // Carrusel infinito
+                    loop: true,
+                    loopedSlides: 5, // Ayuda a que el loop sea fluido con slides 'auto'
                     speed: 800,
                     autoplay: { 
                         delay: 3000, 
                         disableOnInteraction: false 
                     },
+                    // Usamos el contenedor padre para encontrar los botones específicos de esta sección
                     navigation: {
                         nextEl: container.querySelector('.swiper-button-next'),
                         prevEl: container.querySelector('.swiper-button-prev'),
                     },
                     pagination: {
                         el: container.querySelector('.swiper-pagination-custom'),
-                        type: 'bullets',
-                        clickable: true, // Hace que los botones funcionen al click
+                        clickable: true,
                     },
+                    // Observar cambios para evitar que se rompa al redimensionar
+                    observer: true,
+                    observeParents: true
                 });
-                container.dataset.swiperReady = "true";
             }
         });
     };

@@ -1,17 +1,18 @@
 <?php
-require_once 'includes/managers/main_manager.php';
+require_once 'includes/managers/content_manager.php';
 require_once 'includes/utils/card_render_util.php';
 
-$manager = new MainManager();
+$contentManager = new ContentManager();
 
-// 1. Obtenemos la info de la categoría actual usando el slug ($page)
-// Asumimos que get_main_menu() ya trae 'descripcion' de la DB
-$menu = $manager->get_main_menu();
+// 1. Obtenemos la info de la categoría actual usando el ContentManager
+$categorias = $contentManager->get_home_structure();
 $currentCat = null;
 
-foreach ($menu as $cat) {
-    if ($cat['slug'] === $page) {
+foreach ($categorias as $cat) {
+    $slug = str_replace(' ', '-', strtolower($cat['nombre']));
+    if ($slug === $page) {
         $currentCat = $cat;
+        $currentCat['slug'] = $slug;
         break;
     }
 }
@@ -21,13 +22,13 @@ if (!$currentCat) {
     return;
 }
 
-// 2. Traemos los items filtrados por el nombre real de la categoría
-$items = $manager->get_items_by_category_name($currentCat['title']);
+// 2. Traemos los items directamente desde el responsable de contenido
+$items = $contentManager->get_items_by_category_name($currentCat['nombre']);
 ?>
 
 <div class="container-page">
     <div class="section-header">
-        <h1><?php echo htmlspecialchars($currentCat['title']); ?></h1>
+        <h1><?php echo htmlspecialchars($currentCat['nombre']); ?></h1>
         <p class="subtitle"><?php echo htmlspecialchars($currentCat['descripcion'] ?? ''); ?></p>
     </div>
 

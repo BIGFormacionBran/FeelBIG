@@ -1,20 +1,18 @@
 <?php
-require_once __DIR__ . '/../../managers/main_manager.php';
-require_once __DIR__ . '/../../utils/card_render_util.php';
-
-$manager = new MainManager();
-$items = $manager->get_items_by_category_name('Minijuegos');
-
-if (!empty($items)):
-    $carouselID = 'fb_carousel_' . uniqid(); 
+/**
+ * @var string $carouselTitle Título de la sección
+ * @var string $exploreUrl Link de "Ver todos"
+ * @var array $carouselItems Lista de items formateados para card
+ */
+if (!empty($carouselItems)):
+    $carouselID = 'fb_gen_cur_' . uniqid(); 
 ?>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
 <div class="home-module-wrapper feelbig-swiper-section" id="<?php echo $carouselID; ?>">
     <div class="module-header">
-        <h2>Minijuegos Saludables</h2>
-        <a href="minijuegos" class="enlace-personalizado">Explorar todos los juegos</a>
+        <h2><?php echo htmlspecialchars($carouselTitle); ?></h2>
+        <?php if($exploreUrl): ?>
+            <a href="<?php echo $exploreUrl; ?>" class="enlace-personalizado">Explorar todo</a>
+        <?php endif; ?>
     </div>
 
     <div class="carousel-flex-layout">
@@ -22,7 +20,7 @@ if (!empty($items)):
 
         <div class="swiper swiper-feelbig-generic">
             <div class="swiper-wrapper">
-                <?php foreach ($items as $item): ?>
+                <?php foreach ($carouselItems as $item): ?>
                     <div class="swiper-slide">
                         <?php render_card_item_util($item); ?>
                     </div>

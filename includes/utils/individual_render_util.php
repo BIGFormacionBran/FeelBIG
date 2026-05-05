@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/../managers/main_manager.php';
+require_once __DIR__ . '/../managers/content_manager.php';
 
 function render_individual_page($item = null) {
     if ($item !== null) {
-        $manager = new MainManager();
-        $categoria = $manager->get_category_by_item_id($item['id']);
+        $contentManager = new ContentManager();
+        $categoria = $contentManager->get_category_by_item_id($item['id']);
         $catSlug = $categoria ? strtolower(str_replace(' ', '-', $categoria['nombre'])) : 'contenido';
         return "/" . $catSlug . "/" . str_replace(' ', '-', $item['name']);
     }
@@ -13,8 +13,8 @@ function render_individual_page($item = null) {
     $itemNameFromUrl = isset($routeParts[1]) ? urldecode($routeParts[1]) : null;
 
     if ($itemNameFromUrl) {
-        $manager = new MainManager();
-        $foundItem = $manager->get_item_by_name($itemNameFromUrl);
+        $contentManager = new ContentManager();
+        $foundItem = $contentManager->get_item_by_name($itemNameFromUrl);
 
         if ($foundItem) {
             render_individual_view_util($foundItem);

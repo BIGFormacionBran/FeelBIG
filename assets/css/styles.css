@@ -411,7 +411,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     padding: 15px 0;
 }
 
-.swiper-slide { width: 320px; }
+.swiper-slide { width: 320px; display: flex; justify-content: center; }
 
 /* --- FLECHAS Y BOTONES CORREGIDOS --- */
 
@@ -423,7 +423,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     background: var(--color-blanco) !important;
     border: 2px solid var(--color-principal) !important;
     border-radius: 50% !important;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -431,34 +431,42 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     top: auto !important;
     margin: 0 !important;
     flex-shrink: 0;
+    z-index: 10;
+    color: var(--color-principal);
 }
 
 /* Dibujo de la flecha con bordes */
 .btn-nav-feelbig::after {
-    content: '';
+    content: '' !important;
     display: block;
     width: 12px;
     height: 12px;
     border-left: 3px solid currentColor;
     border-bottom: 3px solid currentColor;
     transition: var(--transition);
+    position: static !important; /* Anula el absolute de Swiper */
 }
 
 /* Orientación Izquierda */
 .swiper-button-prev.btn-nav-feelbig::after {
     transform: rotate(45deg);
-    margin-left: 4px;
+    margin-left: 5px;
 }
 
 /* Orientación Derecha */
 .swiper-button-next.btn-nav-feelbig::after {
     transform: rotate(-135deg);
-    margin-right: 4px;
+    margin-right: 5px;
 }
 
-.btn-nav-feelbig:hover {
+/* Hover, Focus y Active para Flechas */
+.btn-nav-feelbig:hover, .btn-nav-feelbig:focus {
     background: var(--color-principal) !important;
     color: var(--color-blanco) !important;
+}
+
+.btn-nav-feelbig:active {
+    transform: scale(0.92);
 }
 
 /* Botones de Paginación (Puntos) */
@@ -467,6 +475,8 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     justify-content: center;
     gap: 12px;
     margin-top: 30px;
+    position: relative; /* Asegura que esté en el flujo */
+    z-index: 10;
 }
 
 /* Estilo de los puntos */
@@ -479,12 +489,22 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     opacity: 1;
     cursor: pointer;
     transition: var(--transition);
-    margin: 0 !important; /* Reset de margen de swiper */
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+/* Hover y Active para Puntos */
+.swiper-pagination-custom .swiper-pagination-bullet:hover {
+    background: var(--color-principal-soft);
+}
+
+.swiper-pagination-custom .swiper-pagination-bullet:active {
+    transform: scale(0.85);
 }
 
 /* Punto Activo (Relleno) */
 .swiper-pagination-custom .swiper-pagination-bullet-active {
-    background: var(--color-principal);
+    background: var(--color-principal) !important;
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */
