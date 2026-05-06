@@ -19,11 +19,26 @@ class MainManager {
     public function iniciar_registro($nombre, $correo, $pass) {
         Logger::info("MainManager: Iniciando registro para $correo");
         $codigo = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        if ($this->registroPendienteDao->crear_temporal($nombre, $correo, $pass, $codigo)) {
-            return $this->mailManager->enviarConfirmacionRegistro($correo, $nombre, $codigo);
+        
+        // 1. Intentar persistir en DB
+        $dbResult = $this->registroPendienteDao->crear_temporal($nombre, $correo, $pass, $codigo);
+        
+        if (!$dbResult) {
+            Logger::error("MainManager: Falló RegistroPendienteDAO::crear_temporal para $correo. Revisa logs de base de datos.");
+            return false;
         }
-        Logger::error("MainManager: Error al crear registro temporal para $correo");
-        return false;
+
+        Logger::info("MainManager: Registro temporal creado en DB. Procediendo a enviar email...");
+
+        // 2. Intentar enviar mail
+        $mailResult = $this->mailManager->enviarConfirmacionRegistro($correo, $nombre, $codigo);
+        
+        if (!$mailResult) {
+            Logger::error("MainManager: Falló el envío del mail. Registro temporal queda en DB pero el usuario no recibirá el código.");
+            return false;
+        }
+
+        return true;
     }
 
     public function confirmar_registro($correo, $codigo) {
