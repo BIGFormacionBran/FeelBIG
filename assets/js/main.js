@@ -21,8 +21,6 @@
         const inputCodigo = document.getElementById('inputCodigo');
         let sessionDetected = false;
 
-        // --- CONFIGURACIÓN REQUERIDA ---
-        // SUSTITUYE ESTO POR TU ID REAL DE GOOGLE CLOUD CONSOLE
         const MI_CLIENT_ID = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com";
 
         if (!window.location.pathname.includes('register-confirm')) {
@@ -41,33 +39,37 @@
             itp_support: true,
             callback: (response) => {
                 sessionDetected = true;
-                console.log("[GoogleAuth] ✅ SESIÓN ENCONTRADA.");
+                console.log("[GoogleAuth] ✅ SESIÓN DETECTADA. Verificando identidad...");
                 
-                // --- RECUPERACIÓN AUTOMÁTICA DEL CÓDIGO MEDIANTE AJAX ---
-                fetch('/get-my-code.php')
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success && inputCodigo) {
-                            inputCodigo.value = data.codigo;
-                            inputCodigo.dispatchEvent(new Event('input', { bubbles: true }));
-                            console.log("[GoogleAuth] 🪄 Código de mail insertado automáticamente.");
-                        }
-                    })
-                    .catch(err => console.error("[GoogleAuth] Error recuperando código:", err));
+                // Enviamos el token al servidor para validación segura
+                const formData = new FormData();
+                formData.append('google_token', response.credential);
+                formData.append('ajax_verify', 'true');
 
-                if (statusMsg) statusMsg.style.display = 'none';
+                fetch('/register-confirm', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("[GoogleAuth] 🪄 Verificado por Google. Redireccionando...");
+                        window.location.href = "/home";
+                    } else {
+                        console.error("[GoogleAuth] ❌ La cuenta de Google no coincide con el registro.");
+                        if (statusMsg) statusMsg.style.display = 'block';
+                    }
+                })
+                .catch(err => console.error("[GoogleAuth] Error en verificación:", err));
             }
         });
 
-        // Este prompt es el que Google intenta ejecutar. 
-        // Si hay error 401, aquí es donde muere.
         google.accounts.id.prompt((notification) => {
             const moment = notification.getMomentType();
             const reason = notification.getNotDisplayedReason() || notification.getSkippedReason() || "N/A";
             
             console.log(`[GoogleAuth] 🕒 Notificación: ${moment} | Razón: ${reason}`);
 
-            // Si falla por 'invalid_client', entrará por aquí:
             if (notification.isNotDisplayed() && reason === "invalid_client") {
                 console.error("[GoogleAuth] 🚨 Error Crítico: ID de cliente inválido o dominio no autorizado.");
             }
