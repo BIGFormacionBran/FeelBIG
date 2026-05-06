@@ -14,63 +14,78 @@
         }
     };
 
-    // LÓGICA DE DETECCIÓN CON LOGS EXHAUSTIVOS
+    // LÓGICA DE DETECCIÓN CORREGIDA PARA LOGIN AUTOMÁTICO (SILENT)
     const initGoogleAuth = () => {
-        console.log("[GoogleAuth] Iniciando flujo de verificación detallado...");
+        console.log("[GoogleAuth] 🚀 Iniciando flujo de verificación detallado...");
         
         const statusMsg = document.getElementById('google-status-msg');
-        const inputCodigo = document.getElementById('inputCodigo');
         let sessionDetected = false;
 
         if (!window.location.pathname.includes('register-confirm')) {
-            console.log("[GoogleAuth] Ruta no válida para comprobación.");
+            console.log("[GoogleAuth] 🛑 Ruta no válida para comprobación.");
             return;
         }
 
         if (!window.google) {
-            console.error("[GoogleAuth] SDK de Google no encontrado. Revisa la carga del script.");
+            console.error("[GoogleAuth] ❌ SDK de Google no encontrado.");
             return;
         }
 
+        console.log("[GoogleAuth] ⚙️ Configurando google.accounts.id.initialize...");
         google.accounts.id.initialize({
             client_id: "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com", 
-            auto_select: true,
-            use_fedcm_for_prompt: true,
+            auto_select: true, // ESTO fuerza que si ya entró una vez, entre solo
+            use_fedcm_for_prompt: true, // Google obliga a esto ahora
+            itp_support: true,
             callback: (response) => {
                 sessionDetected = true;
-                console.log("[GoogleAuth] ¡CALLBACK RECIBIDO! Sesión validada correctamente.");
-                console.log("[GoogleAuth] Token recibido (fragmento):", response.credential.substring(0, 20) + "...");
-                if (statusMsg) statusMsg.style.display = 'none';
+                console.log("[GoogleAuth] ✅ ¡CALLBACK EXITOSO! Entrando sin intervención del usuario.");
+                console.log("[GoogleAuth] 🔑 ID Token:", response.credential.substring(0, 30) + "...");
+                
+                if (statusMsg) {
+                    console.log("[GoogleAuth] 🙈 Ocultando mensaje de estado.");
+                    statusMsg.style.display = 'none';
+                }
+                
+                // Aquí podrías redirigir o enviar el token a tu backend automáticamente
+                // window.location.href = "/dashboard?token=" + response.credential;
             }
         });
 
-        // Para que el callback funcione, el PROMPT debe ejecutarse. 
-        // Si auto_select está a true, será invisible si hay sesión.
+        console.log("[GoogleAuth] 📡 Lanzando google.accounts.id.prompt() en modo automático...");
+        
         google.accounts.id.prompt((notification) => {
-            console.log("[GoogleAuth] Estado del Prompt (MomentType):", notification.getMomentType());
+            const moment = notification.getMomentType();
+            console.log(`[GoogleAuth] 🕒 Momento actual: ${moment}`);
             
             if (notification.isNotDisplayed()) {
-                console.warn("[GoogleAuth] Prompt no mostrado. Razón:", notification.getNotDisplayedReason());
+                console.warn("[GoogleAuth] ⚠️ Prompt NO mostrado. Razón:", notification.getNotDisplayedReason());
+                console.log("[GoogleAuth] Detalle: Si la razón es 'skipped', Google cree que el usuario no quiere login automático o no hay sesión activa.");
             }
             
             if (notification.isSkippedMoment()) {
-                console.warn("[GoogleAuth] Momento omitido. Razón:", notification.getSkippedReason());
+                console.warn("[GoogleAuth] ⏭️ Momento omitido. Razón:", notification.getSkippedReason());
             }
 
             if (notification.isDismissedMoment()) {
-                console.warn("[GoogleAuth] Momento descartado. Razón:", notification.getDismissedReason());
+                console.warn("[GoogleAuth] ❌ El usuario cerró la ventana manualmente. Razón:", notification.getDismissedReason());
+            }
+            
+            if (notification.isDisplayed()) {
+                console.log("[GoogleAuth] 👀 El prompt visual se ha mostrado (el usuario NO entró solo).");
             }
         });
 
-        // Verificación final tras un tiempo prudencial
+        // Verificación de seguridad tras 4 segundos
         setTimeout(() => {
             if (!sessionDetected) {
-                console.log("[GoogleAuth] Tras 3s no se confirmó sesión vía callback. Mostrando aviso visual.");
+                console.error("[GoogleAuth] ⌛ TIMEOUT: 4 segundos sin detección automática.");
+                console.log("[GoogleAuth] Acción: Mostrando aviso visual porque el 'auto_select' falló.");
                 if (statusMsg) statusMsg.style.display = 'block';
             } else {
-                console.log("[GoogleAuth] Verificación final: Sesión activa confirmada.");
+                console.log("[GoogleAuth] ✨ Verificación final: El usuario ya está dentro.");
             }
-        }, 3000);
+        }, 4000);
     };
 
     const initCarousels = () => {
@@ -102,6 +117,7 @@
     };
 
     const init = () => { 
+        console.log("[App] 🚀 Inicializando scripts...");
         initAuth(); 
         initGoogleAuth(); 
         initCarousels(); 
