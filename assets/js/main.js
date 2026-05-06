@@ -14,7 +14,6 @@
         }
     };
 
-    // LÓGICA DE DETECCIÓN 100% SILENCIOSA
     const initGoogleAuth = () => {
         console.log("[GoogleAuth] 🚀 INICIANDO COMPROBACIÓN SILENCIOSA...");
         
@@ -22,8 +21,17 @@
         const inputCodigo = document.getElementById('inputCodigo');
         let sessionDetected = false;
 
+        // --- CONFIGURACIÓN REQUERIDA ---
+        // SUSTITUYE ESTO POR TU ID REAL DE GOOGLE CLOUD CONSOLE
+        const MI_CLIENT_ID = "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; 
+
+        if (MI_CLIENT_ID.includes("TU_GOOGLE_CLIENT_ID")) {
+            console.error("[GoogleAuth] ❌ ERROR: No has configurado tu Client ID real.");
+            if (statusMsg) statusMsg.style.display = 'block';
+            return;
+        }
+
         if (!window.location.pathname.includes('register-confirm')) {
-            console.log("[GoogleAuth] ⏹️ Ruta omitida. No requiere validación.");
             return;
         }
 
@@ -32,58 +40,42 @@
             return;
         }
 
-        // 1. INICIALIZACIÓN
         google.accounts.id.initialize({
-            client_id: "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-            auto_select: true,             // Tenta loguear automáticamente si hay una sesión
-            use_fedcm_for_prompt: true,    // Obligatorio para evitar bloqueos modernos de Chrome
+            client_id: MI_CLIENT_ID,
+            auto_select: true,
+            use_fedcm_for_prompt: true,
             itp_support: true,
             callback: (response) => {
                 sessionDetected = true;
-                console.log("[GoogleAuth] ✅ SESIÓN ENCONTRADA. Escribiendo código...");
+                console.log("[GoogleAuth] ✅ SESIÓN ENCONTRADA.");
                 
-                // RELLENAR INPUT AUTOMÁTICAMENTE
                 if (inputCodigo) {
                     inputCodigo.value = response.credential;
                     inputCodigo.dispatchEvent(new Event('input', { bubbles: true }));
-                    console.log("[GoogleAuth] ✍️ Token insertado en #inputCodigo.");
                 }
 
-                // OCULTAR BADGE SI EXISTE
-                if (statusMsg) {
-                    statusMsg.style.display = 'none';
-                    console.log("[GoogleAuth] 🙈 Badge ocultado.");
-                }
+                if (statusMsg) statusMsg.style.display = 'none';
             }
         });
 
-        // 2. LANZAMIENTO DEL PROMPT (MODO SILENCIOSO)
-        // Si auto_select funciona, el callback se dispara y NO sale ventana.
-        // Si no funciona, el prompt muere en 'skipped' y NO sale ventana.
+        // Este prompt es el que Google intenta ejecutar. 
+        // Si hay error 401, aquí es donde muere.
         google.accounts.id.prompt((notification) => {
             const moment = notification.getMomentType();
             const reason = notification.getNotDisplayedReason() || notification.getSkippedReason() || "N/A";
             
             console.log(`[GoogleAuth] 🕒 Notificación: ${moment} | Razón: ${reason}`);
 
-            if (notification.isDisplayMoment()) {
-                console.warn("[GoogleAuth] ⚠️ Intentó mostrar UI. Esto no debería pasar con auto_select.");
-            }
-
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                console.log("[GoogleAuth] 🤐 Flujo mantenido en segundo plano (Ventana bloqueada/omitida).");
+            // Si falla por 'invalid_client', entrará por aquí:
+            if (notification.isNotDisplayed() && reason === "invalid_client") {
+                console.error("[GoogleAuth] 🚨 Error Crítico: ID de cliente inválido o dominio no autorizado.");
             }
         });
 
-        // 3. VERIFICACIÓN FINAL (TIMEOUT)
-        // Si después de 3.5 segundos no hubo callback, asumimos que no hay sesión.
         setTimeout(() => {
-            console.log("[GoogleAuth] 🏁 Finalizando espera de 3.5s...");
             if (!sessionDetected) {
-                console.log("[GoogleAuth] 📢 No se detectó cuenta. Mostrando badge informativo.");
+                console.log("[GoogleAuth] 📢 No se detectó cuenta o hubo error 401. Badge visible.");
                 if (statusMsg) statusMsg.style.display = 'block';
-            } else {
-                console.log("[GoogleAuth] ✨ Proceso automático completado con éxito.");
             }
         }, 3500);
     };
