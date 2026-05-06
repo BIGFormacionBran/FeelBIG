@@ -23,7 +23,7 @@
 
         // --- CONFIGURACIÓN REQUERIDA ---
         // SUSTITUYE ESTO POR TU ID REAL DE GOOGLE CLOUD CONSOLE
-        const MI_CLIENT_ID = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com.apps.googleusercontent.com";
+        const MI_CLIENT_ID = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com";
 
         if (!window.location.pathname.includes('register-confirm')) {
             return;
