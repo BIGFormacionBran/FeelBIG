@@ -14,56 +14,40 @@
         }
     };
 
-    // LÓGICA DETALLADA: Detección e inyección de sesión
+    // LÓGICA SILENCIOSA: Comprobación de sesión sin popups
     const initGoogleAuth = () => {
-        console.log("[GoogleAuth] Iniciando comprobación...");
+        console.log("[GoogleAuth] Comprobando sesión de forma silenciosa...");
         
         const statusMsg = document.getElementById('google-status-msg');
         const inputCodigo = document.getElementById('inputCodigo');
 
-        if (!window.location.pathname.includes('register-confirm')) {
-            console.log("[GoogleAuth] No estamos en la página de confirmación. Abortando.");
-            return;
-        }
+        if (!window.location.pathname.includes('register-confirm')) return;
+        if (!window.google) return;
 
-        if (!window.google) {
-            console.error("[GoogleAuth] Error: La librería 'google' no está cargada. Revisa la etiqueta script en auth_view.php.");
-            return;
-        }
-
-        console.log("[GoogleAuth] Librería detectada. Inicializando SDK...");
-
+        // Inicializamos el SDK
         google.accounts.id.initialize({
             client_id: "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com", 
+            auto_select: true, // Intenta seleccionar la cuenta automáticamente si hay sesión
+            use_fedcm_for_prompt: true,
             callback: (response) => {
-                console.log("[GoogleAuth] ¡Sesión detectada con éxito!");
-                // Aquí el navegador nos da el ID Token, lo que confirma que hay sesión.
-                // Intentamos extraer información o simplemente avisar.
-                if (inputCodigo) {
-                    console.log("[GoogleAuth] Intentando autocompletar input...");
-                    // Nota: El "código" real está en el mail, pero si Google responde aquí 
-                    // es que el usuario está logueado en Chrome con la misma cuenta.
-                }
-            },
-            auto_select: true
-        });
-
-        google.accounts.id.prompt((notification) => {
-            console.log("[GoogleAuth] Notificación de estado:", notification.getMomentType());
-            
-            if (notification.isNotDisplayed()) {
-                console.warn("[GoogleAuth] El prompt no se mostró:", notification.getNotDisplayedReason());
-                if (statusMsg) statusMsg.style.display = 'block';
-            }
-            
-            if (notification.isSkippedMoment()) {
-                console.warn("[GoogleAuth] El usuario omitió el prompt:", notification.getSkippedReason());
-            }
-
-            if (notification.isDismissedMoment()) {
-                console.warn("[GoogleAuth] Prompt cerrado por el usuario.");
+                // Si entra aquí, es que hay una sesión activa y Google la ha validado
+                console.log("[GoogleAuth] Sesión detectada.");
+                if (statusMsg) statusMsg.style.display = 'none';
+                
+                // Nota: Aquí podrías realizar una llamada al servidor para obtener el código 
+                // si el email de Google coincide con el del registro, pero por ahora 
+                // cumplimos con la lógica de detección.
             }
         });
+
+        // IMPORTANTE: NO LLAMAMOS A google.accounts.id.prompt()
+        // En su lugar, si tras 2 segundos no ha habido callback, mostramos el aviso (badge)
+        setTimeout(() => {
+            if (statusMsg && statusMsg.style.display === 'none') {
+                console.log("[GoogleAuth] No se detectó sesión automática. Mostrando aviso.");
+                statusMsg.style.display = 'block';
+            }
+        }, 2000);
     };
 
     const initCarousels = () => {
