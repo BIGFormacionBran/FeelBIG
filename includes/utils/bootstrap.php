@@ -9,9 +9,9 @@ if (!is_dir($base_path . '/logs')) {
     mkdir($base_path . '/logs', 0755, true);
 }
 
-ini_set('display_errors', 0); // No mostrar al usuario
-ini_set('log_errors', 1);     // Activar log
-ini_set('error_log', $log_file); // Ruta del archivo
+ini_set('display_errors', 0); 
+ini_set('log_errors', 1);     
+ini_set('error_log', $log_file); 
 error_reporting(E_ALL);
 
 // 1. Cargar CAPA UTILS
@@ -28,6 +28,14 @@ require_once $base_path . '/includes/managers/main_manager.php';
 // 3. Lógica de Enrutamiento
 $rawRoute = $_GET['route'] ?? 'home';
 $cleanRoute = trim($rawRoute, '/');
+
+// --- DETECCIÓN DE SCRIPTS DE PROCESAMIENTO (POST) ---
+// Si la ruta es login, register o register-confirm y es POST, cargamos el logic worker
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($cleanRoute === 'login') { require_once $base_path . '/auth.php'; exit(); }
+    if ($cleanRoute === 'register') { require_once $base_path . '/process_registro.php'; exit(); }
+    if ($cleanRoute === 'register-confirm') { require_once $base_path . '/process_confirmacion.php'; exit(); }
+}
 
 global $routeParts;
 $routeParts = explode('/', $cleanRoute);

@@ -5,7 +5,7 @@ $is_confirmacion = ($page === 'register-confirm');
 
 $titulo = $is_registro ? "Crear cuenta" : ($is_confirmacion ? "Verificar código" : "Iniciar sesión");
 $btn_text = $is_registro ? "Registrarme" : ($is_confirmacion ? "Confirmar" : "Entrar");
-$action = $is_registro ? "register" : ($is_confirmacion ? "/register-confirm" : "/login");
+$action = $is_registro ? "/register" : ($is_confirmacion ? "/register-confirm" : "/login");
 
 $error_code = $_GET['error'] ?? null;
 $mensaje_error = "";
