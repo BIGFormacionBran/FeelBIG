@@ -42,17 +42,34 @@ class UsuarioDAO {
     }
 
     public function login($identificador, $password) {
-        if (!$this->db) throw new Exception("no_db");
-        
-        $sql = "SELECT * FROM USUARIO WHERE correo = ? OR nombre = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$identificador, $identificador]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && password_verify($password, $user['password'])) {
-            return $user;
+        if (!$this->db) {
+            Logger::error("UsuarioDAO: No hay conexión a la base de datos.");
+            throw new Exception("no_db");
         }
-        return false;
+        
+        try {
+            $sql = "SELECT * FROM USUARIO WHERE correo = ? OR nombre = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$identificador, $identificador]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                Logger::info("UsuarioDAO: No se encontró ningún usuario con identificador: $identificador");
+                return false;
+            }
+
+            if (password_verify($password, $user['password'])) {
+                return $user;
+            } else {
+                Logger::error("UsuarioDAO: Contraseña incorrecta para el usuario: $identificador");
+                // Debug opcional: Si sospechas del hash, loguea el hash de la DB (NUNCA la pass plana)
+                // Logger::info("Hash en DB: " . $user['password']); 
+                return false;
+            }
+        } catch (PDOException $e) {
+            Logger::error("UsuarioDAO: Error de SQL en login: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
