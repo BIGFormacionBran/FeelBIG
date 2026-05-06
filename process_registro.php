@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($resultado === true) {
         $_SESSION['temp_email'] = $correo;
+        $_SESSION['temp_name'] = $nombre; // Guardamos el nombre para el reenvío
         unset($_SESSION['form_data']);
         header("Location: /register-confirm");
         exit();

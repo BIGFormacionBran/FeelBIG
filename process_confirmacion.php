@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['nombre'];
             $_SESSION['user_role'] = $user['id_tipo_cuenta'] ?? 3;
             unset($_SESSION['temp_email']);
+            unset($_SESSION['temp_name']); // Limpiamos el nombre temporal
             header("Location: /home");
             exit();
         }

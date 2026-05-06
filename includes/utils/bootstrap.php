@@ -10,7 +10,7 @@ if (!is_dir($base_path . '/logs')) {
 }
 
 ini_set('display_errors', 0); 
-ini_set('log_errors', 1);     
+ini_set('log_errors', 1);      
 ini_set('error_log', $log_file); 
 error_reporting(E_ALL);
 
@@ -29,8 +29,22 @@ require_once $base_path . '/includes/managers/main_manager.php';
 $rawRoute = $_GET['route'] ?? 'home';
 $cleanRoute = trim($rawRoute, '/');
 
+// Lógica de reenvío de código
+if ($cleanRoute === 'resend-code') {
+    $correo = $_SESSION['temp_email'] ?? '';
+    $nombre = $_SESSION['temp_name'] ?? 'Usuario';
+    if (!empty($correo)) {
+        $manager = new MainManager();
+        if ($manager->iniciar_registro($nombre, $correo, "RESEND_ONLY")) {
+            header("Location: /register-confirm?sent=1");
+            exit();
+        }
+    }
+    header("Location: /register?error=mail");
+    exit();
+}
+
 // --- DETECCIÓN DE SCRIPTS DE PROCESAMIENTO (POST) ---
-// Si la ruta es login, register o register-confirm y es POST, cargamos el logic worker
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($cleanRoute === 'login') { require_once $base_path . '/auth.php'; exit(); }
     if ($cleanRoute === 'register') { require_once $base_path . '/process_registro.php'; exit(); }

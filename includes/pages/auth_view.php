@@ -43,13 +43,22 @@ if ($error_code === '1') {
                 </div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['sent'])): ?>
+                <div class="error-banner" style="color: #065f46; background: #dcfce7; border-color: #059669;">
+                    Código reenviado con éxito.
+                </div>
+            <?php endif; ?>
+
             <form action="<?php echo $action; ?>" method="POST">
                 <?php if ($is_confirmacion): ?>
-                    <p style="color: #888; text-align: center; margin-bottom: 20px;">
-                        Introduce el código enviado a <strong><?php echo htmlspecialchars($_SESSION['temp_email'] ?? ''); ?></strong>
+                    <p style="color: var(--color-texto-muted); text-align: center; margin-bottom: 25px; font-size: 14px;">
+                        Introduce el código enviado a:<br>
+                        <strong style="color: var(--color-texto);"><?php echo htmlspecialchars($_SESSION['temp_email'] ?? ''); ?></strong>
                     </p>
                     <div class="input-box">
-                        <input type="text" name="codigo" placeholder="Código de 6 dígitos" required style="text-align:center; letter-spacing: 5px; font-weight: bold;">
+                        <input type="text" name="codigo" placeholder="······" required 
+                               maxlength="6"
+                               style="text-align:center; letter-spacing: 12px; font-size: 24px; font-weight: 800; color: var(--color-principal);">
                     </div>
                 <?php else: ?>
                     <?php if ($is_registro): ?>
@@ -85,7 +94,11 @@ if ($error_code === '1') {
                             <?php echo $is_registro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'; ?>
                         </a>
                     <?php else: ?>
-                        <a href="/register" class="enlace-personalizado">Volver al registro</a>
+                        <p style="font-size: 13px; color: var(--color-texto-muted); margin-top: 15px;">¿No has recibido ningún correo?</p>
+                        <a href="/resend-code" class="enlace-personalizado" style="font-weight: 700;">Reenviar código de confirmación</a>
+                        <div style="margin-top: 15px;">
+                            <a href="/register" class="enlace-personalizado" style="font-size: 12px; opacity: 0.7;">Volver al registro</a>
+                        </div>
                     <?php endif; ?>
                 </div>
             </form>
