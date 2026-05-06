@@ -53,15 +53,13 @@
                         if (statusMsg) statusMsg.style.display = 'block';
                     }
                 })
-                .catch(err => {
-                    // Error de red o servidor
+                .catch(() => {
+                    // Error de red o servidor manejado silenciosamente
                 });
             }
         });
 
-        google.accounts.id.prompt((notification) => {
-            // Manejo de prompts silencioso
-        });
+        google.accounts.id.prompt();
 
         setTimeout(() => {
             if (!sessionDetected) {
