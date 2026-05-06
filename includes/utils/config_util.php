@@ -12,12 +12,10 @@ class ConfigUtil {
             $path = dirname(__DIR__, 2) . '/.env';
             
             if (!file_exists($path)) {
-                // Si no existe, podrías lanzar una excepción o registrar un error
                 return $default;
             }
 
-            // Usamos parse_ini_file que es lo que ya estabas usando y funciona bien
-            self::$config = parse_ini_file($path);
+            self::$config = parse_ini_file($path, false, INI_SCANNER_RAW);
         }
 
         return self::$config[$key] ?? $default;
