@@ -1,5 +1,5 @@
 <?php
-session_start();
+// feelbig\process_confirmacion.php
 require_once 'includes/managers/main_manager.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,14 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $manager = new MainManager();
     
     if ($manager->confirmar_registro($correo, $codigo)) {
-        // Al confirmar, hacemos login automático (opcional, igual que tenías antes)
-        // Como registrar() en UsuarioDAO ahora se llamó desde confirmar_registro,
-        // simplemente recuperamos el usuario para la sesión.
-        
-        // Usamos una contraseña dummy o buscamos por correo ya que el password está hasheado
-        // Mejor buscamos los datos del usuario directamente:
+        // Recuperamos los datos del usuario recién creado para loguearlo
         $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM USUARIO WHERE correo = ?");
+        $stmt = $db->prepare("SELECT id, nombre, id_tipo_cuenta FROM USUARIO WHERE correo = ?");
         $stmt->execute([$correo]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

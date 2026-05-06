@@ -1,5 +1,5 @@
 <?php
-session_start();
+// feelbig\process_registro.php
 require_once 'includes/managers/main_manager.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: /register-confirm");
         exit();
     } else {
-        // Si falla, es probable que sea el SMTP (según tus logs)
         header("Location: /register?error=mail"); 
         exit();
     }

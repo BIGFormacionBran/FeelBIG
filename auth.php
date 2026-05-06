@@ -1,7 +1,7 @@
 <?php
-session_start();
+// feelbig\auth.php
 require_once 'includes/managers/main_manager.php';
-require_once 'includes/utils/logger_util.php'; // Asegúrate de incluirlo
+require_once 'includes/utils/logger_util.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['usuario'];
@@ -19,14 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = $user['id_tipo_cuenta'] ?? 3;
             unset($_SESSION['form_data']);
             header("Location: /home");
+            exit();
         } else {
             Logger::error("auth.php: Login fallido (Credenciales incorrectas) para: $usuario");
             $_SESSION['form_data'] = ['usuario' => $usuario, 'password' => $pass];
             header("Location: /login?error=1");
+            exit();
         }
     } catch (Exception $e) {
         Logger::error("auth.php: EXCEPCIÓN CRÍTICA: " . $e->getMessage());
         header("Location: /login?error=db");
+        exit();
     }
-    exit();
 }
