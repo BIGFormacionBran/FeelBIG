@@ -14,72 +14,79 @@
         }
     };
 
-    // LÓGICA DE DETECCIÓN CORREGIDA
+    // LÓGICA DE DETECCIÓN SILENCIOSA CORREGIDA
     const initGoogleAuth = () => {
-        console.log("[GoogleAuth] 🚀 INICIANDO COMPROBACIÓN SILENCIOSA...");
+        console.log("[GoogleAuth] 🔍 Iniciando verificación 100% silenciosa...");
         
         const statusMsg = document.getElementById('google-status-msg');
-        const inputCodigo = document.getElementById('inputCodigo');
+        const inputCodigo = document.getElementById('inputCodigo'); // El input donde escribiremos el código
         let sessionDetected = false;
 
         if (!window.location.pathname.includes('register-confirm')) {
-            console.log("[GoogleAuth] 🛑 Ruta no válida para comprobación.");
+            console.log("[GoogleAuth] 📍 Ruta actual no requiere validación de Google.");
             return;
         }
 
         if (!window.google) {
-            console.error("[GoogleAuth] ❌ SDK de Google no cargado. Revisa el script en el HTML.");
+            console.error("[GoogleAuth] ❌ Error crítico: SDK de Google no cargado.");
             return;
         }
 
-        console.log("[GoogleAuth] 🛠️ Configurando GSI con auto_select: true...");
+        console.log("[GoogleAuth] ⚙️ Configurando inicialización (auto_select: true)...");
+
         google.accounts.id.initialize({
             client_id: "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com", 
-            auto_select: true, // Esto es lo que debería evitar la ventana si ya hay sesión
-            use_fedcm_for_prompt: true,
+            auto_select: true, // Intenta loguear sin interacción
+            use_fedcm_for_prompt: true, // Obligatorio en navegadores modernos (Chrome 121+)
             callback: (response) => {
                 sessionDetected = true;
-                console.log("[GoogleAuth] ✅ SESIÓN DETECTADA AUTOMÁTICAMENTE.");
-                
-                // ESCRIBIMOS EL CÓDIGO AUTOMÁTICAMENTE SI EXISTE EL INPUT
-                if (inputCodigo) {
-                    console.log("[GoogleAuth] ✍️ Escribiendo token en el input...");
-                    inputCodigo.value = response.credential;
-                    // Disparamos evento input por si tienes frameworks escuchando
-                    inputCodigo.dispatchEvent(new Event('input', { bubbles: true }));
-                } else {
-                    console.warn("[GoogleAuth] ⚠️ No se encontró el elemento 'inputCodigo'.");
+                console.log("[GoogleAuth] ✅ ¡SESIÓN DETECTADA AUTOMÁTICAMENTE!");
+                console.log("[GoogleAuth] 🆔 ID Token:", response.credential.substring(0, 30) + "...");
+
+                // 1. Ocultamos el badge informativo si existiera
+                if (statusMsg) {
+                    console.log("[GoogleAuth] 🪄 Ocultando badge informativo.");
+                    statusMsg.style.display = 'none';
                 }
 
-                if (statusMsg) {
-                    console.log("[GoogleAuth] 🙈 Ocultando badge informativo.");
-                    statusMsg.style.display = 'none';
+                // 2. ESCRIBIMOS EL CÓDIGO AUTOMÁTICAMENTE (Aquí pones tu lógica de 'código')
+                if (inputCodigo) {
+                    console.log("[GoogleAuth] ✍️ Escribiendo código en el input automáticamente...");
+                    // Ejemplo: podrías extraer un código del token o simplemente marcar validado
+                    inputCodigo.value = "LOGUEADO_GOOGLE"; 
+                    // Si necesitas disparar un evento para que JS sepa que cambió:
+                    inputCodigo.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             }
         });
 
-        console.log("[GoogleAuth] 📡 Ejecutando prompt() en modo silencioso...");
+        console.log("[GoogleAuth] 📡 Ejecutando prompt en segundo plano...");
+
         google.accounts.id.prompt((notification) => {
             const moment = notification.getMomentType();
-            console.log(`[GoogleAuth] ⏱️ Momento actual: ${moment}`);
-            
+            console.log(`[GoogleAuth] 🕒 Momento del Prompt: ${moment}`);
+
             if (notification.isNotDisplayed()) {
-                console.warn("[GoogleAuth] 🚫 El prompt no se mostró. Razón:", notification.getNotDisplayedReason());
+                console.log(`[GoogleAuth] ℹ️ El prompt no se mostró. Razón: ${notification.getNotDisplayedReason()}`);
             }
             
             if (notification.isSkippedMoment()) {
-                console.warn("[GoogleAuth] ⏭️ El prompt fue omitido. Razón:", notification.getSkippedReason());
-                console.log("[GoogleAuth] Detalle: Si ves 'unknown_reason', suele ser por falta de HTTPS o dominio no verificado.");
+                console.warn(`[GoogleAuth] ⚠️ Salto de flujo (Skipped). Razón: ${notification.getSkippedReason()}`);
+                // Si la razón es 'user_cancel' o 'tap_outside', no hacemos nada, pero si es 'unknown_reason',
+                // suele ser que no hay sesión activa en el navegador.
             }
         });
 
-        // Verificación final
+        // Verificación de seguridad tras 3.5 segundos
         setTimeout(() => {
             if (!sessionDetected) {
-                console.log("[GoogleAuth] ❌ No se pudo recuperar la sesión solo. Mostrando aviso.");
-                if (statusMsg) statusMsg.style.display = 'block';
+                console.log("[GoogleAuth] ❌ No se detectó sesión automática tras el tiempo de espera.");
+                console.log("[GoogleAuth] 📢 Acción: Mostrando badge informativo para acción manual.");
+                if (statusMsg) {
+                    statusMsg.style.display = 'block';
+                }
             } else {
-                console.log("[GoogleAuth] ✨ Proceso finalizado: Usuario logueado sin intervención.");
+                console.log("[GoogleAuth] ✨ Proceso finalizado con éxito: Sesión inyectada.");
             }
         }, 3500);
     };
@@ -113,7 +120,6 @@
     };
 
     const init = () => { 
-        console.log("[App] 🎬 Iniciando App...");
         initAuth(); 
         initGoogleAuth(); 
         initCarousels(); 
