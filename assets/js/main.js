@@ -14,40 +14,63 @@
         }
     };
 
-    // LÓGICA SILENCIOSA: Comprobación de sesión sin popups
+    // LÓGICA DE DETECCIÓN CON LOGS EXHAUSTIVOS
     const initGoogleAuth = () => {
-        console.log("[GoogleAuth] Comprobando sesión de forma silenciosa...");
+        console.log("[GoogleAuth] Iniciando flujo de verificación detallado...");
         
         const statusMsg = document.getElementById('google-status-msg');
         const inputCodigo = document.getElementById('inputCodigo');
+        let sessionDetected = false;
 
-        if (!window.location.pathname.includes('register-confirm')) return;
-        if (!window.google) return;
+        if (!window.location.pathname.includes('register-confirm')) {
+            console.log("[GoogleAuth] Ruta no válida para comprobación.");
+            return;
+        }
 
-        // Inicializamos el SDK
+        if (!window.google) {
+            console.error("[GoogleAuth] SDK de Google no encontrado. Revisa la carga del script.");
+            return;
+        }
+
         google.accounts.id.initialize({
             client_id: "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com", 
-            auto_select: true, // Intenta seleccionar la cuenta automáticamente si hay sesión
+            auto_select: true,
             use_fedcm_for_prompt: true,
             callback: (response) => {
-                // Si entra aquí, es que hay una sesión activa y Google la ha validado
-                console.log("[GoogleAuth] Sesión detectada.");
+                sessionDetected = true;
+                console.log("[GoogleAuth] ¡CALLBACK RECIBIDO! Sesión validada correctamente.");
+                console.log("[GoogleAuth] Token recibido (fragmento):", response.credential.substring(0, 20) + "...");
                 if (statusMsg) statusMsg.style.display = 'none';
-                
-                // Nota: Aquí podrías realizar una llamada al servidor para obtener el código 
-                // si el email de Google coincide con el del registro, pero por ahora 
-                // cumplimos con la lógica de detección.
             }
         });
 
-        // IMPORTANTE: NO LLAMAMOS A google.accounts.id.prompt()
-        // En su lugar, si tras 2 segundos no ha habido callback, mostramos el aviso (badge)
-        setTimeout(() => {
-            if (statusMsg && statusMsg.style.display === 'none') {
-                console.log("[GoogleAuth] No se detectó sesión automática. Mostrando aviso.");
-                statusMsg.style.display = 'block';
+        // Para que el callback funcione, el PROMPT debe ejecutarse. 
+        // Si auto_select está a true, será invisible si hay sesión.
+        google.accounts.id.prompt((notification) => {
+            console.log("[GoogleAuth] Estado del Prompt (MomentType):", notification.getMomentType());
+            
+            if (notification.isNotDisplayed()) {
+                console.warn("[GoogleAuth] Prompt no mostrado. Razón:", notification.getNotDisplayedReason());
             }
-        }, 2000);
+            
+            if (notification.isSkippedMoment()) {
+                console.warn("[GoogleAuth] Momento omitido. Razón:", notification.getSkippedReason());
+            }
+
+            if (notification.isDismissedMoment()) {
+                console.warn("[GoogleAuth] Momento descartado. Razón:", notification.getDismissedReason());
+            }
+        });
+
+        // Verificación final tras un tiempo prudencial
+        setTimeout(() => {
+            if (!sessionDetected) {
+                console.log("[GoogleAuth] Tras 3s no se confirmó sesión vía callback. Mostrando aviso visual.");
+                if (statusMsg) statusMsg.style.display = 'block';
+            } else {
+                console.log("[GoogleAuth] Verificación final: Sesión activa confirmada.");
+            }
+        }, 3000);
     };
 
     const initCarousels = () => {
