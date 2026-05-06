@@ -1,5 +1,4 @@
 <?php
-// Detectamos la página usando la variable $page definida en bootstrap
 $is_registro = ($page === 'register');
 $is_confirmacion = ($page === 'register-confirm'); 
 
@@ -28,6 +27,8 @@ if ($error_code === '1') {
 }
 ?>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <div class="auth-wrapper">
     <div class="main-column-padre">
         <div class="login-central-container">
@@ -43,11 +44,9 @@ if ($error_code === '1') {
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($_GET['sent'])): ?>
-                <div class="error-banner" style="color: #065f46; background: #dcfce7; border-color: #059669;">
-                    Código reenviado con éxito.
-                </div>
-            <?php endif; ?>
+            <div id="google-status-msg" style="display:none; color: #856404; background: #fff3cd; padding: 10px; border-radius: 5px; font-size: 12px; margin-bottom: 15px; text-align: center; border: 1px solid #ffeeba;">
+                ⚠️ No detectamos sesión activa en el navegador. Revisa tu correo.
+            </div>
 
             <form action="<?php echo $action; ?>" method="POST">
                 <?php if ($is_confirmacion): ?>
@@ -56,8 +55,8 @@ if ($error_code === '1') {
                         <strong style="color: var(--color-texto);"><?php echo htmlspecialchars($_SESSION['temp_email'] ?? ''); ?></strong>
                     </p>
                     <div class="input-box">
-                        <input type="text" name="codigo" placeholder="······" required 
-                               maxlength="6"
+                        <input type="text" name="codigo" id="inputCodigo" placeholder="······" required 
+                               maxlength="6" autocomplete="one-time-code"
                                style="text-align:center; letter-spacing: 12px; font-size: 24px; font-weight: 800; color: var(--color-principal);">
                     </div>
                 <?php else: ?>

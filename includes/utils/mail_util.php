@@ -30,35 +30,38 @@ class MailUtil {
             $mail->isHTML(true);
             $mail->Subject = $asunto;
 
-            // --- CONFIGURACIÓN DEL LOGO (URL Pública correcta) ---
-            $urlLogo = "https://bigformacion.es/feelbig/assets/img/logo.png";
+            // --- LOGO ---
+            $rutaLogo = dirname(__DIR__, 2) . '/assets/img/logo.png';
+            if (file_exists($rutaLogo)) {
+                $mail->addEmbeddedImage($rutaLogo, 'logo_feelbig');
+                $imgSrc = 'cid:logo_feelbig';
+            } else {
+                $imgSrc = 'https://bigformacion.es/feelbig/assets/img/logo.png';
+            }
 
-            // --- PLANTILLA MAESTRA (Cabecera, Saludo, Footer y Firma fijos) ---
             $htmlHeader = "
-            <div style='background-color: #f4f4f4; padding: 20px; font-family: Arial, sans-serif;'>
-                <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #eeeeee;'>
-                    <div style='background-color: #1a1a1a; padding: 20px; text-align: center;'>
-                        <img src='$urlLogo' alt='Feel BiG' style='width: 150px; display: block; margin: 0 auto;'>
+            <div style='background-color: #f8f9fa; padding: 40px 10px; font-family: sans-serif;'>
+                <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #eeeeee; overflow: hidden;'>
+                    <div style='background-color: #1a1a1a; padding: 30px; text-align: center;'>
+                        <img src='$imgSrc' alt='Feel BiG' style='width: 150px; height: auto;'>
                     </div>
-                    <div style='padding: 30px; color: #333333;'>
-                        <div style='font-size: 18px; font-weight: bold; margin-bottom: 20px;'>¡Hola, " . htmlspecialchars($nombreUsuario) . "!</div>
+                    <div style='padding: 40px 30px; color: #333333;'>
+                        <div style='font-size: 20px; font-weight: bold; margin-bottom: 20px; text-align: center;'>¡Hola, " . htmlspecialchars($nombreUsuario) . "!</div>
             ";
 
             $htmlFooter = "
-                        <div style='margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee; color: #777777; font-size: 14px;'>
-                            Atentamente,<br>
-                            <strong>Equipo de Feel BiG</strong><br>
-                            <em>Formación de Alto Impacto</em>
+                        <div style='margin-top: 40px; padding-top: 25px; border-top: 1px solid #f0f0f0; text-align: center;'>
+                            <div style='font-weight: bold; color: #1a1a1a; font-size: 16px;'>Equipo de Feel BiG</div>
+                            <div style='color: #159BD7; font-size: 13px; margin-top: 5px; text-transform: uppercase;'>Formación de Alto Impacto</div>
+                            <div style='margin-top: 25px; color: #999999; font-size: 11px;'>
+                                &copy; " . date('Y') . " Academia trinidad S.L. Todos los derechos reservados.
+                            </div>
                         </div>
-                    </div>
-                    <div style='background-color: #f9f9f9; padding: 15px; text-align: center; color: #999999; font-size: 11px;'>
-                        &copy; " . date('Y') . " Feel BiG. Todos los derechos reservados.
                     </div>
                 </div>
             </div>";
 
             $mail->Body = $htmlHeader . $cuerpoVariable . $htmlFooter;
-
             return $mail->send();
         } catch (Exception $e) {
             Logger::error("MailUtil: " . $e->getMessage());
