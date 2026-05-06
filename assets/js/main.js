@@ -23,13 +23,7 @@
 
         // --- CONFIGURACIÓN REQUERIDA ---
         // SUSTITUYE ESTO POR TU ID REAL DE GOOGLE CLOUD CONSOLE
-        const MI_CLIENT_ID = "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; 
-
-        if (MI_CLIENT_ID.includes("TU_GOOGLE_CLIENT_ID")) {
-            console.error("[GoogleAuth] ❌ ERROR: No has configurado tu Client ID real.");
-            if (statusMsg) statusMsg.style.display = 'block';
-            return;
-        }
+        const MI_CLIENT_ID = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com.apps.googleusercontent.com";
 
         if (!window.location.pathname.includes('register-confirm')) {
             return;
