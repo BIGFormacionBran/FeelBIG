@@ -43,10 +43,17 @@
                 sessionDetected = true;
                 console.log("[GoogleAuth] ✅ SESIÓN ENCONTRADA.");
                 
-                if (inputCodigo) {
-                    inputCodigo.value = response.credential;
-                    inputCodigo.dispatchEvent(new Event('input', { bubbles: true }));
-                }
+                // --- RECUPERACIÓN AUTOMÁTICA DEL CÓDIGO MEDIANTE AJAX ---
+                fetch('/get-my-code.php')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && inputCodigo) {
+                            inputCodigo.value = data.codigo;
+                            inputCodigo.dispatchEvent(new Event('input', { bubbles: true }));
+                            console.log("[GoogleAuth] 🪄 Código de mail insertado automáticamente.");
+                        }
+                    })
+                    .catch(err => console.error("[GoogleAuth] Error recuperando código:", err));
 
                 if (statusMsg) statusMsg.style.display = 'none';
             }
