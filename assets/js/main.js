@@ -15,8 +15,6 @@
     };
 
     const initGoogleAuth = () => {
-        console.log("[GoogleAuth] 🚀 INICIANDO COMPROBACIÓN SILENCIOSA...");
-        
         const statusMsg   = document.getElementById('google-status-msg');
         const inputCodigo = document.getElementById('inputCodigo');
         let sessionDetected = false;
@@ -28,7 +26,6 @@
         }
 
         if (!window.google || !window.google.accounts) {
-            console.error("[GoogleAuth] ❌ SDK no disponible.");
             return;
         }
 
@@ -39,9 +36,7 @@
             itp_support: true,
             callback: (response) => {
                 sessionDetected = true;
-                console.log("[GoogleAuth] ✅ SESIÓN DETECTADA. Verificando identidad...");
                 
-                // Enviamos el token al servidor para validación segura
                 const formData = new FormData();
                 formData.append('google_token', response.credential);
                 formData.append('ajax_verify', 'true');
@@ -53,31 +48,23 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        console.log("[GoogleAuth] 🪄 Verificado por Google. Redireccionando...");
                         window.location.href = "/home";
                     } else {
-                        console.error("[GoogleAuth] ❌ La cuenta de Google no coincide con el registro.");
                         if (statusMsg) statusMsg.style.display = 'block';
                     }
                 })
-                .catch(err => console.error("[GoogleAuth] Error en verificación:", err));
+                .catch(err => {
+                    // Error de red o servidor
+                });
             }
         });
 
         google.accounts.id.prompt((notification) => {
-            const moment = notification.getMomentType();
-            const reason = notification.getNotDisplayedReason() || notification.getSkippedReason() || "N/A";
-            
-            console.log(`[GoogleAuth] 🕒 Notificación: ${moment} | Razón: ${reason}`);
-
-            if (notification.isNotDisplayed() && reason === "invalid_client") {
-                console.error("[GoogleAuth] 🚨 Error Crítico: ID de cliente inválido o dominio no autorizado.");
-            }
+            // Manejo de prompts silencioso
         });
 
         setTimeout(() => {
             if (!sessionDetected) {
-                console.log("[GoogleAuth] 📢 No se detectó cuenta o hubo error 401. Badge visible.");
                 if (statusMsg) statusMsg.style.display = 'block';
             }
         }, 3500);
