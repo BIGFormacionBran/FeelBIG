@@ -9,24 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $manager = new MainManager();
     
-    // Guardamos en sesión por si hay error
     $_SESSION['form_data'] = [
         'nombre' => $nombre,
         'usuario' => $correo,
         'password' => $pass
     ];
 
-    // Intentamos iniciar registro
     $resultado = $manager->iniciar_registro($nombre, $correo, $pass);
 
     if ($resultado === true) {
         $_SESSION['temp_email'] = $correo;
         unset($_SESSION['form_data']);
-        header("Location: /register-confirm"); // Asegúrate de que el slug sea /register-confirm
+        header("Location: /register-confirm");
         exit();
     } else {
-        // Si entra aquí es que falló el Mail o la DB
-        header("Location: /register?error=db"); 
+        // Si falla, es probable que sea el SMTP (según tus logs)
+        header("Location: /register?error=mail"); 
         exit();
     }
 }

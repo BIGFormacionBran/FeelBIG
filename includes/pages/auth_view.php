@@ -10,13 +10,11 @@ $action = $is_registro ? "/register" : ($is_confirmacion ? "/register-confirm" :
 $error_code = $_GET['error'] ?? null;
 $mensaje_error = "";
 
-// Recuperamos datos de la sesión si existen
 $form_data = $_SESSION['form_data'] ?? [];
 $old_user = $form_data['usuario'] ?? '';
 $old_nombre = $form_data['nombre'] ?? '';
 $old_pass = $form_data['password'] ?? '';
 
-// Una vez recuperados, los eliminamos de la sesión para que no persistan por siempre
 unset($_SESSION['form_data']);
 
 if ($error_code === '1') {
@@ -25,6 +23,8 @@ if ($error_code === '1') {
     $mensaje_error = "Error de conexión con la base de datos.";
 } elseif ($error_code === 'codigo') {
     $mensaje_error = "El código de confirmación es incorrecto o ha expirado.";
+} elseif ($error_code === 'mail') {
+    $mensaje_error = "Error al enviar el correo de verificación. Contacta con soporte.";
 }
 ?>
 

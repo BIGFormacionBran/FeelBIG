@@ -1,4 +1,3 @@
-// feelbig\auth.php
 <?php
 session_start();
 require_once 'includes/managers/main_manager.php';
