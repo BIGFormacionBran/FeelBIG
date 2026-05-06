@@ -14,81 +14,73 @@
         }
     };
 
-    // LÓGICA DE DETECCIÓN SILENCIOSA CORREGIDA
+    // LÓGICA DE DETECCIÓN 100% SILENCIOSA
     const initGoogleAuth = () => {
-        console.log("[GoogleAuth] 🔍 Iniciando verificación 100% silenciosa...");
+        console.log("[GoogleAuth] 🔍 Iniciando comprobación silenciosa de sesión...");
         
         const statusMsg = document.getElementById('google-status-msg');
-        const inputCodigo = document.getElementById('inputCodigo'); // El input donde escribiremos el código
+        const inputCodigo = document.getElementById('inputCodigo');
         let sessionDetected = false;
 
         if (!window.location.pathname.includes('register-confirm')) {
-            console.log("[GoogleAuth] 📍 Ruta actual no requiere validación de Google.");
+            console.log("[GoogleAuth] ⏹️ Ruta omitida: No es register-confirm.");
             return;
         }
 
         if (!window.google) {
-            console.error("[GoogleAuth] ❌ Error crítico: SDK de Google no cargado.");
+            console.error("[GoogleAuth] ❌ SDK no encontrado.");
             return;
         }
 
-        console.log("[GoogleAuth] ⚙️ Configurando inicialización (auto_select: true)...");
+        console.log("[GoogleAuth] ⚙️ Configurando One Tap en modo AUTO-SELECT...");
 
         google.accounts.id.initialize({
             client_id: "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com", 
-            auto_select: true, // Intenta loguear sin interacción
-            use_fedcm_for_prompt: true, // Obligatorio en navegadores modernos (Chrome 121+)
+            auto_select: true, // INTENTA LOGUEAR SIN PREGUNTAR
+            use_fedcm_for_prompt: true, // NECESARIO PARA EVITAR BLOQUEOS DE NAVEGADOR
             callback: (response) => {
                 sessionDetected = true;
-                console.log("[GoogleAuth] ✅ ¡SESIÓN DETECTADA AUTOMÁTICAMENTE!");
-                console.log("[GoogleAuth] 🆔 ID Token:", response.credential.substring(0, 30) + "...");
-
-                // 1. Ocultamos el badge informativo si existiera
+                console.log("[GoogleAuth] ✅ SESIÓN DETECTADA. No se mostró ventana.");
+                
+                // 1. Ocultamos el aviso informativo (Badge)
                 if (statusMsg) {
                     console.log("[GoogleAuth] 🪄 Ocultando badge informativo.");
                     statusMsg.style.display = 'none';
                 }
 
-                // 2. ESCRIBIMOS EL CÓDIGO AUTOMÁTICAMENTE (Aquí pones tu lógica de 'código')
+                // 2. ESCRIBIMOS EL CÓDIGO AUTOMÁTICAMENTE
                 if (inputCodigo) {
-                    console.log("[GoogleAuth] ✍️ Escribiendo código en el input automáticamente...");
-                    // Ejemplo: podrías extraer un código del token o simplemente marcar validado
-                    inputCodigo.value = "LOGUEADO_GOOGLE"; 
-                    // Si necesitas disparar un evento para que JS sepa que cambió:
+                    console.log("[GoogleAuth] ✍️ Inyectando valor en el input...");
+                    // Aquí el valor que quieras poner si se detecta la cuenta
+                    inputCodigo.value = "SESION_GOOGLE_OK"; 
                     inputCodigo.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             }
         });
 
-        console.log("[GoogleAuth] 📡 Ejecutando prompt en segundo plano...");
-
+        // Lanzamos el prompt pero con lógica de cancelación inmediata si no es automático
         google.accounts.id.prompt((notification) => {
             const moment = notification.getMomentType();
-            console.log(`[GoogleAuth] 🕒 Momento del Prompt: ${moment}`);
-
-            if (notification.isNotDisplayed()) {
-                console.log(`[GoogleAuth] ℹ️ El prompt no se mostró. Razón: ${notification.getNotDisplayedReason()}`);
-            }
+            const reason = notification.getNotDisplayedReason() || notification.getSkippedReason();
             
-            if (notification.isSkippedMoment()) {
-                console.warn(`[GoogleAuth] ⚠️ Salto de flujo (Skipped). Razón: ${notification.getSkippedReason()}`);
-                // Si la razón es 'user_cancel' o 'tap_outside', no hacemos nada, pero si es 'unknown_reason',
-                // suele ser que no hay sesión activa en el navegador.
+            console.log(`[GoogleAuth] 🕒 Estado actual: ${moment} | Detalle: ${reason}`);
+
+            // SI LA VENTANA INTENTA SALIR O SE OMITE PORQUE NO HAY SESIÓN PREVIA:
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                console.log("[GoogleAuth] 🤐 Flujo silencioso mantenido (La ventana no salió).");
             }
         });
 
-        // Verificación de seguridad tras 3.5 segundos
+        // Verificación final a los 3 segundos
         setTimeout(() => {
             if (!sessionDetected) {
-                console.log("[GoogleAuth] ❌ No se detectó sesión automática tras el tiempo de espera.");
-                console.log("[GoogleAuth] 📢 Acción: Mostrando badge informativo para acción manual.");
-                if (statusMsg) {
-                    statusMsg.style.display = 'block';
-                }
+                console.warn("[GoogleAuth] ⚠️ No se encontró sesión activa en el navegador.");
+                console.log("[GoogleAuth] 📢 Acción: Mostrando badge informativo para el usuario.");
+                if (statusMsg) statusMsg.style.display = 'block';
             } else {
-                console.log("[GoogleAuth] ✨ Proceso finalizado con éxito: Sesión inyectada.");
+                console.log("[GoogleAuth] ✨ Éxito: Código autocompletado sin intervención.");
             }
-        }, 3500);
+        }, 3000);
     };
 
     const initCarousels = () => {
