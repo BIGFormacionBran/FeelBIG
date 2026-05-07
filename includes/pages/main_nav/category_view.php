@@ -19,7 +19,6 @@ $items = $contentManager->get_items_by_category_name($page);
 <div class="container-page">
     <div class="section-header">
         <h1><?php echo htmlspecialchars($currentCat['nombre']); ?></h1>
-        <p class="subtitle"><?php echo htmlspecialchars($currentCat['descripcion'] ?? ''); ?></p>
     </div>
 
     <?php if (!empty($items)): ?>
