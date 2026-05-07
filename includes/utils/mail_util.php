@@ -33,8 +33,8 @@ class MailUtil {
 
             $htmlHeader = "
             <div style='background-color: #f8f9fa; padding: 40px 10px; font-family: sans-serif;'>
-                <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #eeeeee; overflow: hidden;'>
-                    <div style='background-color: #1a1a1a; padding: 30px; text-align: center;'>
+                <div style='max-width: 600px; margin: 0 auto; border-radius: 12px; border: 1px solid #eeeeee; overflow: hidden;'>
+                    <div style='background-color: #fff; padding: 30px; text-align: center;'>
                         <img src='$logoUrl' alt='Feel BiG' style='width: 180px; height: auto; display: block; margin: 0 auto; border: none; outline: none;'>
                     </div>
                     <div style='padding: 40px 30px; color: #fff; background-color: #010101; text-align: center;'>
