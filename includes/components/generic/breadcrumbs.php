@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__DIR__, 2) . '/includes/managers/main_manager.php';
+require_once dirname(__DIR__, 3) . '/includes/managers/main_manager.php';
 
 global $page, $routeParts;
 

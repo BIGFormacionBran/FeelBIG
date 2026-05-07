@@ -3,7 +3,7 @@ require_once __DIR__ . '/../daos/ContenidoDAO.php';
 require_once __DIR__ . '/../utils/logger_util.php';
 
 class ContentManager {
-    private $contenidoDao;
+    public $contenidoDao;
 
     public function __construct() {
         try {
@@ -14,11 +14,8 @@ class ContentManager {
         }
     }
 
-    // NUEVO MÉTODO PARA GENERAR EL MENÚ PRINCIPAL
     public function get_main_menu() {
-        Logger::info("ContentManager: Generando estructura del menú principal.");
         $categorias = $this->get_home_structure();
-        
         return array_map(function($cat) {
             return [
                 'id'    => $cat['id'],
@@ -29,53 +26,45 @@ class ContentManager {
     }
 
     public function get_home_structure() {
-        Logger::info("ContentManager: Solicitando estructura de home.");
-        $res = $this->contenidoDao->get_home_structure();
-        Logger::info("ContentManager: Se obtuvieron " . count($res) . " categorías.");
-        return $res;
+        return $this->contenidoDao->get_home_structure();
+    }
+
+    public function get_items_by_category_slug($slug) {
+        $cat = $this->contenidoDao->get_categoria_por_slug($slug);
+        return $cat ? $this->get_category_content($cat['id']) : [];
+    }
+
+    public function get_category_content($catId) {
+        $subcats = $this->contenidoDao->get_subcategorias($catId);
+        if (!empty($subcats)) {
+            return array_map([$this, 'map_category_to_card'], $subcats);
+        }
+        return $this->get_items_by_category_id($catId);
     }
 
     public function get_items_by_category_id($id) {
-        Logger::info("ContentManager: Obteniendo items para ID categoría: $id");
         $items = $this->contenidoDao->get_contenidos_by_categoria($id);
-        $mapped = array_map([$this, 'map_to_card'], $items);
-        Logger::info("ContentManager: Mapeados " . count($mapped) . " items para categoría $id.");
-        return $mapped;
-    }
-
-    public function get_items_by_category_name($catName) {
-        Logger::info("ContentManager: Buscando items por nombre de categoría: '$catName'");
-        $categorias = $this->get_home_structure();
-        $targetId = null;
-
-        foreach ($categorias as $cat) {
-            if (strtolower($cat['nombre']) === strtolower($catName)) {
-                $targetId = $cat['id'];
-                break;
-            }
-        }
-
-        if (!$targetId) {
-            Logger::error("ContentManager: No se encontró la categoría '$catName'.");
-            return [];
-        }
-
-        return $this->get_items_by_category_id($targetId);
+        return array_map([$this, 'map_to_card'], $items);
     }
 
     public function get_item_by_name($name) {
-        Logger::info("ContentManager: Buscando item por nombre: '$name'");
         $row = $this->contenidoDao->get_contenido_por_nombre($name);
-        if (!$row) {
-            Logger::error("ContentManager: Item '$name' no encontrado.");
-            return null;
-        }
-        return $this->map_to_card($row);
+        return $row ? $this->map_to_card($row) : null;
     }
 
     public function get_category_by_item_id($itemId) {
-        Logger::info("ContentManager: Buscando categoría del item ID: $itemId");
         return $this->contenidoDao->get_categoria_por_item_id($itemId);
+    }
+
+    private function map_category_to_card($cat) {
+        return [
+            'id'    => $cat['id'],
+            'name'  => $cat['nombre'],
+            'type'  => 'category',
+            'img'   => 'default_category.png', 
+            'badge' => 'Sección',
+            'slug'  => str_replace(' ', '-', strtolower($cat['nombre']))
+        ];
     }
 
     public function map_to_card($row) {
@@ -86,11 +75,7 @@ class ContentManager {
             'img'         => $row['imagen'],
             'badge'       => $row['clasificacion'],
             'description' => $row['descripcion_breve'],
-            'fecha'       => $row['fecha_publicacion'],
-            'extra_info'  => array_filter([
-                "Publicado" => $row['fecha_publicacion'],
-                "Video"     => !empty($row['video']) ? "Disponible" : null
-            ])
+            'fecha'       => $row['fecha_publicacion']
         ];
     }
 }

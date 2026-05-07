@@ -58,13 +58,18 @@ class MainManager {
     public function get_breadcrumbs($currentPage, $routeParts) {
         Logger::info("MainManager: Generando breadcrumbs para $currentPage");
         if (in_array($currentPage, ['home', 'login', 'registro', 'configuracion'])) return null;
+        
         $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
+        
         if ($currentPage === 'individual_view' && isset($routeParts[1])) {
             $categorySlug = $routeParts[0];
-            $itemSlug = $routeParts[1];
+            $itemSlug = urldecode($routeParts[1]);
+            
             $categoryTitle = ucwords(str_replace('-', ' ', $categorySlug));
+            $itemTitle = ucwords(str_replace('-', ' ', $itemSlug));
+            
             $breadcrumbs[] = ['title' => $categoryTitle, 'link' => '/' . $categorySlug];
-            $breadcrumbs[] = ['title' => str_replace('-', ' ', $itemSlug), 'link' => null];
+            $breadcrumbs[] = ['title' => $itemTitle, 'link' => null];
         } else {
             $breadcrumbs[] = ['title' => ucwords(str_replace('-', ' ', $currentPage)), 'link' => null];
         }

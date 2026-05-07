@@ -1,5 +1,7 @@
 <?php
 function render_card_item_util($item) {
+
+    $link = ($item['type'] === 'category') ? '/' . $item['slug'] : render_individual_page($item);
     ?>
     <div class="card-item">
         <div class="thumb">
@@ -15,7 +17,7 @@ function render_card_item_util($item) {
                     <p class="card-date"><strong>Fecha:</strong> <?php echo $item['fecha']; ?></p>
                 <?php endif; ?>
             </div>
-            <a href="<?php echo render_individual_page($item); ?>">
+            <a href="<?php echo $link; ?>">
                 <div class="btn-primario btn-card">MÁS INFORMACIÓN</div>
             </a>
         </div>
