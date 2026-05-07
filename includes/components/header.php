@@ -1,18 +1,14 @@
 <?php 
 require_once __DIR__ . '/../managers/content_manager.php';
 
-// Cambiamos el Manager para usar ContentManager en lugar de MainManager
 $manager = new ContentManager();
 $menuItems = $manager->get_main_menu();
 
-// Determinamos qué categoría debe estar activa
 $activeSlug = '';
 if (isset($page)) {
     if ($page === 'individual_view' && isset($routeParts[0])) {
-        // Si estamos en un contenido, activamos el padre (ej: /minijuegos/poker -> activa minijuegos)
         $activeSlug = $routeParts[0];
     } else {
-        // Si estamos en la lista de categoría
         $activeSlug = $page;
     }
 }

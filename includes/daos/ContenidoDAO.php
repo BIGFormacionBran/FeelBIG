@@ -9,10 +9,10 @@ class ContenidoDAO {
     }
 
     public function get_home_structure() {
-        $sql = "SELECT DISTINCT C.id, C.nombre FROM CATEGORIA C
-                INNER JOIN CONTENIDO CONT ON C.id = CONT.id_categoria
-                WHERE C.id_padre IS NULL
-                ORDER BY C.id ASC";
+        // Quitamos el INNER JOIN para que BiG Fit aparezca aunque su contenido esté en una hija
+        $sql = "SELECT id, nombre FROM CATEGORIA 
+                WHERE id_padre IS NULL 
+                ORDER BY id ASC";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
