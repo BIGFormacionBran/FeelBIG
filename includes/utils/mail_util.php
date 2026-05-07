@@ -32,7 +32,7 @@ class MailUtil {
             $logoUrl = "https://feelbigpre.bigformacion.com/assets/img/logo.png";
 
             $htmlHeader = "
-            <div style='background-color: #f8f9fa; padding: 40px 10px; font-family: sans-serif;'>
+            <div style='background-color: #d3d3d3; padding: 40px 10px; font-family: sans-serif; border-radius: 12px;'>
                 <div style='max-width: 600px; margin: 0 auto; border-radius: 12px; border: 1px solid #eeeeee; overflow: hidden;'>
                     <div style='background-color: #fff; padding: 30px; text-align: center;'>
                         <img src='$logoUrl' alt='Feel BiG' style='width: 180px; height: auto; display: block; margin: 0 auto; border: none; outline: none;'>
