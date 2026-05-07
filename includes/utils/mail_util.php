@@ -35,7 +35,7 @@ class MailUtil {
             <div style='background-color: #d3d3d3; padding: 40px 10px; font-family: sans-serif; border-radius: 12px;'>
                 <div style='max-width: 600px; margin: 0 auto; border-radius: 12px; border: 1px solid #eeeeee; overflow: hidden;'>
                     <div style='background-color: #fff; padding: 30px; text-align: center;'>
-                        <img src='$logoUrl' alt='Feel BiG' style='width: 180px; height: auto; display: block; margin: 0 auto; border: none; outline: none;'>
+                        <img src='$logoUrl' alt='Feel BiG' style='width: 180px; height: auto; display: block; margin: 0 auto; -ms-interpolation-mode: bicubic;'>
                     </div>
                     <div style='padding: 40px 30px; color: #fff; background-color: #010101; text-align: center;'>
                         <div style='font-size: 20px; font-weight: bold; margin-bottom: 20px; text-align: center;'>¡Hola, " . htmlspecialchars($nombreUsuario) . "!</div>
