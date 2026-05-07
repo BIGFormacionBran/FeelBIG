@@ -29,11 +29,6 @@ class ContentManager {
         return $this->contenidoDao->get_home_structure();
     }
 
-    public function get_items_by_category_slug($slug) {
-        $cat = $this->contenidoDao->get_categoria_por_slug($slug);
-        return $cat ? $this->get_category_content($cat['id']) : [];
-    }
-
     public function get_category_content($catId) {
         $subcats = $this->contenidoDao->get_subcategorias($catId);
         if (!empty($subcats)) {
@@ -45,6 +40,12 @@ class ContentManager {
     public function get_items_by_category_id($id) {
         $items = $this->contenidoDao->get_contenidos_by_categoria($id);
         return array_map([$this, 'map_to_card'], $items);
+    }
+
+    // Este es el método que pedía el log de errores
+    public function get_items_by_category_name($catNameOrSlug) {
+        $cat = $this->contenidoDao->get_categoria_por_slug($catNameOrSlug);
+        return $cat ? $this->get_category_content($cat['id']) : [];
     }
 
     public function get_item_by_name($name) {

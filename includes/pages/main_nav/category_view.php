@@ -4,7 +4,7 @@ require_once 'includes/utils/card_render_util.php';
 
 $contentManager = new ContentManager();
 
-// 1. Buscamos la info de la categoría directamente por el slug
+// 1. Buscamos la categoría por el slug que viene en la URL ($page)
 $currentCat = $contentManager->contenidoDao->get_categoria_por_slug($page);
 
 if (!$currentCat) {
@@ -12,8 +12,8 @@ if (!$currentCat) {
     return;
 }
 
-// 2. Traemos los items usando el slug para que el manager decida si son subcats o contenidos
-$items = $contentManager->get_items_by_category_slug($page);
+// 2. Traemos los items usando el método compatible
+$items = $contentManager->get_items_by_category_name($page);
 ?>
 
 <div class="container-page">

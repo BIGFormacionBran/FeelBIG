@@ -17,7 +17,6 @@ class ContenidoDAO {
     }
 
     public function get_subcategorias($id_padre) {
-        if (!$id_padre) return [];
         $stmt = $this->db->prepare("SELECT * FROM CATEGORIA WHERE id_padre = ?");
         $stmt->execute([$id_padre]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
