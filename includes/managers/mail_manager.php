@@ -4,6 +4,8 @@ require_once __DIR__ . '/../utils/mail_util.php';
 class MailManager {
     public function enviarConfirmacionRegistro($correo, $nombre, $codigo) {
         $asunto = "Código de verificación: $codigo - Feel BiG";
+
+        $iconoAlertaBase64 = "PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCc+PHBhdGggZmlsbD0nIzg1NjQwNCcgZD0nTTEyIDJMMSAyMWgyMkwxMiAyem0wIDMuOTlMMTkuNTMgMTlINC40N0wxMiA1Ljk5ek0xMSAxNmgydjJoLTJ6bTAtNmgydjRoLTInLz48L3N2Zz4=";
         
         $mensaje = "
             <div style='font-size: 16px; line-height: 1.6;'>
@@ -14,11 +16,14 @@ class MailManager {
                     <div style='font-size: 36px; font-weight: 800; letter-spacing: 6px; color: #159BD7; font-family: monospace;'>$codigo</div>
                 </div>
             </div>
-            <div style='display: flex; flex-flow: row; align-items: center; justify-content: center; font-size: 14px; color: #999999; background: #fff9e6; padding: 10px 0; border-radius: 6px;'>
-                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' style='width: 30px; height: auto; margin-right: 8px; fill: #856404;'>
-                    <path d='M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z'/>
-                </svg> Este código es válido únicamente durante <b>1 hora</b>.
-            </div>
+            <table role='presentation' width='100%' cellspacing='0' cellpadding='0' border='0' style='background-color: #fff9e6; border-radius: 6px;'>
+                <tr>
+                    <td style='padding: 10px; text-align: center; vertical-align: middle;'>
+                        <img src='data:image/svg+xml;base64,$iconoAlertaBase64' width='20' height='20' style='vertical-align: middle; margin-right: 5px;'>
+                        <span style='font-size: 14px; color: #856404; vertical-align: middle;'>Este código es válido únicamente durante <b>1 hora</b>.</span>
+                    </td>
+                </tr>
+            </table>
         ";
         
         return MailUtil::enviar($correo, $asunto, $mensaje, $nombre);
