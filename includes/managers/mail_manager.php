@@ -18,9 +18,9 @@ class MailManager {
             </div>
             <table role='presentation' width='100%' cellspacing='0' cellpadding='0' border='0' style='background-color: #fff9e6; border-radius: 6px;'>
                 <tr>
-                    <td style='padding: 10px; text-align: center; vertical-align: middle;'>
-                        <img src='data:image/svg+xml;base64,$iconoAlertaBase64' width='20' height='20' style='vertical-align: middle; margin-right: 5px;'>
-                        <span style='font-size: 14px; color: #856404; vertical-align: middle;'>Este código es válido únicamente durante <b>1 hora</b>.</span>
+                    <td style='padding: 12px; text-align: center; color: #856404;'>
+                        <span style='font-size: 18px; vertical-align: middle; margin-right: 5px;'>⚠️</span>
+                        <span style='font-size: 14px; vertical-align: middle;'>Este código es válido únicamente durante <b>1 hora</b>.</span>
                     </td>
                 </tr>
             </table>
