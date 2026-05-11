@@ -42,7 +42,7 @@ function get_page_config_manager($page) {
         // Si hay una segunda parte en la URL, es un contenido individual dentro de esta categoría
         if (count($routeParts) >= 2) {
             return [
-                'path'    => 'includes/pages/main_nav/individual_view.php',
+                'path'    => 'includes/pages/individual_view.php',
                 'title'   => ucwords(str_replace('-', ' ', urldecode($routeParts[1]))),
                 'is_root' => false
             ];
