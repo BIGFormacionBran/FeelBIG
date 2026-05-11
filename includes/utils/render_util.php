@@ -25,7 +25,8 @@ function render_page_layout_manager($page, $pageConfig, $auth_pages) {
     } else {
         include 'includes/components/header.php';
         echo '<div class="main-content-wrapper">';
-            if (!$pageConfig['is_root'] && $page !== 'error') {
+        $isErrorPage = (strpos($pageConfig['path'], 'error.php') !== false);
+            if (!$pageConfig['is_root'] && !$isErrorPage) {
                 include 'includes/components/generic/breadcrumbs.php';
             }
             include $pageConfig['path'];

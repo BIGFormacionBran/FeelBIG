@@ -3,8 +3,8 @@ require_once __DIR__ . '/content_manager.php';
 
 function get_page_config_manager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
-    $errorCode = $GLOBALS['routeParts'][1] ?? '404';
 
+    $errorCode = $GLOBALS['routeParts'][1] ?? '404';
     if ($page === 'error') {
         return [
             'path'       => 'includes/pages/error.php',
@@ -17,20 +17,14 @@ function get_page_config_manager($page) {
     // 1. ESCANEO AUTOMÁTICO DE ARCHIVOS
     
     $fileToLoad = null;
-
     if (file_exists($baseDir . $page . '.php')) {
         $fileToLoad = 'includes/pages/' . $page . '.php';
-    } 
-    // Manejo de las 3 páginas que usan auth_view de forma automática
-    elseif (in_array($page, ['login', 'registro', 'confirmacion'])) {
+    } elseif (in_array($page, ['login', 'registro', 'confirmacion'])) {
         $fileToLoad = 'includes/pages/auth_view.php';
-    }
-    // Si entras a la raíz o pones home
-    elseif ($page === 'home' || empty($page)) {
+    } elseif ($page === 'home' || empty($page)) {
         $fileToLoad = 'includes/pages/home.php';
     }
 
-    // Si encontramos el archivo físicamente, lo devolvemos
     if ($fileToLoad) {
         return [
             'path'    => $fileToLoad,
@@ -54,15 +48,10 @@ function get_page_config_manager($page) {
     }
 
     // 3. AUTO-FALLBACK
-    if ($page !== 'error') {
-        header("Location: /error/404");
-        exit();
-    }
-
     return [
         'path'       => 'includes/pages/error.php',
         'title'      => 'Error 404',
-        'is_root'    => false,
+        'is_root'    => false, // Importante para que el layout manager sepa qué hacer
         'error_code' => '404'
     ];
 }
