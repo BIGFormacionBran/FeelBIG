@@ -619,6 +619,14 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     font-size: 12px;
 }
 
+.error-container {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 0 auto;
+}
+
 /* --- ANIMACIONES --- */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
