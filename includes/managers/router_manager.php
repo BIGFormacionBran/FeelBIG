@@ -54,6 +54,11 @@ function get_page_config_manager($page) {
     }
 
     // 3. AUTO-FALLBACK
+    if ($page !== 'error') {
+        header("Location: /error/404");
+        exit();
+    }
+
     return [
         'path'       => 'includes/pages/error.php',
         'title'      => 'Error 404',
