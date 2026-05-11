@@ -19,7 +19,7 @@ function get_page_config_manager($page) {
     $fileToLoad = null;
     if (file_exists($baseDir . $page . '.php')) {
         $fileToLoad = 'includes/pages/' . $page . '.php';
-    } elseif (in_array($page, ['login', 'registro', 'confirmacion'])) {
+    } elseif (in_array($page, ['login', 'register', 'register-confirm'])) {
         $fileToLoad = 'includes/pages/auth_view.php';
     } elseif ($page === 'home' || empty($page)) {
         $fileToLoad = 'includes/pages/home.php';
