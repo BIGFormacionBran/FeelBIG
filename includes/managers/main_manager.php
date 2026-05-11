@@ -57,7 +57,7 @@ class MainManager {
 
     public function get_breadcrumbs($currentPage, $routeParts) {
         Logger::info("MainManager: Generando breadcrumbs para $currentPage");
-        if (in_array($currentPage, ['home', 'login', 'registro', 'configuracion'])) return null;
+        if (in_array($currentPage, ['home', 'login', 'registro', 'configuracion', 'error'])) return null;
         
         $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
         

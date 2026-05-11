@@ -3,10 +3,18 @@ require_once __DIR__ . '/content_manager.php';
 
 function get_page_config_manager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
+    $errorCode = $GLOBALS['routeParts'][1] ?? '404';
+
+    if ($page === 'error') {
+        return [
+            'path'       => 'includes/pages/error.php',
+            'title'      => 'Error ' . $errorCode,
+            'is_root'    => false,
+            'error_code' => $errorCode
+        ];
+    }
     
     // 1. ESCANEO AUTOMÁTICO DE ARCHIVOS
-    // Buscamos si existe un archivo que se llame como la ruta (ej: /login -> login.php)
-    // O si es una ruta compartida que ya gestiona internamente la vista (como auth_view.php)
     
     $fileToLoad = null;
 
@@ -47,8 +55,9 @@ function get_page_config_manager($page) {
 
     // 3. AUTO-FALLBACK
     return [
-        'path'    => 'includes/pages/home.php',
-        'title'   => 'Home',
-        'is_root' => true
+        'path'       => 'includes/pages/error.php',
+        'title'      => 'Error 404',
+        'is_root'    => false,
+        'error_code' => '404'
     ];
 }
