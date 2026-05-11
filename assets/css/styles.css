@@ -627,12 +627,14 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     background-color: var(--color-blanco);
     border-radius: 12px;
     margin: 0 auto;
-    padding: 20px 0;
-    max-width: 500px;
+    padding: 50px 0;
+    max-width: 400px;
 }
 
 .error-header {
     font-size: 50px;
+    font-weight: bold;
+    text-align: center;
     color: var(--color-principal);
 }
 
