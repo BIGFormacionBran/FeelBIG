@@ -14,8 +14,7 @@ function render_individual_page($item = null) {
     $itemNameFromUrl = isset($routeParts[1]) ? urldecode($routeParts[1]) : null;
 
     // Corregido: Validamos que no sea una petición de recurso estático antes de buscar en DB
-    $invalidNames = ['img', 'assets', 'css', 'js', 'favicon.ico'];
-    
+    $invalidNames = ['img', 'assets', 'css', 'js', 'favicon.ico'];    
     if ($itemNameFromUrl && !in_array(strtolower($itemNameFromUrl), $invalidNames)) {
         $foundItem = $contentManager->get_item_by_name($itemNameFromUrl);
         if ($foundItem) {

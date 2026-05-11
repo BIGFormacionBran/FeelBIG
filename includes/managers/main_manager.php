@@ -1,18 +1,21 @@
 <?php
 require_once __DIR__ . '/../daos/UsuarioDAO.php';
 require_once __DIR__ . '/../daos/RegistroPendienteDAO.php';
+require_once __DIR__ . '/../daos/ContenidoDAO.php';
 require_once __DIR__ . '/mail_manager.php';
 require_once __DIR__ . '/../utils/logger_util.php';
 
 class MainManager {
     private $usuarioDao;
     private $registroPendienteDao; 
+    private $contenidoDao;
     private $mailManager;
     
     public function __construct() {
         Logger::info("MainManager: Inicializando manager principal.");
         $this->usuarioDao = new UsuarioDAO();
         $this->registroPendienteDao = new RegistroPendienteDAO(); 
+        $this->contenidoDao = new ContenidoDAO();
         $this->mailManager = new MailManager();
     }
 
@@ -60,18 +63,27 @@ class MainManager {
         if (in_array($currentPage, ['home', 'login', 'register', 'configuracion', 'error'])) return null;
         
         $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
+        $currentSlug = ($currentPage === 'individual_view') ? ($routeParts[0] ?? null) : $currentPage;
         
-        if ($currentPage === 'individual_view' && isset($routeParts[1])) {
-            $categorySlug = $routeParts[0];
-            $itemSlug = urldecode($routeParts[1]);
-            
-            $categoryTitle = ucwords(str_replace('-', ' ', $categorySlug));
-            $itemTitle = ucwords(str_replace('-', ' ', $itemSlug));
-            
-            $breadcrumbs[] = ['title' => $categoryTitle, 'link' => '/' . $categorySlug];
-            $breadcrumbs[] = ['title' => $itemTitle, 'link' => null];
-        } else {
-            $breadcrumbs[] = ['title' => ucwords(str_replace('-', ' ', $currentPage)), 'link' => null];
+        if ($currentSlug) {
+            $catData = $this->contenidoDao->get_categoria_por_slug($currentSlug);
+            if ($catData) {
+                if (!empty($catData['id_padre'])) {
+                    $parent = $this->contenidoDao->get_categoria_por_id($catData['id_padre']);
+                    if ($parent) {
+                        $parentSlug = strtolower(str_replace(' ', '-', $parent['nombre']));
+                        $breadcrumbs[] = ['title' => $parent['nombre'], 'link' => '/' . $parentSlug];
+                    }
+                }
+
+                $hasLink = ($currentPage === 'individual_view');
+                $breadcrumbs[] = ['title' => $catData['nombre'], 'link' => $hasLink ? '/' . $currentSlug : null];
+
+                if ($currentPage === 'individual_view' && isset($routeParts[1])) {
+                    $itemTitle = ucwords(str_replace('-', ' ', urldecode($routeParts[1])));
+                    $breadcrumbs[] = ['title' => $itemTitle, 'link' => null];
+                }
+            }
         }
         return $breadcrumbs;
     }

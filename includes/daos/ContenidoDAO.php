@@ -42,6 +42,12 @@ class ContenidoDAO {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function get_categoria_por_id($id) {
+        $stmt = $this->db->prepare("SELECT * FROM CATEGORIA WHERE id = ? LIMIT 1");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function get_categoria_por_item_id($itemId) {
         $stmt = $this->db->prepare("
             SELECT C.* FROM CATEGORIA C 
