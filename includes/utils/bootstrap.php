@@ -27,7 +27,11 @@ require_once $base_path . '/includes/managers/main_manager.php';
 
 // 3. Lógica de Enrutamiento
 $rawRoute = $_GET['route'] ?? 'home';
-$cleanRoute = trim($rawRoute, '/');
+if (isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] >= 400) {
+    $cleanRoute = 'error/' . $_SERVER['REDIRECT_STATUS'];
+} else {
+    $cleanRoute = trim($rawRoute, '/');
+}
 
 // Lógica de reenvío de código
 if ($cleanRoute === 'resend-code') {
@@ -55,11 +59,11 @@ global $routeParts;
 $routeParts = explode('/', $cleanRoute);
 $page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
 
-if (count($routeParts) >= 2) {
+if (count($routeParts) >= 2 && $page !== 'error') {
     $page = 'individual_view';
 }
 
-$auth_pages = ['login', 'register', 'register-confirm'];
+$auth_pages = ['login', 'register', 'register-confirm', 'error'];
 
 // 4. Lógica de Sesión
 if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages)) {

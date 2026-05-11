@@ -4,8 +4,8 @@ require_once __DIR__ . '/content_manager.php';
 function get_page_config_manager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
 
-    $errorCode = $GLOBALS['routeParts'][1] ?? '404';
     if ($page === 'error') {
+        $errorCode = $GLOBALS['routeParts'][1] ?? '404';
         return [
             'path'       => 'includes/pages/error.php',
             'title'      => 'Error ' . $errorCode,
