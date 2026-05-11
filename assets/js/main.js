@@ -72,15 +72,25 @@
         const sections = document.querySelectorAll('.feelbig-swiper-section');
         sections.forEach((container) => {
             const swiperEl = container.querySelector('.swiper-feelbig-generic');
+            
+            // Verificamos existencia y si ya está inicializado
             if (swiperEl && window.Swiper && !swiperEl.classList.contains('swiper-initialized')) {
+                
+                // CONTAR SLIDES: Si hay pocos, el loop dará error
+                const slideCount = swiperEl.querySelectorAll('.swiper-slide').length;
+                
+                // Configuración dinámica
+                const shouldLoop = slideCount > 3; // Solo hace loop si hay más de 3 items
+
                 new Swiper(swiperEl, {
                     slidesPerView: 'auto',
                     spaceBetween: 30,
-                    centeredSlides: true,
-                    loop: true,
-                    loopedSlides: 5,
+                    centeredSlides: shouldLoop, // Solo centramos si hay loop
+                    loop: shouldLoop,
+                    // Si no hay loop, quitamos los loopedSlides para evitar conflictos
+                    ...(shouldLoop && { loopedSlides: 5 }), 
                     speed: 800,
-                    autoplay: { delay: 3000, disableOnInteraction: false },
+                    autoplay: shouldLoop ? { delay: 3000, disableOnInteraction: false } : false,
                     navigation: {
                         nextEl: container.querySelector('.swiper-button-next'),
                         prevEl: container.querySelector('.swiper-button-prev'),
@@ -92,6 +102,12 @@
                     observer: true,
                     observeParents: true
                 });
+
+                // Ocultar flechas si no hay suficientes diapositivas
+                if (slideCount <= 1) {
+                    const navButtons = container.querySelectorAll('.btn-nav-feelbig');
+                    navButtons.forEach(btn => btn.style.display = 'none');
+                }
             }
         });
     };
