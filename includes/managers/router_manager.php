@@ -14,8 +14,7 @@ function get_page_config_manager($page) {
         ];
     }
     
-    // 1. ESCANEO AUTOMÁTICO DE ARCHIVOS
-    
+    // 1. ESCANEO AUTOMÁTICO DE ARCHIVOS    
     $fileToLoad = null;
     if (file_exists($baseDir . $page . '.php')) {
         $fileToLoad = 'includes/pages/' . $page . '.php';
@@ -35,16 +34,23 @@ function get_page_config_manager($page) {
 
     // 2. BUSQUEDA AUTOMÁTICA EN BASE DE DATOS (Categorías)
     $manager = new ContentManager();
-    $menu = $manager->get_main_menu();
+    $catData = $manager->contenidoDao->get_categoria_por_slug($page);
 
-    foreach ($menu as $cat) {
-        if ($cat['slug'] === $page) {
+    if ($catData) {
+        // Si hay una segunda parte en la URL, es un contenido individual dentro de esta categoría
+        if (count($routeParts) >= 2) {
             return [
-                'path'    => 'includes/pages/main_nav/category_view.php',
-                'title'   => $cat['title'],
+                'path'    => 'includes/pages/main_nav/individual_view.php',
+                'title'   => ucwords(str_replace('-', ' ', urldecode($routeParts[1]))),
                 'is_root' => false
             ];
         }
+        // Si no hay segunda parte, cargamos la vista de categoría/grid
+        return [
+            'path'    => 'includes/pages/main_nav/category_view.php',
+            'title'   => $catData['nombre'],
+            'is_root' => false
+        ];
     }
 
     // 3. AUTO-FALLBACK
