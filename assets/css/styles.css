@@ -397,6 +397,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .section-header {
     margin: 0 0 40px;
+    text-align: center;
 }
 
 .section-header h1 {
