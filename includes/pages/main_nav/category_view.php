@@ -24,7 +24,7 @@ $items = $contentManager->get_items_by_category_name($page);
     <?php if (!empty($items)): ?>
         <div class="category-grid-layout">
             <?php foreach ($items as $item): ?>
-                <?php render_card_item_util($item); ?>
+                <?php render_card_item_row($item); ?>
             <?php endforeach; ?>
         </div>
     <?php else: ?>

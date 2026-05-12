@@ -460,7 +460,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 }
 
 /* Hover, Focus y Active para Flechas */
-.btn-nav-feelbig:hover, .btn-nav-feelbig:focus {
+.btn-nav-feelbig:hover {
     background: var(--color-principal) !important;
     color: var(--color-blanco) !important;
 }
@@ -644,9 +644,115 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* --- ESTILOS DE CARDS (COLUMNA Y FILA) --- */
+
+/* CARD COLUMNA (Vertical) */
+.card-column {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    background: var(--color-blanco);
+    border-radius: var(--radio);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.card-img-wrapper {
+    width: 100%;
+    position: relative;
+    aspect-ratio: 16/9;
+}
+
+.card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-badge-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--color-principal);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.card-body-col {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.card-desc {
+    font-size: 13px;
+    color: var(--color-texto-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* CARD ROW (Horizontal) */
+.card-row {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-evenly;
+    background: var(--color-blanco);
+    border-radius: var(--radio);
+    padding: 15px 25px;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.card-row-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.card-row-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-row-content h4 { margin: 0 0 5px 0; }
+
+.card-row-action {
+    flex-shrink: 0;
+}
+
+.btn-card-col, .btn-card-row {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 12px;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .nav-menu { display: none; }
     .info-container-global { flex-direction: column; text-align: center; gap: 10px; }
     .btn-nav-feelbig { display: none; } /* Ocultar flechas en móvil para ganar espacio */
+    
+    .card-row {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
 }
