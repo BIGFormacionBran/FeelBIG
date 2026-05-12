@@ -206,6 +206,15 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-texto);
 }
 
+#inputCodigo {
+    letter-spacing: 12px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    background-color: #f9f9f9;
+    text-transform: uppercase;
+}
+
 /* --- AUTH WRAPPER (LOGIN/REGISTRO) --- */
 .auth-wrapper {
     display: flex;
@@ -352,6 +361,14 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     margin: 15px 0;
 }
 
+.enlace-personalizado {
+    display: inline-block;
+    color: var(--color-principal);
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
 .enlace-bold {
     font-weight: 700;
 }
@@ -359,14 +376,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .enlace-muted {
     font-size: 12px;
     opacity: 0.7;
-}
-
-.enlace-personalizado {
-    display: inline-block;
-    color: var(--color-principal);
-    font-weight: 500;
-    font-size: 14px;
-    transition: all 0.3s ease;
 }
 
 .enlace-personalizado:hover { color: var(--color-secundario); transform: translateY(-2px);}
