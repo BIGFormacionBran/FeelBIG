@@ -331,12 +331,12 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 14px;
+    padding: 10px 20px;
     background-color: var(--color-principal);
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     margin-top: 10px;
@@ -793,12 +793,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .card-row-action {
     flex-shrink: 0;
-}
-
-.btn-card-row {
-    width: auto;
-    padding: 10px 20px;
-    font-size: 12px;
 }
 
 /* --- RESPONSIVE --- */
