@@ -761,7 +761,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     display: flex;
     flex-flow: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     background: var(--color-blanco);
     border-radius: var(--radio);
     padding: 15px;
