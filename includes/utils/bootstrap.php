@@ -64,6 +64,10 @@ $auth_pages = ['login', 'register', 'register-confirm'];
 $pageConfig = get_page_config_manager($page);
 $isError = isset($pageConfig['error_code']);
 
+if ($isError && is_numeric($pageConfig['error_code'])) {
+    http_response_code($pageConfig['error_code']);
+}
+
 // 4. Lógica de Sesión
 if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages) && !$isError) {
     header("Location: /login");

@@ -1,6 +1,5 @@
 <?php
 $errorCode = $pageConfig['error_code'] ?? '404';
-if(is_numeric($errorCode)) http_response_code($errorCode);
 
 $destinoError = isset($_SESSION['user_id']) ? '/home' : '/login';
 $textoBoton = isset($_SESSION['user_id']) ? 'Volver al Inicio' : 'Ir al Login';
