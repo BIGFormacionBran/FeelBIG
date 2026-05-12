@@ -52,7 +52,7 @@ if ($error_code === '1') {
 
             <form action="<?php echo $action; ?>" method="POST">
                 <?php if ($is_confirmacion): ?>
-                    <p>
+                    <p class="muted-text">
                         Introduce el código enviado a:<br>
                         <strong><?php echo htmlspecialchars($_SESSION['temp_email'] ?? ''); ?></strong>
                     </p>
@@ -88,16 +88,16 @@ if ($error_code === '1') {
                 <button type="submit" class="btn-primario"><?php echo $btn_text; ?></button>
 
                 <div class="auth-footer-links">
-                    <?php if (!$is_confirmacion): ?>
-                        <a href="/<?php echo $is_registro ? 'login' : 'register'; ?>" class="enlace-personalizado">
+                    <?php if ($is_confirmacion): ?>
+                        <p class="muted-text">¿No has recibido ningún correo?</p>
+                        <a href="/resend-code" class="enlace-personalizado enlace-bold">Reenviar código de confirmación</a>
+                        <div>
+                            <a href="/register" class="enlace-personalizado enlace-muted">Volver al registro</a>
+                        </div>
+                    <?php else: ?>
+                        <a href="/<?php echo $is_registro ? 'login' : 'register'; ?>" class="enlace-personalizado enlace-muted">
                             <?php echo $is_registro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'; ?>
                         </a>
-                    <?php else: ?>
-                        <p>¿No has recibido ningún correo?</p>
-                        <a href="/resend-code" class="enlace-personalizado">Reenviar código de confirmación</a>
-                        <div>
-                            <a href="/register" class="enlace-personalizado">Volver al registro</a>
-                        </div>
                     <?php endif; ?>
                 </div>
             </form>
