@@ -241,6 +241,17 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     letter-spacing: -0.5px;
 }
 
+#google-status-msg {
+    color: #856404;
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-bottom: 15px;
+    text-align: center;
+    border: 1px solid #ffeeba;
+}
+
 /* Estilos para el banner de error que antes eran inline */
 .error-banner {
     color: #ff4d4d; 
@@ -403,25 +414,32 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     align-items: center;
     gap: 15px;
     width: 100%;
+    max-width: 1300px; /* Limitamos ancho máximo */
+    margin: 0 auto;
 }
 
 .swiper-feelbig-generic {
     flex: 1;
     overflow: hidden;
-    padding: 15px 0;
+    padding: 20px 10px 40px 10px; /* Padding extra para sombras de cards */
 }
 
-.swiper-slide { width: 320px; display: flex; justify-content: center; }
+/* Forzamos que los slides de Swiper tengan un tamaño consistente */
+.swiper-slide { 
+    height: auto; 
+    display: flex; 
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
 
 /* --- FLECHAS Y BOTONES CORREGIDOS --- */
 
-/* Flechas Circulares (con ::after en lugar de SVG) */
 .btn-nav-feelbig {
     position: relative !important;
-    width: 50px !important;
-    height: 50px !important;
+    width: 44px !important;
+    height: 44px !important;
     background: var(--color-blanco) !important;
-    border: 2px solid var(--color-principal) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center;
@@ -432,79 +450,59 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     margin: 0 !important;
     flex-shrink: 0;
     z-index: 10;
-    color: var(--color-principal);
+    color: var(--color-texto);
+    box-shadow: var(--shadow-sm);
 }
 
-/* Dibujo de la flecha con bordes */
 .btn-nav-feelbig::after {
     content: '' !important;
     display: block;
-    width: 12px;
-    height: 12px;
-    border-left: 3px solid currentColor;
-    border-bottom: 3px solid currentColor;
-    transition: var(--transition);
-    position: static !important; /* Anula el absolute de Swiper */
+    width: 10px;
+    height: 10px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    position: static !important;
 }
 
-/* Orientación Izquierda */
 .swiper-button-prev.btn-nav-feelbig::after {
     transform: rotate(45deg);
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
-/* Orientación Derecha */
 .swiper-button-next.btn-nav-feelbig::after {
     transform: rotate(-135deg);
-    margin-right: 5px;
+    margin-right: 4px;
 }
 
-/* Hover, Focus y Active para Flechas */
 .btn-nav-feelbig:hover {
     background: var(--color-principal) !important;
     color: var(--color-blanco) !important;
+    border-color: var(--color-principal) !important;
+    box-shadow: 0 4px 10px var(--color-principal-soft);
 }
 
-.btn-nav-feelbig:active {
-    transform: scale(0.92);
-}
-
-/* Botones de Paginación (Puntos) */
+/* Puntos de paginación */
 .swiper-pagination-custom {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-top: 30px;
-    position: relative; /* Asegura que esté en el flujo */
-    z-index: 10;
+    gap: 8px;
+    margin-top: 10px;
 }
 
-/* Estilo de los puntos */
 .swiper-pagination-custom .swiper-pagination-bullet {
-    width: 14px;
-    height: 14px;
-    background: transparent;
-    border: 2px solid var(--color-principal);
+    width: 8px;
+    height: 8px;
+    background: var(--color-border);
     border-radius: 50%;
     opacity: 1;
     cursor: pointer;
     transition: var(--transition);
-    margin: 0 !important;
-    box-sizing: border-box;
 }
 
-/* Hover y Active para Puntos */
-.swiper-pagination-custom .swiper-pagination-bullet:hover {
-    background: var(--color-principal-soft);
-}
-
-.swiper-pagination-custom .swiper-pagination-bullet:active {
-    transform: scale(0.85);
-}
-
-/* Punto Activo (Relleno) */
 .swiper-pagination-custom .swiper-pagination-bullet-active {
     background: var(--color-principal) !important;
+    width: 24px;
+    border-radius: 4px;
 }
 
 /* --- VISTA INDIVIDUAL (TIPO CREISS) --- */
@@ -650,56 +648,84 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .card-column {
     display: flex;
     flex-flow: column;
-    align-items: center;
     background: var(--color-blanco);
     border-radius: var(--radio);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: var(--transition);
     width: 100%;
-    max-width: 320px;
-    text-align: center;
+    height: 100%; /* Para que todas midan lo mismo en el carrusel */
+}
+
+.card-column:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
 }
 
 .card-img-wrapper {
     width: 100%;
     position: relative;
-    aspect-ratio: 16/9;
+    aspect-ratio: 4/3;
+    overflow: hidden;
 }
 
 .card-img-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card-column:hover .card-img-wrapper img {
+    transform: scale(1.05);
 }
 
 .card-badge-tag {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 12px;
+    left: 12px;
     background: var(--color-principal);
     color: white;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
 }
 
 .card-body-col {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 100%;
+    flex-grow: 1; /* Empuja el botón al fondo */
+    text-align: left;
+}
+
+.card-body-col h4 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-texto);
+    line-height: 1.3;
 }
 
 .card-desc {
     font-size: 13px;
     color: var(--color-texto-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.btn-card-col {
+    margin-top: auto; /* Alinea el botón siempre abajo */
+    font-size: 12px;
+    padding: 10px;
 }
 
 /* CARD ROW (Horizontal) */
@@ -707,19 +733,24 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     display: flex;
     flex-flow: row;
     align-items: center;
-    justify-content: space-evenly;
     background: var(--color-blanco);
     border-radius: var(--radio);
-    padding: 15px 25px;
+    padding: 15px;
     box-shadow: var(--shadow-sm);
     width: 100%;
+    max-width: 800px;
     gap: 20px;
     margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.card-row:hover {
+    box-shadow: var(--shadow-md);
 }
 
 .card-row-img {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
     border-radius: 8px;
     flex-shrink: 0;
@@ -729,16 +760,18 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
 
-.card-row-content h4 { margin: 0 0 5px 0; }
+.card-row-content h4 { 
+    margin: 0 0 8px 0;
+    font-size: 20px;
+}
 
 .card-row-action {
     flex-shrink: 0;
 }
 
-.btn-card-col, .btn-card-row {
+.btn-card-row {
     width: auto;
     padding: 10px 20px;
     font-size: 12px;
@@ -748,11 +781,22 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 @media (max-width: 768px) {
     .nav-menu { display: none; }
     .info-container-global { flex-direction: column; text-align: center; gap: 10px; }
-    .btn-nav-feelbig { display: none; } /* Ocultar flechas en móvil para ganar espacio */
     
+    .carousel-flex-layout { gap: 5px; }
+    .btn-nav-feelbig { display: none; } /* Ocultar flechas en móvil */
+
     .card-row {
         flex-direction: column;
         text-align: center;
         padding: 20px;
+    }
+    
+    .card-row-img {
+        width: 100%;
+        height: 180px;
+    }
+
+    .card-row-action {
+        width: 100%;
     }
 }

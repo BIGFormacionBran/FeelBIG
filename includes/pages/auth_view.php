@@ -44,26 +44,26 @@ if ($error_code === '1') {
                 </div>
             <?php endif; ?>
 
-            <div id="google-status-msg" style="display:none; color: #856404; background: #fff3cd; padding: 10px; border-radius: 5px; font-size: 12px; margin-bottom: 15px; text-align: center; border: 1px solid #ffeeba;">
-                ⚠️ No detectamos sesión activa en el navegador. Revisa tu correo.
-            </div>
+            <?php if ($is_confirmacion): ?>
+                <div id="google-status-msg" style="display:none;">
+                    ⚠️ No detectamos sesión activa en el navegador. Revisa tu correo.
+                </div>                
+            <?php endif; ?>
 
             <form action="<?php echo $action; ?>" method="POST">
                 <?php if ($is_confirmacion): ?>
-                    <p style="color: var(--color-texto-muted); text-align: center; margin-bottom: 25px; font-size: 14px;">
+                    <p>
                         Introduce el código enviado a:<br>
-                        <strong style="color: var(--color-texto);"><?php echo htmlspecialchars($_SESSION['temp_email'] ?? ''); ?></strong>
+                        <strong><?php echo htmlspecialchars($_SESSION['temp_email'] ?? ''); ?></strong>
                     </p>
                     <div class="input-box">
-                        <input type="text" name="codigo" id="inputCodigo" placeholder="······" required 
-                               maxlength="6" autocomplete="one-time-code"
-                               style="text-align:center; letter-spacing: 12px; font-size: 24px; font-weight: 800; color: var(--color-principal);">
+                        <input type="text" name="codigo" id="inputCodigo" placeholder="······" required maxlength="6" autocomplete="one-time-code">
                     </div>
                 <?php else: ?>
                     <?php if ($is_registro): ?>
-                    <div class="input-box">
-                        <input type="text" name="nombre" placeholder="Nombre completo" value="<?php echo htmlspecialchars($old_nombre); ?>" required>
-                    </div>
+                        <div class="input-box">
+                            <input type="text" name="nombre" placeholder="Nombre completo" value="<?php echo htmlspecialchars($old_nombre); ?>" required>
+                        </div>
                     <?php endif; ?>
 
                     <div class="input-box">
@@ -93,10 +93,10 @@ if ($error_code === '1') {
                             <?php echo $is_registro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'; ?>
                         </a>
                     <?php else: ?>
-                        <p style="font-size: 13px; color: var(--color-texto-muted); margin-top: 15px;">¿No has recibido ningún correo?</p>
-                        <a href="/resend-code" class="enlace-personalizado" style="font-weight: 700;">Reenviar código de confirmación</a>
-                        <div style="margin-top: 15px;">
-                            <a href="/register" class="enlace-personalizado" style="font-size: 12px; opacity: 0.7;">Volver al registro</a>
+                        <p>¿No has recibido ningún correo?</p>
+                        <a href="/resend-code" class="enlace-personalizado">Reenviar código de confirmación</a>
+                        <div>
+                            <a href="/register" class="enlace-personalizado">Volver al registro</a>
                         </div>
                     <?php endif; ?>
                 </div>
