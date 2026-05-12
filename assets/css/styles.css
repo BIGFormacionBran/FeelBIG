@@ -392,7 +392,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 }
 
 .category-grid-layout {
-    
+    width: 100%;
 }
 
 .section-header {
@@ -742,7 +742,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .card-desc {
     font-size: 13px;
     color: var(--color-texto-muted);
-    margin-bottom: 20px;
+    margin: 0;
     line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -765,9 +765,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     border-radius: var(--radio);
     padding: 15px;
     box-shadow: var(--shadow-sm);
-    width: 100%;
-    max-width: 800px;
-    gap: 20px;
     margin-bottom: 15px;
     transition: var(--transition);
 }
@@ -781,22 +778,20 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     height: 120px;
     object-fit: cover;
     border-radius: 8px;
-    flex-shrink: 0;
 }
 
 .card-row-content {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .card-row-content h4 { 
-    margin: 0 0 8px 0;
+    margin: 0;
     font-size: 20px;
 }
 
 .card-row-action {
-    flex-shrink: 0;
 }
 
 /* --- RESPONSIVE --- */
