@@ -8,6 +8,11 @@ function get_page_config_manager($page) {
 
     if ($page === 'error') {
         $errorCode = $GLOBALS['routeParts'][1] ?? '404';
+
+        if(is_numeric($errorCode)) {
+            http_response_code((int)$errorCode);
+        }
+        
         return [
             'path'       => 'includes/pages/error.php',
             'title'      => 'Error ' . $errorCode,

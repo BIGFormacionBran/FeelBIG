@@ -50,9 +50,11 @@ class Database {
 
     public static function getConnection() {
         Logger::info("Database: Solicitando instancia de conexión...");
-        if (self::$instance == null) {
+        
+        // Es mejor inicializar la propia clase Database y guardarla en $instance
+        if (self::$instance === null) {
             Logger::info("Database: No hay instancia previa. Creando nueva...");
-            self::$instance = new Database();
+            self::$instance = new self();
         }
         return self::$instance->conn;
     }

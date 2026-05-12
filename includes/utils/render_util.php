@@ -20,12 +20,13 @@ function render_auto_components_util($folder) {
 }
 
 function render_page_layout_manager($page, $pageConfig, $auth_pages) {
-    if (in_array($page, $auth_pages)) {
+    $isErrorPage = (isset($pageConfig['error_code']) || strpos($pageConfig['path'], 'error.php') !== false);
+    $isLoggedIn = isset($_SESSION['user_id']);
+    if (in_array($page, $auth_pages) || ($isErrorPage && !$isLoggedIn)) {
         include 'includes/pages/auth_view.php';
     } else {
         include 'includes/components/header.php';
         echo '<div class="main-content-wrapper">';
-        $isErrorPage = (strpos($pageConfig['path'], 'error.php') !== false);
             if (!$pageConfig['is_root'] && !$isErrorPage) {
                 include 'includes/components/generic/breadcrumbs.php';
             }
