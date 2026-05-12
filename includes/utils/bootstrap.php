@@ -61,13 +61,15 @@ $page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
 
 $auth_pages = ['login', 'register', 'register-confirm'];
 
+$pageConfig = get_page_config_manager($page);
+$isError = isset($pageConfig['error_code']);
+
 // 4. Lógica de Sesión
-if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages) && $page !== 'error') {
+if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages) && !$isError) {
     header("Location: /login");
     exit();
 }
 
 // 5. Cargar Configuración de página
-$pageConfig = get_page_config_manager($page);
 $main_css = get_minified_css_util();
 $needs_swiper = false;
