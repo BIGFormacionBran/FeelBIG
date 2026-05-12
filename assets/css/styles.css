@@ -385,11 +385,14 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     display: flex;
     flex-flow: column;
     align-items: center;
-    background-color: var(--color-blanco);
+    background-color: var(--color-principal-soft);
     padding: 40px;
     border-radius: var(--radio);
     box-shadow: var(--shadow-sm);
-    min-height: 400px;
+}
+
+.category-grid-layout {
+    
 }
 
 .section-header {
@@ -450,9 +453,10 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 /* Forzamos que los slides de Swiper tengan un tamaño consistente */
 .swiper-slide { 
-    height: auto; 
-    display: flex; 
-    justify-content: center;
+    height: auto !important;
+    display: flex !important; 
+    max-height: 400px !important;
+    max-width: 300px !important;
     transition: transform 0.3s ease;
 }
 
