@@ -22,6 +22,7 @@ function render_auto_components_util($folder) {
 function render_page_layout_manager($page, $pageConfig, $auth_pages) {
     $isErrorPage = (isset($pageConfig['error_code']) || strpos($pageConfig['path'], 'error.php') !== false);
     $isLoggedIn = isset($_SESSION['user_id']);
+    
     if (in_array($page, $auth_pages) || ($isErrorPage && !$isLoggedIn)) {
         include 'includes/pages/auth_view.php';
     } else {

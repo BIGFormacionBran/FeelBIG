@@ -62,7 +62,7 @@ $page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
 $auth_pages = ['login', 'register', 'register-confirm'];
 
 // 4. Lógica de Sesión
-if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages)) {
+if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages) && $page !== 'error') {
     header("Location: /login");
     exit();
 }
