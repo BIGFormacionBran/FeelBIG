@@ -347,7 +347,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .btn-primario:hover, .btn-primario:focus {
     background-color: var(--color-secundario);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(2, 123, 196, 0.2);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-primario:active, .enlace-personalizado:active {
@@ -516,8 +516,8 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .btn-nav-feelbig:hover {
     background: var(--color-principal) !important;
     color: var(--color-blanco) !important;
-    border-color: var(--color-principal) !important;
-    box-shadow: 0 4px 10px var(--color-principal-soft);
+    border-color: var(--color-blanco) !important;
+    box-shadow: var(--shadow-md);
 }
 
 .swiper-pagination-custom {
