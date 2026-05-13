@@ -5,7 +5,7 @@ function render_card_item_column($item) {
     ?>
     <div class="card-column">
         <div class="card-img-wrapper">
-            <img src="/assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" loading="lazy" decoding="async">
+            <img src="<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" loading="lazy" decoding="async">
             <?php if (isset($item['badge'])): ?>
                 <span class="card-badge-tag"><?php echo $item['badge']; ?></span>
             <?php endif; ?>
@@ -24,7 +24,7 @@ function render_card_item_row($item) {
     $textoBoton = ($item['type'] === 'category') ? 'VER CONTENIDO' : 'MÁS INFORMACIÓN';
     ?>
     <div class="card-row">
-        <img src="/assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" class="card-row-img">
+        <img src="<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" class="card-row-img">
         
         <div class="card-row-content">
             <h4><?php echo $item['name']; ?></h4>

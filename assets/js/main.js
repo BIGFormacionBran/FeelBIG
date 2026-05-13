@@ -1,6 +1,15 @@
 (function() {
     "use strict";
 
+    // Función para enviar logs al servidor (PHP)
+    const remoteLog = (message, level = 'ERROR') => {
+        fetch('/includes/ajax/js_logger.php', {
+            method: 'POST',
+            body: JSON.stringify({ message, level }),
+            headers: { 'Content-Type': 'application/json' }
+        }).catch(() => {}); 
+    };
+
     const initAuth = () => {
         const passInput = document.getElementById('passInput');
         const toggleBtn = document.getElementById('toggleBtn');
@@ -26,6 +35,7 @@
         }
 
         if (!window.google || !window.google.accounts) {
+            remoteLog("Google SDK no detectado en register-confirm", "WARNING");
             return;
         }
 
@@ -51,10 +61,11 @@
                         window.location.href = "/home";
                     } else {
                         if (statusMsg) statusMsg.style.display = 'block';
+                        remoteLog("Validación Google fallida: " + JSON.stringify(data));
                     }
                 })
-                .catch(() => {
-                    // Error de red o servidor manejado silenciosamente
+                .catch((err) => {
+                    remoteLog("Error en fetch Google Auth: " + err.message);
                 });
             }
         });
@@ -77,48 +88,53 @@
             if (swiperEl && window.Swiper && !swiperEl.classList.contains('swiper-initialized')) {
                 const slideCount = swiperEl.querySelectorAll('.swiper-slide').length;
                 const shouldLoop = slideCount > 3;
-                new Swiper(swiperEl, {
-                    spaceBetween: 20,
-                    breakpoints: {
-                        320: {
-                            slidesPerView: 1,
-                            centeredSlides: true
+                try {
+                    new Swiper(swiperEl, {
+                        spaceBetween: 20,
+                        breakpoints: {
+                            320: { slidesPerView: 1, centeredSlides: true },
+                            768: { slidesPerView: 2, centeredSlides: false },
+                            1024: { slidesPerView: 3, centeredSlides: false }
                         },
-                        768: {
-                            slidesPerView: 2,
-                            centeredSlides: false
+                        preloadImages: false,
+                        lazy: true,
+                        watchSlidesProgress: true,
+                        powerMode: true,
+                        spaceBetween: 30,
+                        centeredSlides: shouldLoop, 
+                        loop: shouldLoop,
+                        ...(shouldLoop && { loopedSlides: 5 }), 
+                        speed: 800,
+                        autoplay: shouldLoop ? { delay: 3000, disableOnInteraction: false } : false,
+                        navigation: {
+                            nextEl: container.querySelector('.swiper-button-next'),
+                            prevEl: container.querySelector('.swiper-button-prev'),
                         },
-                        1024: {
-                            slidesPerView: 3,
-                            centeredSlides: false
+                        pagination: {
+                            el: container.querySelector('.swiper-pagination-custom'),
+                            clickable: true,
+                        },
+                        observer: true,
+                        observeParents: true,
+                        on: {
+                            init: function () {
+                                swiperEl.classList.remove('is-loading');
+                                swiperEl.style.visibility = 'visible';
+                            },
                         }
-                    },
-                    preloadImages: false,
-                    lazy: true,
-                    watchSlidesProgress: true,
-                    powerMode: true,
-                    spaceBetween: 30,
-                    centeredSlides: shouldLoop, 
-                    loop: shouldLoop,
-                    ...(shouldLoop && { loopedSlides: 5 }), 
-                    speed: 800,
-                    autoplay: shouldLoop ? { delay: 3000, disableOnInteraction: false } : false,
-                    navigation: {
-                        nextEl: container.querySelector('.swiper-button-next'),
-                        prevEl: container.querySelector('.swiper-button-prev'),
-                    },
-                    pagination: {
-                        el: container.querySelector('.swiper-pagination-custom'),
-                        clickable: true,
-                    },
-                    observer: true,
-                    observeParents: true
-                });
+                    });
+                } catch (e) {
+                    remoteLog("Error Swiper (" + container.id + "): " + e.message);
+                    swiperEl.style.visibility = 'visible';
+                    swiperEl.classList.remove('is-loading');
+                }
 
                 if (slideCount <= 1) {
                     const navButtons = container.querySelectorAll('.btn-nav-feelbig');
                     navButtons.forEach(btn => btn.style.display = 'none');
                 }
+            } else if (!window.Swiper && swiperEl) {
+                remoteLog("Librería Swiper no cargada al intentar inicializar carrusel", "ERROR");
             }
         });
     };

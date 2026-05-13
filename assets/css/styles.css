@@ -404,7 +404,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 .section-header h1 {
     margin: 0;
     font-size: 28px;
-    color: var(--color-texto);
+    color: var(--color-principal);
 }
 
 .section-header .subtitle {
