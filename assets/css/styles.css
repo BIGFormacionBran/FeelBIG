@@ -14,7 +14,7 @@
     --fuente: 'Poppins', sans-serif;
     --radio: 12px;
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
-    --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.12);
+    --shadow-md: 5px 5px 5px 0 rgba(0, 0, 0, 0.12);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
