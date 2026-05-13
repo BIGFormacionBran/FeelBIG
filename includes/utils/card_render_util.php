@@ -5,7 +5,7 @@ function render_card_item_column($item) {
     ?>
     <div class="card-column">
         <div class="card-img-wrapper">
-            <img src="/assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>">
+            <img src="/assets/img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" loading="lazy" decoding="async">
             <?php if (isset($item['badge'])): ?>
                 <span class="card-badge-tag"><?php echo $item['badge']; ?></span>
             <?php endif; ?>

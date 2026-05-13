@@ -10,7 +10,7 @@ if (!empty($carouselItems)):
     <div class="carousel-flex-layout">
         <div class="swiper-button-prev btn-nav-feelbig"></div>
 
-        <div class="swiper swiper-feelbig-generic">
+        <div class="swiper swiper-feelbig-generic is-loading">
             <div class="swiper-wrapper">
                 <?php foreach ($carouselItems as $item): ?>
                     <div class="swiper-slide">

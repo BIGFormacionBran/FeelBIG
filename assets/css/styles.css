@@ -447,9 +447,19 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 }
 
 .swiper-feelbig-generic {
-    flex: 1;
-    overflow: hidden;
-    padding: 20px 10px 40px 10px; /* Padding extra para sombras de cards */
+    max-width: 1015px;
+    min-height: 400px;
+    visibility: hidden;
+    padding: 0 10px 20px !important;
+}
+
+.swiper-feelbig-generic.swiper-initialized {
+    visibility: visible;
+    animation: fadeIn 0.4s ease-in;
+}
+
+.swiper-wrapper {
+    will-change: transform;
 }
 
 /* Forzamos que los slides de Swiper tengan un tamaño consistente */
@@ -510,9 +520,9 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     box-shadow: 0 4px 10px var(--color-principal-soft);
 }
 
-/* Puntos de paginación */
 .swiper-pagination-custom {
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: 8px;
     margin-top: 10px;

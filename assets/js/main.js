@@ -84,6 +84,10 @@
 
                 new Swiper(swiperEl, {
                     slidesPerView: 'auto',
+                    preloadImages: false,
+                    lazy: true,
+                    watchSlidesProgress: true,
+                    powerMode: true,
                     spaceBetween: 30,
                     centeredSlides: shouldLoop, // Solo centramos si hay loop
                     loop: shouldLoop,
