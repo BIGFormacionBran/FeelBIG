@@ -478,7 +478,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     width: 44px !important;
     height: 44px !important;
     background: var(--color-blanco) !important;
-    border: 1px solid var(--color-border) !important;
+    border: 2px solid var(--color-principal) !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center;
