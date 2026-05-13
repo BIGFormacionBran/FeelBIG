@@ -75,23 +75,31 @@
             
             // Verificamos existencia y si ya está inicializado
             if (swiperEl && window.Swiper && !swiperEl.classList.contains('swiper-initialized')) {
-                
-                // CONTAR SLIDES: Si hay pocos, el loop dará error
                 const slideCount = swiperEl.querySelectorAll('.swiper-slide').length;
-                
-                // Configuración dinámica
-                const shouldLoop = slideCount > 3; // Solo hace loop si hay más de 3 items
-
+                const shouldLoop = slideCount > 3;
                 new Swiper(swiperEl, {
-                    slidesPerView: 'auto',
+                    spaceBetween: 20,
+                    breakpoints: {
+                        320: {
+                            slidesPerView: 1,
+                            centeredSlides: true
+                        },
+                        768: {
+                            slidesPerView: 2,
+                            centeredSlides: false
+                        },
+                        1024: {
+                            slidesPerView: 3,
+                            centeredSlides: false
+                        }
+                    },
                     preloadImages: false,
                     lazy: true,
                     watchSlidesProgress: true,
                     powerMode: true,
                     spaceBetween: 30,
-                    centeredSlides: shouldLoop, // Solo centramos si hay loop
+                    centeredSlides: shouldLoop, 
                     loop: shouldLoop,
-                    // Si no hay loop, quitamos los loopedSlides para evitar conflictos
                     ...(shouldLoop && { loopedSlides: 5 }), 
                     speed: 800,
                     autoplay: shouldLoop ? { delay: 3000, disableOnInteraction: false } : false,
@@ -107,7 +115,6 @@
                     observeParents: true
                 });
 
-                // Ocultar flechas si no hay suficientes diapositivas
                 if (slideCount <= 1) {
                     const navButtons = container.querySelectorAll('.btn-nav-feelbig');
                     navButtons.forEach(btn => btn.style.display = 'none');
