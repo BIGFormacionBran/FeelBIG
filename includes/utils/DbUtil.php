@@ -7,17 +7,17 @@ class DbUtil {
     private $connection;
 
     private function __construct() {
-        Logger::info("Database: Starting private constructor...");
+        LoggerUtil::info("Database: Starting private constructor...");
         try {
             $host = ConfigUtil::get('DB_HOST');
             $name = ConfigUtil::get('DB_NAME');
             $user = ConfigUtil::get('DB_USER');
             $pass = ConfigUtil::get('DB_PASS');
 
-            Logger::info("Database: Attempting to connect to $host / $name with user $user");
+            LoggerUtil::info("Database: Attempting to connect to $host / $name with user $user");
 
             if (!$host || !$name) {
-                Logger::error("Database: Incomplete configuration. HOST: '$host', NAME: '$name'");
+                LoggerUtil::error("Database: Incomplete configuration. HOST: '$host', NAME: '$name'");
                 throw new Exception("Configuración de base de datos incompleta en .env");
             }
 
@@ -34,22 +34,22 @@ class DbUtil {
                 $options
             );
             
-            Logger::info("Database: PDO connection established successfully!");
+            LoggerUtil::info("Database: PDO connection established successfully!");
 
         } catch (PDOException $e) {
-            Logger::error("Database: PDO ERROR [" . $e->getCode() . "]: " . $e->getMessage());
+            LoggerUtil::error("Database: PDO ERROR [" . $e->getCode() . "]: " . $e->getMessage());
             die("Error de conexión a la base de datos. Consulta los logs.");
         } catch (Exception $e) {
-            Logger::error("Database: GENERAL EXCEPTION: " . $e->getMessage());
+            LoggerUtil::error("Database: GENERAL EXCEPTION: " . $e->getMessage());
             die("Error crítico de configuración."); 
         }
     }
 
     public static function getConnection() {
-        Logger::info("Database: Requesting connection instance...");
+        LoggerUtil::info("Database: Requesting connection instance...");
         
         if (self::$instance === null) {
-            Logger::info("Database: No previous instance. Creating new...");
+            LoggerUtil::info("Database: No previous instance. Creating new...");
             self::$instance = new self();
         }
         return self::$instance->connection;
