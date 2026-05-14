@@ -25,7 +25,7 @@ function getPageConfigManager($page) {
         return [
             'path'   => $fileToLoad,
             'title'  => ucwords(str_replace(['-', '_'], ' ', $page)),
-            'isRoot' => ($page === 'home' || empty($page))
+            'isRoot' => ($page === 'home'  || $page === 'config' || $page === 'admin' || empty($page))
         ];
     }
 
