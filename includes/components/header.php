@@ -16,7 +16,7 @@ if (isset($page)) {
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
-            <a href="/Home.php">
+            <a href="/home">
                 <img src="assets/img/logo.png" alt="Feel BiG" class="header-logo-img">
             </a>
         </div>
@@ -38,7 +38,7 @@ if (isset($page)) {
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <div class="user-dropdown">
-                    <a href="/Configuration.php">Configuración</a>
+                    <a href="/config">Configuración</a>
                     <a href="/Logout.php" class="logout-link">Cerrar Sesión</a>
                 </div>
             </div>

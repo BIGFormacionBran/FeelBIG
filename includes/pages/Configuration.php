@@ -6,8 +6,8 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = $manager->updateProfile(
         $_SESSION['user_id'], 
-        $_POST['nombre'] ?? '', 
-        $_POST['correo'] ?? '', 
+        $_POST['name'] ?? '', 
+        $_POST['email'] ?? '', 
         $_POST['new_pass'] ?? ''
     );
 }

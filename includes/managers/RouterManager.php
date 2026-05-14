@@ -5,23 +5,17 @@ function getPageConfigManager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
     global $routeParts;
 
-    if ($page === 'error') {
-        $errorCode = $GLOBALS['routeParts'][1] ?? '404';
-        return [
-            'path'      => 'includes/pages/Error.php',
-            'title'     => 'Error ' . $errorCode,
-            'isRoot'    => false,
-            'errorCode' => $errorCode
-        ];
-    }
-
     // 1. AUTOMATIC FILE SCAN    
     $fileToLoad = null;
-    if (file_exists($baseDir . $page . '.php')) {
+    if ($page === 'config') {
+        $fileToLoad = 'includes/pages/Configuration.php';
+    } elseif ($page === 'error') {
+        $fileToLoad = 'includes/pages/Error.php';
+    } elseif (file_exists($baseDir . $page . '.php')) {
         $fileToLoad = 'includes/pages/' . $page . '.php';
     } elseif (in_array($page, ['login', 'register', 'register-confirm'])) {
         $fileToLoad = 'includes/pages/AuthView.php';
-    } elseif ($page === 'home' || empty($page)) {
+    } elseif ($page === 'home') {
         $fileToLoad = 'includes/pages/Home.php';
     }
 
