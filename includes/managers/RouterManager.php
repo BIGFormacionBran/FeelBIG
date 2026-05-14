@@ -7,10 +7,13 @@ function getPageConfigManager($page) {
 
     // 1. AUTOMATIC FILE SCAN    
     $fileToLoad = null;
+    $customErrorCode = null;
+
     if ($page === 'config') {
         $fileToLoad = 'includes/pages/Configuration.php';
     } elseif ($page === 'error') {
         $fileToLoad = 'includes/pages/Error.php';
+        $customErrorCode = $routeParts[1] ?? '404';
     } elseif ($page === 'admin') {
         $fileToLoad = 'admin/index.php';
     } elseif (file_exists($baseDir . $page . '.php')) {
@@ -24,8 +27,9 @@ function getPageConfigManager($page) {
     if ($fileToLoad) {
         return [
             'path'   => $fileToLoad,
-            'title'  => ucwords(str_replace(['-', '_'], ' ', $page)),
-            'isRoot' => ($page === 'home'  || $page === 'config' || $page === 'admin' || empty($page))
+            'title'  => ($page === 'error' && $customErrorCode) ? "Error " . $customErrorCode : ucwords(str_replace(['-', '_'], ' ', $page)),
+            'isRoot' => ($page === 'home'  || $page === 'config' || $page === 'admin' || empty($page)),
+            'errorCode' => $customErrorCode
         ];
     }
 
