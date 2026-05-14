@@ -5,7 +5,7 @@
         <h2 style="margin: 0;">Feel BiG <span style="color: #fff; font-size: 0.8em;">| CMS Panel</span></h2>
         <nav>
             <span style="color: #eee; margin-right: 15px;">Bienvenido, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong></span>
-            <a href="/logout" style="color: #ff4d4d; text-decoration: none; font-weight: bold;">Cerrar Sesión</a>
+            <a href="/Logout.php" style="color: #ff4d4d; text-decoration: none; font-weight: bold;">Cerrar Sesión</a>
         </nav>
     </div>
 </header>
