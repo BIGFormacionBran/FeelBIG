@@ -13,7 +13,7 @@ ErrorDocument 500 /error/500
 RewriteEngine On
 RewriteBase /
 
-# Evita que se aplique la regla si el archivo o carpeta existe físicamente (CSS, JS, imágenes)
+# Evita que se aplique la regla si el archivo o carpeta existe físicamente
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 

@@ -1,8 +1,8 @@
 <?php
 if (!empty($carouselItems)):
-    $carouselID = 'fb_gen_cur_' . uniqid(); 
+    $carouselId = 'fb_gen_cur_' . uniqid(); 
 ?>
-<div class="home-module-wrapper feelbig-swiper-section" id="<?php echo $carouselID; ?>">
+<div class="home-module-wrapper feelbig-swiper-section" id="<?php echo $carouselId; ?>">
     <div class="module-header">
         <h2><?php echo htmlspecialchars($carouselTitle); ?></h2>
     </div>
@@ -14,7 +14,7 @@ if (!empty($carouselItems)):
             <div class="swiper-wrapper">
                 <?php foreach ($carouselItems as $item): ?>
                     <div class="swiper-slide">
-                        <?php render_card_item_column($item); ?>
+                        <?php renderCardItemColumn($item); ?>
                     </div>
                 <?php endforeach; ?>
             </div>

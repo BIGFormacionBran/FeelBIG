@@ -1,10 +1,9 @@
 <?php
-// Aseguramos que las utilidades de renderizado estén disponibles
-require_once 'includes/utils/render_util.php';
+require_once 'includes/utils/RenderUtil.php';
 ?>
 
 <div class="home-dynamic-container">
     <?php 
-        render_auto_components_util('includes/components/home_modules'); 
+        renderAutoComponentsUtil('includes/components/home_modules'); 
     ?>
 </div>

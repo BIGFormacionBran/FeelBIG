@@ -1,30 +1,30 @@
 <?php
-$is_registro = ($page === 'register');
-$is_confirmacion = ($page === 'register-confirm'); 
-$is_error_view = (isset($pageConfig['error_code']));
+$isRegistration = ($page === 'register');
+$isConfirmation = ($page === 'register-confirm'); 
+$isErrorView = (isset($pageConfig['errorCode']));
 
-$titulo = $is_registro ? "Crear cuenta" : ($is_confirmacion ? "Verificar código" : "Iniciar sesión");
-$btn_text = $is_registro ? "Registrarme" : ($is_confirmacion ? "Confirmar" : "Entrar");
-$action = $is_registro ? "/register" : ($is_confirmacion ? "/register-confirm" : "/login");
+$title = $isRegistration ? "Crear cuenta" : ($isConfirmation ? "Verificar código" : "Iniciar sesión");
+$btnText = $isRegistration ? "Registrarme" : ($isConfirmation ? "Confirmar" : "Entrar");
+$action = $isRegistration ? "/register" : ($isConfirmation ? "/register-confirm" : "/login");
 
-$error_code = $_GET['error'] ?? null;
-$mensaje_error = "";
+$errorCode = $_GET['error'] ?? null;
+$errorMessage = "";
 
-$form_data = $_SESSION['form_data'] ?? [];
-$old_user = $form_data['usuario'] ?? '';
-$old_nombre = $form_data['nombre'] ?? '';
-$old_pass = $form_data['password'] ?? '';
+$formData = $_SESSION['formData'] ?? [];
+$oldUser = $formData['usuario'] ?? '';
+$oldName = $formData['nombre'] ?? '';
+$oldPass = $formData['password'] ?? '';
 
-unset($_SESSION['form_data']);
+unset($_SESSION['formData']);
 
-if ($error_code === '1') {
-    $mensaje_error = $is_registro ? "El nombre de usuario o correo ya están en uso." : "Usuario o contraseña incorrectos.";
-} elseif ($error_code === 'db') {
-    $mensaje_error = "Error de conexión con la base de datos.";
-} elseif ($error_code === 'codigo') {
-    $mensaje_error = "El código de confirmación es incorrecto o ha expirado.";
-} elseif ($error_code === 'mail') {
-    $mensaje_error = "Error al enviar el correo de verificación. Contacta con soporte.";
+if ($errorCode === '1') {
+    $errorMessage = $isRegistration ? "El nombre de usuario o correo ya están en uso." : "Usuario o contraseña incorrectos.";
+} elseif ($errorCode === 'db') {
+    $errorMessage = "Error de conexión con la base de datos.";
+} elseif ($errorCode === 'codigo') {
+    $errorMessage = "El código de confirmación es incorrecto o ha expirado.";
+} elseif ($errorCode === 'mail') {
+    $errorMessage = "Error al enviar el correo de verificación. Contacta con soporte.";
 }
 ?>
 
@@ -32,50 +32,50 @@ if ($error_code === '1') {
 
 <div class="auth-wrapper">
     <div class="main-column-padre">
-        <?php if ($is_error_view): ?>
-            <?php include 'includes/pages/error.php'; ?>
+        <?php if ($isErrorView): ?>
+            <?php include 'includes/pages/Error.php'; ?>
         <?php else: ?>
             <div class="login-central-container">
                 <div class="login-logo">
                     <img src="assets/img/logo.png" alt="Feel BiG">
                 </div>
 
-                <div class="titulo-acceso"><?php echo $titulo; ?></div>
+                <div class="titulo-acceso"><?php echo $title; ?></div>
 
-                <?php if ($mensaje_error): ?>
+                <?php if ($errorMessage): ?>
                     <div class="error-banner">
-                        <?php echo $mensaje_error; ?>
+                        <?php echo $errorMessage; ?>
                     </div>
                 <?php endif; ?>
 
-                <?php if ($is_confirmacion): ?>
+                <?php if ($isConfirmation): ?>
                     <div id="google-status-msg" style="display:none;">
                         ⚠️ No detectamos sesión activa en el navegador. Revisa tu correo.
                     </div>                
                 <?php endif; ?>
 
                 <form action="<?php echo $action; ?>" method="POST">
-                    <?php if ($is_confirmacion): ?>
+                    <?php if ($isConfirmation): ?>
                         <p class="muted-text">
                             Introduce el código enviado a:<br>
                             <strong><?php echo htmlspecialchars($_SESSION['temp_email'] ?? ''); ?></strong>
                         </p>
                         <div class="input-box">
-                            <input type="text" name="codigo" id="inputCodigo" placeholder="······" required maxlength="6" autocomplete="one-time-code">
+                            <input type="text" name="codigo" id="inputCode" placeholder="······" required maxlength="6" autocomplete="one-time-code">
                         </div>
                     <?php else: ?>
-                        <?php if ($is_registro): ?>
+                        <?php if ($isRegistration): ?>
                             <div class="input-box">
-                                <input type="text" name="nombre" placeholder="Nombre completo" value="<?php echo htmlspecialchars($old_nombre); ?>" required>
+                                <input type="text" name="nombre" placeholder="Nombre completo" value="<?php echo htmlspecialchars($oldName); ?>" required>
                             </div>
                         <?php endif; ?>
 
                         <div class="input-box">
-                            <input type="text" name="usuario" placeholder="<?php echo $is_registro ? 'Correo electrónico' : 'Correo o nombre de usuario'; ?>" value="<?php echo htmlspecialchars($old_user); ?>" required>
+                            <input type="text" name="usuario" placeholder="<?php echo $isRegistration ? 'Correo electrónico' : 'Correo o nombre de usuario'; ?>" value="<?php echo htmlspecialchars($oldUser); ?>" required>
                         </div>
 
                         <div class="input-box">
-                            <input type="password" name="password" id="passInput" placeholder="Contraseña" value="<?php echo htmlspecialchars($old_pass); ?>" required minlength="6">
+                            <input type="password" name="password" id="passInput" placeholder="Contraseña" value="<?php echo htmlspecialchars($oldPass); ?>" required minlength="6">
                             <button type="button" class="btn-ojo" id="toggleBtn" aria-label="Mostrar contraseña">                        
                                 <svg class="icon-open" viewBox="0 0 24 24" fill="currentColor">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M20.293 2.293a1 1 0 1 1 1.414 1.414l-18 18a1 1 0 0 1-1.414-1.414l3.446-3.446c-.238-.188-.47-.387-.694-.6L1.31 12.722a.985.985 0 0 1 0-1.436l3.734-3.527c3.15-2.976 7.77-3.542 11.48-1.697l3.768-3.768zm-5.275 5.275c-2.852-1.138-6.23-.596-8.582 1.627l-2.974 2.808 2.974 2.809c.233.22.476.423.727.61l1.391-1.39a4 4 0 0 1 5.478-5.478l.986-.986zm-2.5 2.5a2.001 2.001 0 0 0-2.45 2.45l2.45-2.45z"></path>
@@ -89,24 +89,24 @@ if ($error_code === '1') {
                         </div>
                     <?php endif; ?>
 
-                    <button type="submit" class="btn-primario"><?php echo $btn_text; ?></button>
+                    <button type="submit" class="btn-primario"><?php echo $btnText; ?></button>
 
                     <div class="auth-footer-links">
-                        <?php if ($is_confirmacion): ?>
+                        <?php if ($isConfirmation): ?>
                             <p class="muted-text">¿No has recibido ningún correo?</p>
                             <a href="/resend-code" class="enlace-personalizado enlace-bold">Reenviar código de confirmación</a>
                             <div>
                                 <a href="/register" class="enlace-personalizado enlace-muted">Volver al registro</a>
                             </div>
                         <?php else: ?>
-                            <a href="/<?php echo $is_registro ? 'login' : 'register'; ?>" class="enlace-personalizado enlace-muted">
-                                <?php echo $is_registro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'; ?>
+                            <a href="/<?php echo $isRegistration ? 'login' : 'register'; ?>" class="enlace-personalizado enlace-muted">
+                                <?php echo $isRegistration ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'; ?>
                             </a>
                         <?php endif; ?>
                     </div>
                 </form>
             </div>
-            <?php if(function_exists('render_signature_util')) echo render_signature_util(); ?>
+            <?php if(function_exists('renderSignatureUtil')) echo renderSignatureUtil(); ?>
         <?php endif; ?>
     </div>
 </div>

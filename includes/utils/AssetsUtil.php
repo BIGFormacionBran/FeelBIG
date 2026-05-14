@@ -1,5 +1,5 @@
 <?php
-function get_minified_css_util() {
+function getMinifiedCssUtil() {
     $source = 'assets/css/styles.css';
     $target = 'assets/css/styles.min.css';
 

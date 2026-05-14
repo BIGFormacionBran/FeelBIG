@@ -1,10 +1,10 @@
 <?php
-require_once 'includes/managers/main_manager.php';
+require_once 'includes/managers/MainManager.php';
 $manager = new MainManager();
-$mensaje = "";
+$message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $mensaje = $manager->update_user_profile(
+    $message = $manager->updateProfile(
         $_SESSION['user_id'], 
         $_POST['nombre'] ?? '', 
         $_POST['correo'] ?? '', 
@@ -12,8 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 }
 
-// Obtenemos los datos completos del usuario desde la DB usando el ID de la sesión
-$userData = $manager->get_user_by_id($_SESSION['user_id']);
+$userData = $manager->getUserById($_SESSION['user_id']);
 ?>
 
 <div class="container-page">
@@ -54,7 +53,6 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
                                 <path d="M22.69 11.285 19.7 8.463l-1.414 1.414 2.251 2.126-2.973 2.809a8.099 8.099 0 0 1-6.377 2.164l-1.712 1.712c3.268.833 6.876.02 9.48-2.44l3.733-3.527a.985.985 0 0 0 0-1.436z"></path>
                                 <path d="M15.997 12.167a4 4 0 0 1-3.83 3.83l3.83-3.83z"></path>
                             </svg>
-                            
                             <svg class="icon-closed" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
                                 <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                             </svg>
@@ -65,24 +63,11 @@ $userData = $manager->get_user_by_id($_SESSION['user_id']);
                 <button type="submit" class="btn-primario">Guardar Cambios</button>
             </form>
         </div>
-        <?php if (!empty($mensaje)): 
-            // Determinamos si es error o éxito
-            $esError = (strpos($mensaje, 'Error') !== false);
+        <?php if (!empty($message)): 
+            $isError = (strpos($message, 'Error') !== false);
         ?>
-            <div class="info-badge <?php echo $esError ? 'error' : 'success'; ?>">
-                <?php if ($esError): ?>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                    </svg>
-                <?php else: ?>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                <?php endif; ?>
-                <span><?php echo htmlspecialchars($mensaje); ?></span>
+            <div class="info-badge <?php echo $isError ? 'error' : 'success'; ?>">
+                <span><?php echo htmlspecialchars($message); ?></span>
             </div>
         <?php endif; ?>
     </div>

@@ -1,12 +1,12 @@
 <?php 
-require_once __DIR__ . '/../managers/content_manager.php';
+require_once __DIR__ . '/../managers/ContentManager.php';
 
 $manager = new ContentManager();
-$menuItems = $manager->get_main_menu();
+$menuItems = $manager->getMainMenu(); // Método en inglés
 
 $activeSlug = '';
 if (isset($page)) {
-    if ($page === 'individual_view' && isset($routeParts[0])) {
+    if ($page === 'IndividualView' && isset($routeParts[0])) {
         $activeSlug = $routeParts[0];
     } else {
         $activeSlug = $page;
@@ -16,7 +16,7 @@ if (isset($page)) {
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
-            <a href="/home">
+            <a href="/Home.php">
                 <img src="assets/img/logo.png" alt="Feel BiG" class="header-logo-img">
             </a>
         </div>
@@ -38,8 +38,8 @@ if (isset($page)) {
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <div class="user-dropdown">
-                    <a href="/configuracion">Mi Perfil</a>
-                    <a href="/logout.php">Cerrar Sesión</a>
+                    <a href="/Configuration.php">Configuración</a>
+                    <a href="/Logout.php" class="logout-link">Cerrar Sesión</a>
                 </div>
             </div>
         </div>

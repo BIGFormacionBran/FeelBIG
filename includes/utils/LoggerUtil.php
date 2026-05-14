@@ -1,13 +1,8 @@
 <?php
 
-class Logger {
+class LoggerUtil {
     private static $logPath = __DIR__ . '/../../logs/';
 
-    /**
-     * Escribe un mensaje en el archivo de log del sistema
-     * @param string $message Mensaje a guardar
-     * @param string $level Nivel (INFO, ERROR, WARNING)
-     */
     public static function log($message, $level = 'INFO') {
         if (!is_dir(self::$logPath)) {
             mkdir(self::$logPath, 0777, true);
@@ -17,7 +12,6 @@ class Logger {
         $timestamp = date('H:i:s');
         $formattedMessage = "[$timestamp] [$level]: $message" . PHP_EOL;
 
-        // Escribimos al archivo (FILE_APPEND para no borrar lo anterior)
         file_put_contents($fileName, $formattedMessage, FILE_APPEND);
     }
 

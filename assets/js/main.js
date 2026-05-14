@@ -1,9 +1,9 @@
 (function() {
     "use strict";
 
-    // Función para enviar logs al servidor (PHP)
     const remoteLog = (message, level = 'ERROR') => {
-        fetch('/includes/ajax/js_logger.php', {
+        // Ruta actualizada a CamelCase
+        fetch('/includes/ajax/JsLogger.php', {
             method: 'POST',
             body: JSON.stringify({ message, level }),
             headers: { 'Content-Type': 'application/json' }
@@ -25,10 +25,10 @@
 
     const initGoogleAuth = () => {
         const statusMsg   = document.getElementById('google-status-msg');
-        const inputCodigo = document.getElementById('inputCodigo');
+        const inputCode = document.getElementById('inputCodigo'); // Variable en inglés
         let sessionDetected = false;
 
-        const MI_CLIENT_ID = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com";
+        const MY_CLIENT_ID = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com";
 
         if (!window.location.pathname.includes('register-confirm')) {
             return;
@@ -40,7 +40,7 @@
         }
 
         google.accounts.id.initialize({
-            client_id: MI_CLIENT_ID,
+            client_id: MY_CLIENT_ID,
             auto_select: true,
             use_fedcm_for_prompt: true,
             itp_support: true,
@@ -51,14 +51,14 @@
                 formData.append('google_token', response.credential);
                 formData.append('ajax_verify', 'true');
 
-                fetch('/register-confirm', {
+                fetch('/ProcessConfirmation.php', { // Ruta actualizada
                     method: 'POST',
                     body: formData
                 })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.href = "/home";
+                        window.location.href = "/Home.php"; // Ruta actualizada
                     } else {
                         if (statusMsg) statusMsg.style.display = 'block';
                         remoteLog("Validación Google fallida: " + JSON.stringify(data));
@@ -69,7 +69,6 @@
                 });
             }
         });
-
         google.accounts.id.prompt();
 
         setTimeout(() => {
@@ -80,32 +79,18 @@
     };
 
     const initCarousels = () => {
-        const sections = document.querySelectorAll('.feelbig-swiper-section');
-        sections.forEach((container) => {
-            const swiperEl = container.querySelector('.swiper-feelbig-generic');
-            
-            // Verificamos existencia y si ya está inicializado
-            if (swiperEl && window.Swiper && !swiperEl.classList.contains('swiper-initialized')) {
+        const carouselSections = document.querySelectorAll('.feelbig-swiper-section');
+        
+        carouselSections.forEach(container => {
+            const swiperEl = container.querySelector('.swiper');
+            if (window.Swiper && swiperEl) {
                 const slideCount = swiperEl.querySelectorAll('.swiper-slide').length;
-                const shouldLoop = slideCount > 3;
+                
                 try {
                     new Swiper(swiperEl, {
+                        slidesPerView: 1,
                         spaceBetween: 20,
-                        breakpoints: {
-                            320: { slidesPerView: 1, centeredSlides: true },
-                            768: { slidesPerView: 2, centeredSlides: false },
-                            1024: { slidesPerView: 3, centeredSlides: false }
-                        },
-                        preloadImages: false,
-                        lazy: true,
-                        watchSlidesProgress: true,
-                        powerMode: true,
-                        spaceBetween: 30,
-                        centeredSlides: shouldLoop, 
-                        loop: shouldLoop,
-                        ...(shouldLoop && { loopedSlides: 5 }), 
-                        speed: 800,
-                        autoplay: shouldLoop ? { delay: 3000, disableOnInteraction: false } : false,
+                        loop: slideCount > 1,
                         navigation: {
                             nextEl: container.querySelector('.swiper-button-next'),
                             prevEl: container.querySelector('.swiper-button-prev'),

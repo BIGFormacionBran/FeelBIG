@@ -1,31 +1,26 @@
 <?php
-// feelbig\process_confirmacion.php
-require_once 'includes/managers/main_manager.php';
+require_once 'includes/managers/MainManager.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $correo = $_SESSION['temp_email'] ?? '';
+    $email = $_SESSION['temp_email'] ?? '';
     
-    // --- NUEVA LÓGICA: VERIFICACIÓN SEGURA POR GOOGLE ---
-    if (isset($_POST['google_token'])) {
-        $token = $_POST['google_token'];
-        // Llamada a la API de Google para validar el token
+    if (isset($_POST['googleToken'])) {
+        $token = $_POST['googleToken'];
         $url = "https://oauth2.googleapis.com/tokeninfo?id_token=" . $token;
         $response = @file_get_contents($url);
         $payload = json_decode($response, true);
 
-        if ($payload && isset($payload['email']) && $payload['email'] === $correo) {
+        if ($payload && isset($payload['email']) && $payload['email'] === $email) {
             $manager = new MainManager();
-            $db = Database::getConnection();
+            $connection = DbUtil::getConnection();
             
-            // Buscamos el código que el usuario tiene asignado en la base de datos
-            $stmt = $db->prepare("SELECT codigo FROM REGISTRO_PENDIENTE WHERE correo = ? LIMIT 1");
-            $stmt->execute([$correo]);
-            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $connection->prepare("SELECT codigo FROM REGISTRO_PENDIENTE WHERE correo = ? LIMIT 1");
+            $stmt->execute([$email]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($res && $manager->confirmar_registro($correo, $res['codigo'])) {
-                // Si la confirmación es exitosa, logueamos
-                $stmt = $db->prepare("SELECT id, nombre, id_tipo_cuenta FROM USUARIO WHERE correo = ?");
-                $stmt->execute([$correo]);
+            if ($result && $manager->confirmRegistration($email, $result['codigo'])) {
+                $stmt = $connection->prepare("SELECT id, nombre, id_tipo_cuenta FROM USUARIO WHERE correo = ?");
+                $stmt->execute([$email]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($user) {
@@ -43,19 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // --- FLUJO MANUAL (POR CÓDIGO) ---
-    $codigo = $_POST['codigo'] ?? '';
+    $code = $_POST['codigo'] ?? ''; 
 
-    if (empty($correo) || empty($codigo)) {
+    if (empty($email) || empty($code)) {
         header("Location: /register?error=codigo");
         exit();
     }
 
     $manager = new MainManager();
-    if ($manager->confirmar_registro($correo, $codigo)) {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT id, nombre, id_tipo_cuenta FROM USUARIO WHERE correo = ?");
-        $stmt->execute([$correo]);
+    if ($manager->confirmRegistration($email, $code)) {
+        $connection = DbUtil::getConnection();
+        $stmt = $connection->prepare("SELECT id, nombre, id_tipo_cuenta FROM USUARIO WHERE correo = ?");
+        $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {

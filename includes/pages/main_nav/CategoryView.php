@@ -1,30 +1,30 @@
 <?php
-require_once 'includes/managers/content_manager.php';
-require_once 'includes/utils/card_render_util.php';
+require_once 'includes/managers/ContentManager.php';
+require_once 'includes/utils/CardRenderUtil.php';
 
 $contentManager = new ContentManager();
 
-// 1. Buscamos la categoría por el slug que viene en la URL ($page)
-$currentCat = $contentManager->contenidoDao->get_categoria_por_slug($page);
+// 1. We search for the category by the slug coming in the URL ($page)
+$currentCategory = $contentManager->contentDao->getCategoryBySlug($page);
 
-if (!$currentCat) {
+if (!$currentCategory) {
     echo "Categoría no encontrada.";
     return;
 }
 
-// 2. Traemos los items usando el método compatible
-$items = $contentManager->get_items_by_category_name($page);
+// 2. We fetch items using the compatible method
+$items = $contentManager->getItemsByCategoryName($page);
 ?>
 
 <div class="container-page">
     <div class="section-header">
-        <h1><?php echo htmlspecialchars($currentCat['nombre']); ?></h1>
+        <h1><?php echo htmlspecialchars($currentCategory['nombre']); ?></h1>
     </div>
 
     <?php if (!empty($items)): ?>
         <div class="category-grid-layout">
             <?php foreach ($items as $item): ?>
-                <?php render_card_item_row($item); ?>
+                <?php renderCardItemRow($item); ?>
             <?php endforeach; ?>
         </div>
     <?php else: ?>

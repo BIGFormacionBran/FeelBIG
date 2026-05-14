@@ -1,17 +1,15 @@
 <?php
-// feelbig\includes\utils\mail_util.php
-
 require_once __DIR__ . '/../../libs/PHPMailer/Exception.php';
 require_once __DIR__ . '/../../libs/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/../../libs/PHPMailer/SMTP.php';
-require_once __DIR__ . '/config_util.php';
-require_once __DIR__ . '/logger_util.php';
+require_once __DIR__ . '/ConfigUtil.php';
+require_once __DIR__ . '/LoggerUtil.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 class MailUtil {
-    public static function enviar($destinatario, $asunto, $cuerpoVariable, $nombreUsuario = "Usuario") {
+    public static function send($recipient, $subject, $variableBody, $userName = "Usuario") {
         $mail = new PHPMailer(true);
 
         try {
@@ -25,9 +23,9 @@ class MailUtil {
             $mail->CharSet    = 'UTF-8';
 
             $mail->setFrom(ConfigUtil::get('SMTP_USER'), ConfigUtil::get('SMTP_FROM_NAME', 'Feel BiG'));
-            $mail->addAddress($destinatario);
+            $mail->addAddress($recipient);
             $mail->isHTML(true);
-            $mail->Subject = $asunto;
+            $mail->Subject = $subject;
 
             $logoUrl = "https://feelbigpre.bigformacion.com/assets/img/logo.png";
 
@@ -38,7 +36,7 @@ class MailUtil {
                         <img src='$logoUrl' alt='Feel BiG' style='width: 180px; height: auto; display: block; margin: 0 auto; -ms-interpolation-mode: bicubic;'>
                     </div>
                     <div style='padding: 40px 30px; color: #fff; background-color: #010101; text-align: center;'>
-                        <div style='font-size: 20px; font-weight: bold; margin-bottom: 20px; text-align: center;'>¡Hola, " . htmlspecialchars($nombreUsuario) . "!</div>
+                        <div style='font-size: 20px; font-weight: bold; margin-bottom: 20px; text-align: center;'>¡Hola, " . htmlspecialchars($userName) . "!</div>
             ";
 
             $htmlFooter = "
@@ -53,10 +51,10 @@ class MailUtil {
                 </div>
             </div>";
 
-            $mail->Body = $htmlHeader . $cuerpoVariable . $htmlFooter;
+            $mail->Body = $htmlHeader . $variableBody . $htmlFooter;
             return $mail->send();
         } catch (Exception $e) {
-            Logger::error("MailUtil: " . $e->getMessage());
+            LoggerUtil::error("MailUtil: " . $e->getMessage());
             return false;
         }
     }

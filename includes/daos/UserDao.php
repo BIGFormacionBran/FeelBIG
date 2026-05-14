@@ -1,12 +1,12 @@
 <?php
-require_once __DIR__ . '/../utils/db_util.php';
+require_once __DIR__ . '/../utils/DbUtil.php';
 
-class UsuarioDAO {
+class UserDao {
     private $db;
 
     public function __construct() {
         try {
-            $this->db = Database::getConnection();
+            $this->db = DbUtil::getConnection();
         } catch (Exception $e) {
             $this->db = null;
         }
@@ -20,71 +20,66 @@ class UsuarioDAO {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function registrar($nombre, $correo, $password, $id_tipo = 3) {
+    public function register($name, $email, $password, $typeId = 3) {
         if (!$this->db) return false;
         try {
             $hash = password_hash($password, PASSWORD_BCRYPT);
-            return $this->registrar_con_hash($nombre, $correo, $hash, $id_tipo);
+            return $this->registerWithHash($name, $email, $hash, $typeId);
         } catch (PDOException $e) {
             return false;
         }
     }
 
-    public function registrar_con_hash($nombre, $correo, $hash, $id_tipo = 3) {
+    public function registerWithHash($name, $email, $hash, $typeId = 3) {
         if (!$this->db) return false;
         try {
             $sql = "INSERT INTO USUARIO (nombre, correo, password, id_tipo_cuenta) VALUES (?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$nombre, $correo, $hash, $id_tipo]);
+            return $stmt->execute([$name, $email, $hash, $typeId]);
         } catch (PDOException $e) {
+            LoggerUtil::error("UserDao: SQL Error in registerWithHash: " . $e->getMessage());
             return false;
         }
     }
 
-    public function login($identificador, $password) {
+    public function login($identifier, $password) {
         if (!$this->db) {
-            Logger::error("UsuarioDAO: No hay conexión a la base de datos.");
-            throw new Exception("no_db");
+            LoggerUtil::error("UserDao: No DB connection.");
+            throw new Exception("Error de conexión");
         }
-        
         try {
             $sql = "SELECT * FROM USUARIO WHERE correo = ? OR nombre = ?";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$identificador, $identificador]);
+            $stmt->execute([$identifier, $identifier]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$user) {
-                Logger::info("UsuarioDAO: No se encontró ningún usuario con identificador: $identificador");
+                LoggerUtil::info("UserDao: No user found for: $identifier");
                 return false;
             }
 
             if (password_verify($password, $user['password'])) {
                 return $user;
             } else {
-                Logger::error("UsuarioDAO: Contraseña incorrecta para el usuario: $identificador");
-                // Debug opcional: Si sospechas del hash, loguea el hash de la DB (NUNCA la pass plana)
-                // Logger::info("Hash en DB: " . $user['password']); 
+                LoggerUtil::error("UserDao: Incorrect password for: $identifier");
                 return false;
             }
         } catch (PDOException $e) {
-            Logger::error("UsuarioDAO: Error de SQL en login: " . $e->getMessage());
+            LoggerUtil::error("UserDao: SQL Error in login: " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Actualiza los datos del perfil del usuario
-     */
-    public function actualizarPerfil($id, $nombre, $correo, $password = null) {
+    public function updateProfile($id, $name, $email, $password = null) {
         if (!$this->db) return false;
         try {
             if ($password) {
                 $hash = password_hash($password, PASSWORD_BCRYPT);
                 $sql = "UPDATE USUARIO SET nombre = ?, correo = ?, password = ? WHERE id = ?";
-                $params = [$nombre, $correo, $hash, $id];
+                $params = [$name, $email, $hash, $id];
             } else {
                 $sql = "UPDATE USUARIO SET nombre = ?, correo = ? WHERE id = ?";
-                $params = [$nombre, $correo, $id];
+                $params = [$name, $email, $id];
             }
             $stmt = $this->db->prepare($sql);
             return $stmt->execute($params);

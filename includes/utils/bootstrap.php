@@ -1,31 +1,29 @@
 <?php
 session_start();
+$basePath = dirname(__DIR__, 2);
+$logFile = $basePath . '/logs/php_error.log';
 
-// --- GESTIÓN DE ERRORES PRO ---
-$base_path = dirname(__DIR__, 2);
-$log_file = $base_path . '/logs/php_error.log';
-
-if (!is_dir($base_path . '/logs')) {
-    mkdir($base_path . '/logs', 0755, true);
+if (!is_dir($basePath . '/logs')) {
+    mkdir($basePath . '/logs', 0755, true);
 }
 
 ini_set('display_errors', 0); 
 ini_set('log_errors', 1);      
-ini_set('error_log', $log_file); 
+ini_set('error_log', $logFile); 
 error_reporting(E_ALL);
 
-// 1. Cargar CAPA UTILS
-require_once $base_path . '/includes/utils/assets_util.php';
-require_once $base_path . '/includes/utils/render_util.php';
-require_once $base_path . '/includes/utils/individual_render_util.php';
-require_once $base_path . '/includes/utils/db_util.php';
-require_once $base_path . '/includes/utils/card_render_util.php';
+// 1. Load UTILS layer
+require_once $basePath . '/includes/utils/AssetsUtil.php';
+require_once $basePath . '/includes/utils/RenderUtil.php';
+require_once $basePath . '/includes/utils/IndividualRenderUtil.php';
+require_once $basePath . '/includes/utils/DbUtil.php';
+require_once $basePath . '/includes/utils/CardRenderUtil.php';
 
-// 2. Cargar CAPA MANAGERS
-require_once $base_path . '/includes/managers/router_manager.php';
-require_once $base_path . '/includes/managers/main_manager.php';
+// 2. Load MANAGERS layer
+require_once $basePath . '/includes/managers/RouterManager.php';
+require_once $basePath . '/includes/managers/MainManager.php';
 
-// 3. Lógica de Enrutamiento
+// 3. Routing Logic
 $rawRoute = $_GET['route'] ?? 'home';
 if (isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] >= 400) {
     $cleanRoute = 'error/' . $_SERVER['REDIRECT_STATUS'];
@@ -33,13 +31,26 @@ if (isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] >= 400) {
     $cleanRoute = trim($rawRoute, '/');
 }
 
-// Lógica de reenvío de código
+global $routeParts;
+$routeParts = explode('/', $cleanRoute);
+$page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
+
+// --- ADMIN PROTECTION ---
+if ($page === 'admin') {
+    $userManager = new UserManager();
+    if (!isset($_SESSION['user_id']) || !$userManager->isAdmin($_SESSION['user_role'] ?? 0)) {
+        header("Location: /error/403");
+        exit();
+    }
+}
+
+// Resend code logic
 if ($cleanRoute === 'resend-code') {
-    $correo = $_SESSION['temp_email'] ?? '';
-    $nombre = $_SESSION['temp_name'] ?? 'Usuario';
-    if (!empty($correo)) {
+    $email = $_SESSION['temp_email'] ?? '';
+    $name = $_SESSION['temp_name'] ?? 'Usuario';
+    if (!empty($email)) {
         $manager = new MainManager();
-        if ($manager->iniciar_registro($nombre, $correo, "RESEND_ONLY")) {
+        if ($manager->startRegistration($name, $email, "RESEND_ONLY")) {
             header("Location: /register-confirm?sent=1");
             exit();
         }
@@ -48,32 +59,27 @@ if ($cleanRoute === 'resend-code') {
     exit();
 }
 
-// --- DETECCIÓN DE SCRIPTS DE PROCESAMIENTO (POST) ---
+// --- POST PROCESSING DETECTION ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($cleanRoute === 'login') { require_once $base_path . '/auth.php'; exit(); }
-    if ($cleanRoute === 'register') { require_once $base_path . '/process_registro.php'; exit(); }
-    if ($cleanRoute === 'register-confirm') { require_once $base_path . '/process_confirmacion.php'; exit(); }
+    if ($cleanRoute === 'login') { require_once $basePath . '/Auth.php'; exit(); }
+    if ($cleanRoute === 'register') { require_once $basePath . '/ProcessRegistration.php'; exit(); }
+    if ($cleanRoute === 'register-confirm') { require_once $basePath . '/ProcessConfirmation.php'; exit(); }
 }
 
-global $routeParts;
-$routeParts = explode('/', $cleanRoute);
-$page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
+$authPages = ['login', 'register', 'register-confirm'];
+$pageConfig = getPageConfigManager($page);
+$isError = isset($pageConfig['errorCode']);
 
-$auth_pages = ['login', 'register', 'register-confirm'];
-
-$pageConfig = get_page_config_manager($page);
-$isError = isset($pageConfig['error_code']);
-
-if ($isError && is_numeric($pageConfig['error_code'])) {
-    http_response_code($pageConfig['error_code']);
+if ($isError && is_numeric($pageConfig['errorCode'])) {
+    http_response_code($pageConfig['errorCode']);
 }
 
-// 4. Lógica de Sesión
-if (!isset($_SESSION['user_id']) && !in_array($page, $auth_pages) && !$isError) {
+// 4. Session Logic
+if (!isset($_SESSION['user_id']) && !in_array($page, $authPages) && !$isError) {
     header("Location: /login");
     exit();
 }
 
-// 5. Cargar Configuración de página
-$main_css = get_minified_css_util();
-$needs_swiper = false;
+// 5. Page Config Load
+$mainCss = getMinifiedCssUtil();
+$needsSwiper = false;

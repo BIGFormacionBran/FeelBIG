@@ -1,17 +1,17 @@
 <?php
-require_once __DIR__ . '/../../managers/content_manager.php';
-require_once __DIR__ . '/../../utils/card_render_util.php';
+require_once __DIR__ . '/../../managers/ContentManager.php';
+require_once __DIR__ . '/../../utils/CardRenderUtil.php';
 
 $contentManager = new ContentManager();
-$carouselItems = $contentManager->get_items_by_category_name('Minijuegos');
+$carouselItems = $contentManager->getItemsByCategoryName('Minijuegos');
 
 if (!empty($carouselItems)) {
     $carouselTitle = "Minijuegos Saludables";
     $exploreUrl = "minijuegos";
     
     // ACTIVAMOS EL USO DE SWIPER PARA ESTA PÁGINA
-    $GLOBALS['needs_swiper'] = true;
+    $GLOBALS['needsSwiper'] = true;
 
-    include __DIR__ . '/../generic/dynamic_carousel.php';
+    include __DIR__ . '/../generic/DynamicCarousel.php';
 }
 ?>

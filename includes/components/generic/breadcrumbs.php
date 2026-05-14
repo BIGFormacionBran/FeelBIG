@@ -1,11 +1,11 @@
 <?php
-require_once dirname(__DIR__, 3) . '/includes/managers/main_manager.php';
+require_once dirname(__DIR__, 3) . '/includes/managers/MainManager.php';
 
 global $page, $routeParts;
 
 $manager = new MainManager();
-$safe_route_parts = isset($routeParts) ? $routeParts : [];
-$crumbs = $manager->get_breadcrumbs($page, $safe_route_parts);
+$safeRouteParts = isset($routeParts) ? $routeParts : [];
+$crumbs = $manager->getBreadcrumbs($page, $safeRouteParts);
 ?>
 
 <?php if ($crumbs): ?>

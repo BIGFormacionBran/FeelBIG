@@ -1,33 +1,32 @@
 <?php
-// feelbig\auth.php
-require_once 'includes/managers/main_manager.php';
-require_once 'includes/utils/logger_util.php';
+require_once 'includes/managers/MainManager.php';
+require_once 'includes/utils/LoggerUtil.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $usuario = $_POST['usuario'];
-    $pass = $_POST['password'];
+    $identifier = $_POST['usuario'] ?? '';
+    $password = $_POST['password'] ?? '';
 
     try {
-        Logger::info("auth.php: Intento de login iniciado para usuario: $usuario");
+        LoggerUtil::info("Auth.php: Login attempt started for user: $identifier");
         $manager = new MainManager();
-        $user = $manager->login($usuario, $pass);
+        $user = $manager->login($identifier, $password);
 
         if ($user) {
-            Logger::info("auth.php: Login exitoso para ID: " . $user['id']);
+            LoggerUtil::info("Auth.php: Successful login for ID: " . $user['id']);
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nombre'];
             $_SESSION['user_role'] = $user['id_tipo_cuenta'] ?? 3;
-            unset($_SESSION['form_data']);
+            unset($_SESSION['formData']);
             header("Location: /home");
             exit();
         } else {
-            Logger::error("auth.php: Login fallido (Credenciales incorrectas) para: $usuario");
-            $_SESSION['form_data'] = ['usuario' => $usuario, 'password' => $pass];
+            LoggerUtil::error("Auth.php: Failed login for: $identifier");
+            $_SESSION['formData'] = ['usuario' => $identifier, 'password' => $password];
             header("Location: /login?error=1");
             exit();
         }
     } catch (Exception $e) {
-        Logger::error("auth.php: EXCEPCIÓN CRÍTICA: " . $e->getMessage());
+        LoggerUtil::error("Auth.php: CRITICAL EXCEPTION: " . $e->getMessage());
         header("Location: /login?error=db");
         exit();
     }
