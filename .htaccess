@@ -13,6 +13,9 @@ ErrorDocument 500 /error/500
 RewriteEngine On
 RewriteBase /
 
+# --- BLOQUEO TOTAL DE LA CARPETA ADMIN ---
+RewriteRule ^admin($|/.*) index.php?route=admin [L,QSA]
+
 # Evita que se aplique la regla si el archivo o carpeta existe físicamente
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

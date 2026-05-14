@@ -22,6 +22,7 @@ require_once $basePath . '/includes/utils/CardRenderUtil.php';
 // 2. Load MANAGERS layer
 require_once $basePath . '/includes/managers/RouterManager.php';
 require_once $basePath . '/includes/managers/MainManager.php';
+require_once $basePath . '/includes/managers/UserManager.php';
 
 // 3. Routing Logic
 $rawRoute = $_GET['route'] ?? 'home';
@@ -38,7 +39,11 @@ $page = (empty($routeParts[0])) ? 'home' : $routeParts[0];
 // --- ADMIN PROTECTION ---
 if ($page === 'admin') {
     $userManager = new UserManager();
-    if (!isset($_SESSION['user_id']) || !$userManager->isAdmin($_SESSION['user_role'] ?? 0)) {
+
+    $userRole = $_SESSION['user_role'] ?? 0;
+
+    if (!isset($_SESSION['user_id']) || !$userManager->isAdmin($userRole)) {
+        LoggerUtil::error("Intento de acceso no autorizado a /admin. ID: " . ($_SESSION['user_id'] ?? 'Anónimo') . " | Rol: $userRole");
         header("Location: /error/403");
         exit();
     }
