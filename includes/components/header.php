@@ -1,9 +1,15 @@
 <?php 
 require_once __DIR__ . '/../managers/ContentManager.php';
+require_once __DIR__ . '/../managers/UserManager.php';
 
 $manager = new ContentManager();
-$menuItems = $manager->getMainMenu(); // Método en inglés
+$userManager = new UserManager();
 
+if ($userManager->isAdmin($_SESSION['user_role'] ?? 0)) {
+    include __DIR__ . '/../../admin/includes/components/AdminHeader.php';
+}
+
+$menuItems = $manager->getMainMenu();
 $activeSlug = '';
 if (isset($page)) {
     if ($page === 'IndividualView' && isset($routeParts[0])) {

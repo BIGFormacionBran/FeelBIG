@@ -11,6 +11,8 @@ function getPageConfigManager($page) {
         $fileToLoad = 'includes/pages/Configuration.php';
     } elseif ($page === 'error') {
         $fileToLoad = 'includes/pages/Error.php';
+    } elseif ($page === 'admin') {
+        $fileToLoad = 'admin/index.php';
     } elseif (file_exists($baseDir . $page . '.php')) {
         $fileToLoad = 'includes/pages/' . $page . '.php';
     } elseif (in_array($page, ['login', 'register', 'register-confirm'])) {
