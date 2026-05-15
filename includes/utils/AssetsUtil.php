@@ -1,15 +1,12 @@
 <?php
-function getMinifiedCssUtil() {
-    $source = 'assets/css/styles.css';
-    $target = 'assets/css/styles.min.css';
+function getMinifiedCssUtil($filename = 'styles') {
+    $source = "assets/css/{$filename}.css";
+    $target = "assets/css/{$filename}.min.css";
 
     if (!file_exists($source)) return '';
 
     if (!file_exists($target) || filemtime($source) > filemtime($target)) {
-        $css = file_get_contents($source);
-        $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
-        $css = str_replace(["\r\n", "\r", "\n", "\t", '  ', '    '], '', $css);
-        file_put_contents($target, $css);
+        file_put_contents($target, (str_replace(["\r\n", "\r", "\n", "\t", '  ', '    '], '', preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', file_get_contents($source)))));
     }
     return $target . '?v=' . filemtime($target);
 }
