@@ -21,11 +21,16 @@ class MainManager {
 
     public function getBreadcrumbs($currentPage, $routeParts) {
         LoggerUtil::info("MainManager: Generating breadcrumbs for $currentPage");
-        if (in_array($currentPage, ['home', 'login', 'register', 'configuracion', 'error'])) return null;
+        if (in_array($currentPage, ['home', 'login', 'register', 'configuracion', 'error', 'admin'])) return null;
         
         $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
-        $currentSlug = ($currentPage === 'IndividualView') ? ($routeParts[0] ?? null) : $currentPage;
 
+        if ($currentPage === 'admin' && isset($routeParts[1])) {
+            $breadcrumbs = [['title' => 'Admin', 'link' => '/admin']];
+            $breadcrumbs[] = ['title' => ucwords(str_replace('-', ' ', urldecode($routeParts[1]))), 'link' => null];
+        }
+
+        $currentSlug = ($currentPage === 'IndividualView') ? ($routeParts[0] ?? null) : $currentPage;
         if ($currentSlug) {
             $categoryData = $this->contentDao->getCategoryBySlug($currentSlug);
             if ($categoryData) {
