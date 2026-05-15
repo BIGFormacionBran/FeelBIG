@@ -33,20 +33,22 @@ class AdminContentManager {
 
     public function listAllCategoriesOrdered() {
         $all = $this->publicDao->getAllCategories();
-        $ordered = [];
-        
-        // 1. Separar raíces de hijas
-        $roots = array_filter($all, function($c) { return $c['id_padre'] === null; });
-        
-        // 2. Por cada raíz, buscar sus hijas e insertarlas justo debajo
-        foreach ($roots as $root) {
-            $ordered[] = $root;
-            foreach ($all as $child) {
-                if ($child['id_padre'] == $root['id']) {
-                    $ordered[] = $child;
+        return $this->buildTree($all);
+    }
+
+    private function buildTree(array $elements, $parentId = null) {
+        $branch = [];
+        foreach ($elements as $element) {
+            if ($element['id_padre'] == $parentId) {
+                $branch[] = $element;
+                $children = $this->buildTree($elements, $element['id']);
+                if ($children) {
+                    foreach($children as $child) {
+                        $branch[] = $child;
+                    }
                 }
             }
         }
-        return $ordered;
+        return $branch;
     }
 }

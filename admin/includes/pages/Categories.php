@@ -39,17 +39,20 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                 <div style="margin-bottom: 15px;">
                     <div style="margin-bottom: 5px; font-size: 0.9em; color: #666;">Nombre:</div>
                     <input type="text" name="nombre" required placeholder="Nombre de categoría..." 
-                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
                 </div>
 
                 <div style="margin-bottom: 20px;">
-                    <div style="margin-bottom: 5px; font-size: 0.9em; color: #666;">Depende de:</div>
-                    <select name="id_padre" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: white;">
+                    <div style="margin-bottom: 5px; font-size: 0.9em; color: #666;">Depende de (Categoría Padre):</div>
+                    <select name="id_padre" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: white; font-family: monospace;">
                         <option value="null">-- Categoría Principal (Raíz) --</option>
                         <?php foreach($categorias as $c): ?>
-                            <?php if($c['id_padre'] === null): ?>
-                                <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['nombre']); ?></option>
-                            <?php endif; ?>
+                            <option value="<?php echo $c['id']; ?>">
+                                <?php 
+                                    // Añadimos guiones visuales en el select según sea subcategoría o no
+                                    echo ($c['id_padre'] !== null ? "  — " : "") . htmlspecialchars($c['nombre']); 
+                                ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -76,7 +79,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                     
                     <div style="flex: 2; font-weight: <?php echo $c['id_padre'] ? 'normal' : 'bold'; ?>;">
                         <?php if($c['id_padre']): ?>
-                            <span style="color: #ccc; margin-right: 5px;">└─</span>
+                            <span style="margin: 0 13px;"></span>
                         <?php endif; ?>
                         <?php echo htmlspecialchars($c['nombre']); ?>
                     </div>
