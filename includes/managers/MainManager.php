@@ -37,16 +37,14 @@ class MainManager {
                 if (!empty($categoryData['id_padre'])) {
                     $parent = $this->contentDao->getCategoryById($categoryData['id_padre']);
                     if ($parent) {
-                        $parentSlug = strtolower(str_replace(' ', '-', $parent['nombre']));
-                        $breadcrumbs[] = ['title' => $parent['nombre'], 'link' => '/' . $parentSlug];
+                        $breadcrumbs[] = ['title' => $parent['nombre'], 'link' => '/' . strtolower(str_replace(' ', '-', $parent['nombre']))];
                     }
                 }
-                $hasLink = ($currentPage === 'IndividualView');
-                $breadcrumbs[] = ['title' => $categoryData['nombre'], 'link' => $hasLink ? '/' . $currentSlug : null];
+                $isIndividual = ($currentPage === 'IndividualView');
+                $breadcrumbs[] = ['title' => $categoryData['nombre'], 'link' => $isIndividual ? '/' . $currentSlug : null];
                 
-                if ($currentPage === 'IndividualView' && isset($routeParts[1])) {
-                    $itemTitle = ucwords(str_replace('-', ' ', urldecode($routeParts[1])));
-                    $breadcrumbs[] = ['title' => $itemTitle, 'link' => null];
+                if ($isIndividual && isset($routeParts[1])) {
+                    $breadcrumbs[] = ['title' => ucwords(str_replace(['-', '_'], ' ', urldecode($routeParts[1]))), 'link' => null];
                 }
             }
         }
