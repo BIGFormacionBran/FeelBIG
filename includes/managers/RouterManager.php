@@ -33,7 +33,7 @@ function getPageConfigManager($page) {
     }
 
     // 2. AUTOMATIC DATABASE SEARCH (Categories)
-    if (!empty($page) && $page !== 'assets') {
+    if (!empty($page) && !in_array($page, ['assets', 'admin', 'includes'])) {
         $manager = new ContentManager();
         $categoryData = $manager->contentDao->getCategoryBySlug($page);
         if ($categoryData) {
