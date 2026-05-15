@@ -26,9 +26,10 @@ class MainManager {
         if ($currentPage === 'admin' && isset($routeParts[1])) {
             $breadcrumbs = [['title' => 'Admin', 'link' => '/admin']];
             $breadcrumbs[] = ['title' => ucwords(str_replace(['-', '_'], ' ', urldecode($routeParts[1]))), 'link' => null];
+        }else {
+            $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
         }
-            
-        $breadcrumbs = [['title' => 'Home', 'link' => '/home']];
+        
         $currentSlug = ($currentPage === 'IndividualView') ? ($routeParts[0] ?? null) : $currentPage;
         if ($currentSlug) {
             $categoryData = $this->contentDao->getCategoryBySlug($currentSlug);
