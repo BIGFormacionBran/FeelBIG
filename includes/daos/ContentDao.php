@@ -15,6 +15,11 @@ class ContentDao {
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAllCategories() {
+        $sql = "SELECT id, nombre, id_padre FROM CATEGORIA ORDER BY nombre ASC";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getSubcategories($parentId) {
         $stmt = $this->db->prepare("SELECT * FROM CATEGORIA WHERE id_padre = ?");
         $stmt->execute([$parentId]);
