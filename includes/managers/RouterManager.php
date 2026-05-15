@@ -7,6 +7,10 @@ function getPageConfigManager($page) {
     global $routeParts;
     $subPage = $routeParts[1] ?? '';
 
+    if (preg_match('/\.(jpg|jpeg|png|gif|ico|css|js|svg)$/i', $_SERVER['REQUEST_URI'])) {
+        return ['path' => 'includes/pages/Error.php', 'title' => '404', 'isRoot' => false, 'errorCode' => '404'];
+    }
+
     LoggerUtil::info("RouterManager -> Page: [$page], SubPage: [$subPage]");
 
     if ($page === 'admin') {
@@ -19,6 +23,7 @@ function getPageConfigManager($page) {
     LoggerUtil::info("RouterManager -> Intentando cargar path: [$path]. FullPath: [" . ($fullPath ?: 'NO_EXISTE') . "]");
 
     if ($fullPath && file_exists($fullPath)) {
+        LoggerUtil::info("RouterManager -> Path encontrado: [$path]");
         return [
             'path'      => $path,
             'title'     => ($page === 'error') ? "Error " . ($routeParts[1] ?? '404') : ucwords(str_replace(['-', '_'], ' ', $subPage ?: $page)),
@@ -28,14 +33,16 @@ function getPageConfigManager($page) {
     }
 
     // 2. AUTOMATIC DATABASE SEARCH (Categories)
-    $manager = new ContentManager();
-    $categoryData = $manager->contentDao->getCategoryBySlug($page);
-    if ($categoryData) {
-        return [
-            'path'   => (count($routeParts) >= 2) ? 'includes/pages/IndividualView.php' : 'includes/pages/main_nav/CategoryView.php',
-            'title'  => $categoryData['nombre'],
-            'isRoot' => false
-        ];
+    if (!empty($page) && $page !== 'assets') {
+        $manager = new ContentManager();
+        $categoryData = $manager->contentDao->getCategoryBySlug($page);
+        if ($categoryData) {
+            return [
+                'path'   => (count($routeParts) >= 2) ? 'includes/pages/IndividualView.php' : 'includes/pages/main_nav/CategoryView.php',
+                'title'  => $categoryData['nombre'],
+                'isRoot' => false
+            ];
+        }
     }
 
     return [
