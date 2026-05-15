@@ -5,31 +5,23 @@ function getPageConfigManager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
     global $routeParts;
 
-    // 1. AUTOMATIC FILE SCAN    
-    $fileToLoad = null;
-    $customErrorCode = null;
-
-    if ($page === 'config') {
-        $fileToLoad = 'includes/pages/Configuration.php';
-    } elseif ($page === 'error') {
-        $fileToLoad = 'includes/pages/Error.php';
-        $customErrorCode = $routeParts[1] ?? '404';
-    } elseif ($page === 'admin') {
-        $fileToLoad = 'admin/index.php';
-    } elseif (file_exists($baseDir . $page . '.php')) {
-        $fileToLoad = 'includes/pages/' . $page . '.php';
-    } elseif (in_array($page, ['login', 'register', 'register-confirm'])) {
-        $fileToLoad = 'includes/pages/AuthView.php';
-    } elseif ($page === 'home') {
-        $fileToLoad = 'includes/pages/Home.php';
+    if ($page === 'admin') {
+        $path = empty($subPage) ? 'admin/index.php' : 'admin/includes/pages/' . ucwords($subPage) . '.php';
+    } else {
+        if (in_array($page, ['login', 'register', 'register-confirm'])) {
+            $path = 'includes/pages/AuthView.php';
+        } else {
+            $path = 'includes/pages/' . ucwords($page) . '.php';
+        }
     }
 
-    if ($fileToLoad) {
+    if (file_exists(__DIR__ . '/../../' . $path)) {
+        $subPage = $routeParts[1] ?? '';
         return [
-            'path'   => $fileToLoad,
-            'title'  => ($page === 'error' && $customErrorCode) ? "Error " . $customErrorCode : ucwords(str_replace(['-', '_'], ' ', $page)),
-            'isRoot' => ($page === 'home'  || $page === 'config' || $page === 'admin' || empty($page)),
-            'errorCode' => $customErrorCode
+            'path'      => $path,
+            'title'     => ($page === 'error') ? "Error " . ($routeParts[1] ?? '404') : ucwords(str_replace(['-', '_'], ' ', $subPage ?: $page)),
+            'isRoot'    => in_array($page, ['home', 'admin', '']) && empty($subPage),
+            'errorCode' => ($page === 'error') ? ($routeParts[1] ?? '404') : null
         ];
     }
 
@@ -37,15 +29,8 @@ function getPageConfigManager($page) {
     $manager = new ContentManager();
     $categoryData = $manager->contentDao->getCategoryBySlug($page);
     if ($categoryData) {
-        if (count($routeParts) >= 2) {
-            return [
-                'path'   => 'includes/pages/IndividualView.php',
-                'title'  => ucwords(str_replace('-', ' ', urldecode($routeParts[1]))),
-                'isRoot' => false
-            ];
-        }
         return [
-            'path'   => 'includes/pages/main_nav/CategoryView.php',
+            'path'   => (count($routeParts) >= 2) ? 'includes/pages/IndividualView.php' : 'includes/pages/main_nav/CategoryView.php',
             'title'  => $categoryData['nombre'],
             'isRoot' => false
         ];
