@@ -11,8 +11,6 @@ function getPageConfigManager($page) {
         return ['path' => 'includes/pages/Error.php', 'title' => '404', 'isRoot' => false, 'errorCode' => '404'];
     }
 
-    LoggerUtil::info("RouterManager -> Page: [$page], SubPage: [$subPage]");
-
     if ($page === 'admin') {
         $path = empty($subPage) ? 'admin/index.php' : 'admin/includes/pages/' . ucwords($subPage) . '.php';
     } else {
@@ -20,10 +18,8 @@ function getPageConfigManager($page) {
     }
 
     $fullPath = realpath(__DIR__ . '/../../' . $path);
-    LoggerUtil::info("RouterManager -> Intentando cargar path: [$path]. FullPath: [" . ($fullPath ?: 'NO_EXISTE') . "]");
 
     if ($fullPath && file_exists($fullPath)) {
-        LoggerUtil::info("RouterManager -> Path encontrado: [$path]");
         return [
             'path'      => $path,
             'title'     => ($page === 'error') ? "Error " . ($routeParts[1] ?? '404') : ucwords(str_replace(['-', '_'], ' ', $subPage ?: $page)),
@@ -32,17 +28,11 @@ function getPageConfigManager($page) {
         ];
     }
 
-    // 2. AUTOMATIC DATABASE SEARCH (Categories)
-    LoggerUtil::info("RouterManager -> Path físico no existe. Iniciando búsqueda en DB para slug: [$page]");
     if (!empty($page) && !in_array($page, ['assets', 'admin', 'includes'])) {
         $manager = new ContentManager();
         $categoryData = $manager->contentDao->getCategoryBySlug($page);
 
         if ($categoryData) {
-            $numParts = count($routeParts);
-            $targetPath = ($numParts >= 2) ? 'includes/pages/IndividualView.php' : 'includes/pages/main_nav/CategoryView.php';
-            LoggerUtil::info("RouterManager -> DB Match: [" . $categoryData['nombre'] . "]. RouteParts count: $numParts. Target: $targetPath");
-
             return [
                 'path'   => (count($routeParts) >= 2) ? 'includes/pages/IndividualView.php' : 'includes/pages/main_nav/CategoryView.php',
                 'title'  => $categoryData['nombre'],
@@ -51,7 +41,6 @@ function getPageConfigManager($page) {
         }
     }
 
-    LoggerUtil::info("RouterManager -> No se encontró ruta. Retornando Error 404.");
     return [
         'path'      => 'includes/pages/Error.php',
         'title'     => 'Error 404',
