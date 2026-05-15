@@ -1,13 +1,7 @@
 <?php 
 require_once __DIR__ . '/../managers/ContentManager.php';
-require_once __DIR__ . '/../managers/UserManager.php';
 
 $manager = new ContentManager();
-$userManager = new UserManager();
-
-if ($userManager->isAdmin($_SESSION['user_role'] ?? 0)) {
-    include __DIR__ . '/../../admin/includes/components/AdminHeader.php';
-}
 
 $menuItems = $manager->getMainMenu();
 $activeSlug = '';

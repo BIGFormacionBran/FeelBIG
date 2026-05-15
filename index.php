@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/utils/Bootstrap.php'; 
+require_once __DIR__ . '/../managers/UserManager.php';
+
+$userManager = new UserManager();
+$isAdmin = $userManager->isAdmin($_SESSION['user_role'] ?? 0);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -9,7 +13,7 @@ require_once __DIR__ . '/includes/utils/Bootstrap.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="<?php echo $mainCss; ?>">
-    <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1): ?>
+    <?php if ($isAdmin): ?>
         <link rel="stylesheet" href="<?php echo $adminCss; ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -18,6 +22,9 @@ require_once __DIR__ . '/includes/utils/Bootstrap.php';
 <body>
     <div class="body-section">
         <?php 
+            if ($isAdmin) {
+                include __DIR__ . '/admin/includes/components/AdminHeader.php';
+            }
             renderPageLayoutManager($page, $pageConfig, $authPages); 
         ?>
     </div>
