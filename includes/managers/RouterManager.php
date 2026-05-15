@@ -1,22 +1,24 @@
 <?php
 require_once __DIR__ . '/ContentManager.php';
+require_once __DIR__ . '/../utils/LoggerUtil.php';
 
 function getPageConfigManager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
     global $routeParts;
     $subPage = $routeParts[1] ?? '';
 
+    LoggerUtil::info("RouterManager -> Page: [$page], SubPage: [$subPage]");
+
     if ($page === 'admin') {
         $path = empty($subPage) ? 'admin/index.php' : 'admin/includes/pages/' . ucwords($subPage) . '.php';
     } else {
-        if (in_array($page, ['login', 'register', 'register-confirm'])) {
-            $path = 'includes/pages/AuthView.php';
-        } else {
-            $path = 'includes/pages/' . ucwords($page) . '.php';
-        }
+        $path = in_array($page, ['login', 'register', 'register-confirm']) ? 'includes/pages/AuthView.php' : 'includes/pages/' . ucwords($page) . '.php';
     }
 
-    if (file_exists(__DIR__ . '/../../' . $path)) {
+    $fullPath = realpath(__DIR__ . '/../../' . $path);
+    LoggerUtil::info("RouterManager -> Intentando cargar path: [$path]. FullPath: [" . ($fullPath ?: 'NO_EXISTE') . "]");
+
+    if ($fullPath && file_exists($fullPath)) {
         return [
             'path'      => $path,
             'title'     => ($page === 'error') ? "Error " . ($routeParts[1] ?? '404') : ucwords(str_replace(['-', '_'], ' ', $subPage ?: $page)),
