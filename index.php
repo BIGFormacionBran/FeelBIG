@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/utils/Bootstrap.php'; 
-require_once __DIR__ . '/../managers/UserManager.php';
+require_once __DIR__ . '/includes/managers/UserManager.php';
 
 $userManager = new UserManager();
 $isAdmin = $userManager->isAdmin($_SESSION['user_role'] ?? 0);
