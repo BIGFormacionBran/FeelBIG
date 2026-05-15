@@ -18,4 +18,14 @@ class AdminContentDao {
         $stmt = $this->db->prepare("INSERT INTO CATEGORIA (nombre, id_padre) VALUES (?, ?)");
         return $stmt->execute([$nombre, $id_padre]);
     }
+
+    public function updateCategory($id, $nombre, $id_padre) {
+        $stmt = $this->db->prepare("UPDATE CATEGORIA SET nombre = ?, id_padre = ? WHERE id = ?");
+        return $stmt->execute([$nombre, $id_padre, $id]);
+    }
+
+    public function deleteCategory($id) {
+        $stmt = $this->db->prepare("DELETE FROM CATEGORIA WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 }

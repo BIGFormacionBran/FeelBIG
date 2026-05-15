@@ -51,4 +51,30 @@ class AdminContentManager {
         }
         return $branch;
     }
+
+    public function updateCategory($id, $nombre, $id_padre) {
+        $id = (int)$id;
+        $nombre = trim($nombre);
+        if (empty($nombre)) return false;
+
+        $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
+
+        // Evitar que una categoría sea su propio padre
+        if ($id === $parentId) return false;
+
+        $result = $this->adminDao->updateCategory($id, $nombre, $parentId);
+        if ($result) {
+            LoggerUtil::info("Manager: Categoría ID $id actualizada a '$nombre'");
+        }
+        return $result;
+    }
+
+    public function deleteCategory($id) {
+        $id = (int)$id;
+        $result = $this->adminDao->deleteCategory($id);
+        if ($result) {
+            LoggerUtil::info("Manager: Categoría ID $id eliminada");
+        }
+        return $result;
+    }
 }
