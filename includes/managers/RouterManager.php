@@ -4,6 +4,7 @@ require_once __DIR__ . '/ContentManager.php';
 function getPageConfigManager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
     global $routeParts;
+    $subPage = $routeParts[1] ?? '';
 
     if ($page === 'admin') {
         $path = empty($subPage) ? 'admin/index.php' : 'admin/includes/pages/' . ucwords($subPage) . '.php';
@@ -16,7 +17,6 @@ function getPageConfigManager($page) {
     }
 
     if (file_exists(__DIR__ . '/../../' . $path)) {
-        $subPage = $routeParts[1] ?? '';
         return [
             'path'      => $path,
             'title'     => ($page === 'error') ? "Error " . ($routeParts[1] ?? '404') : ucwords(str_replace(['-', '_'], ' ', $subPage ?: $page)),
