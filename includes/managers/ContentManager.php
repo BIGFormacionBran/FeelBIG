@@ -30,11 +30,19 @@ class ContentManager {
     }
 
     public function getCategoryContent($categoryId) {
+        $results = [];
         $subcategories = $this->contentDao->getSubcategories($categoryId);
         if (!empty($subcategories)) {
-            return array_map([$this, 'mapCategoryToCard'], $subcategories);
+            $mappedSubcategories = array_map([$this, 'mapCategoryToCard'], $subcategories);
+            $results = array_merge($results, $mappedSubcategories);
         }
-        return $this->getItemsByCategoryId($categoryId);
+
+        $items = $this->getItemsByCategoryId($categoryId);
+        if (!empty($items)) {
+            $results = array_merge($results, $items);
+        }
+
+        return $results;
     }
 
     public function getItemsByCategoryId($id) {
