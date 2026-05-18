@@ -1,12 +1,13 @@
 <header class="admin-main-header">
     <div class="admin-header-flex">
         <div class="admin-logo-wrapper">
-            <a href="/admin" class="admin-logo-link">Feel BiG <span class="admin-subtitle">| CMS Panel</span></a>
+            <a href="/admin" class="admin-logo-link">
+                Feel BiG <span class="admin-subtitle">| CMS Panel</span>
+            </a>
         </div>
         
         <nav class="admin-nav-container">
             <a href="/admin/categories" class="admin-nav-link">Categorías</a>
-            <a href="/admin/contents" class="admin-nav-link">Contenidos</a>
             
             <div class="admin-user-info">
                 Bienvenido, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong>
