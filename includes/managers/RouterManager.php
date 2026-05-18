@@ -10,9 +10,17 @@ function getPageConfigManager($page) {
 
     LoggerUtil::info("RouterManager: Iniciando para PAGE: '$page' | SUBPAGE: '$subPage' | URI: " . $_SERVER['REQUEST_URI']);
 
-    if (preg_match('/\.(jpg|jpeg|png|gif|ico|css|js|svg)(\?.*)?$/i', $_SERVER['REQUEST_URI'])) {
-
+    if (preg_match('/\.(jpg|jpeg|png|gif|ico|css|js|svg)(\?.*)?$/i', $_SERVER['REQUEST_URI'])) {        
         LoggerUtil::info("RouterManager: Detectado archivo estático en URI: " . $_SERVER['REQUEST_URI']);
+        
+        $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $fullAssetPath = realpath(__DIR__ . '/../../' . ltrim($requestPath, '/'));
+
+        if ($fullAssetPath && file_exists($fullAssetPath)) {
+            header('Content-Type: ' . ($page === 'js' ? 'application/javascript' : 'text/css'));
+            readfile($fullAssetPath);
+            exit;
+        }
 
         $userManager = new UserManager();
         $userRole = $_SESSION['user_role'] ?? 0;
