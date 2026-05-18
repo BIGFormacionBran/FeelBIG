@@ -31,6 +31,9 @@ $isAdmin = $userManager->isAdmin($_SESSION['user_role'] ?? 0);
     <?php if (isset($needsSwiper) && $needsSwiper): ?>
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <?php endif; ?>
-    <script src="assets/js/main.js"></script>
+    <?php if ($isAdmin): ?>
+        <script src="/admin/assets/js/admin.js" defer></script>
+    <?php endif; ?>
+        <script src="assets/js/main.js"></script>
 </body>
 </html>
