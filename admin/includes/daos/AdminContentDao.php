@@ -29,14 +29,14 @@ class AdminContentDao {
         return $stmt->execute([$id]);
     }
 
-    public function insertContent($titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
-        $stmt = $this->db->prepare("INSERT INTO CONTENIDO (nombre, subtitulo, descripcion, imagen, id_categoria) VALUES (?, ?, ?, ?, ?)");
-        return $stmt->execute([$titulo, $subtitulo, $descripcion, $imagen, $id_categoria]);
+    public function insertContent($titulo, $descripcion, $imagen, $id_categoria) {
+        $stmt = $this->db->prepare("INSERT INTO CONTENIDO (nombre, descripcion, imagen, id_categoria) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$titulo, $descripcion, $imagen, $id_categoria]);
     }
 
-    public function updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
-        $stmt = $this->db->prepare("UPDATE CONTENIDO SET nombre = ?, subtitulo = ?, descripcion = ?, imagen = ?, id_categoria = ? WHERE id = ?");
-        return $stmt->execute([$titulo, $subtitulo, $descripcion, $imagen, $id_categoria, $id]);
+    public function updateContent($id, $titulo, $descripcion, $imagen, $id_categoria) {
+        $stmt = $this->db->prepare("UPDATE CONTENIDO SET nombre = ?, descripcion = ?, imagen = ?, id_categoria = ? WHERE id = ?");
+        return $stmt->execute([$titulo, $descripcion, $imagen, $id_categoria, $id]);
     }
 
     public function deleteContent($id) {
