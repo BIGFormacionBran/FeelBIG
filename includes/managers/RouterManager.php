@@ -10,7 +10,7 @@ function getPageConfigManager($page) {
 
     LoggerUtil::info("RouterManager: Iniciando para PAGE: '$page' | SUBPAGE: '$subPage' | URI: " . $_SERVER['REQUEST_URI']);
 
-    if (preg_match('/\.(jpg|jpeg|png|gif|ico|css|js|svg)$/i', $_SERVER['REQUEST_URI'])) {
+    if (preg_match('/\.(jpg|jpeg|png|gif|ico|css|js|svg)(\?.*)?$/i', $_SERVER['REQUEST_URI'])) {
 
         LoggerUtil::info("RouterManager: Detectado archivo estático en URI: " . $_SERVER['REQUEST_URI']);
 
