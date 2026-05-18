@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/ContentManager.php';
 require_once __DIR__ . '/../utils/LoggerUtil.php';
+require_once __DIR__ . '/includes/managers/UserManager.php';
 
 function getPageConfigManager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
@@ -8,7 +9,10 @@ function getPageConfigManager($page) {
     $subPage = $routeParts[1] ?? '';
 
     if (preg_match('/\.(jpg|jpeg|png|gif|ico|css|js|svg)$/i', $_SERVER['REQUEST_URI'])) {
-        return ['path' => 'includes/pages/Error.php', 'title' => '404', 'isRoot' => false, 'errorCode' => '404'];
+        $userManager = new UserManager();
+        return (strpos($_SERVER['REQUEST_URI'], '/admin/') !== false && !$userManager->isAdmin($_SESSION['user_role'] ?? 0)) 
+            ? ['path' => 'includes/pages/Error.php', 'title' => '403', 'isRoot' => false, 'errorCode' => '403'] 
+                : null;
     }
 
     if ($page === 'admin') {
