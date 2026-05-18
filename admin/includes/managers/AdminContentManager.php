@@ -81,20 +81,67 @@ class AdminContentManager {
         return $this->adminDao->getAllContents();
     }
 
+    // --- OPERACIONES DE CONTENIDO CON LOGS ---
+
     public function createContent($titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
         $titulo = trim($titulo);
-        if (empty($titulo) || empty($id_categoria)) return false;
-        return $this->adminDao->insertContent($titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
+        
+        LoggerUtil::info("Manager: Intentando crear contenido. Título: '$titulo', Cat: '$id_categoria'");
+
+        if (empty($titulo)) {
+            LoggerUtil::error("Manager: Error al crear contenido - El título está vacío.");
+            return false;
+        }
+        if (empty($id_categoria)) {
+            LoggerUtil::error("Manager: Error al crear contenido - No se proporcionó ID de categoría.");
+            return false;
+        }
+
+        $result = $this->adminDao->insertContent($titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
+
+        if ($result) {
+            LoggerUtil::info("Manager: Contenido '$titulo' creado con éxito.");
+        } else {
+            LoggerUtil::error("Manager: El DAO devolvió FALSE al intentar insertar contenido '$titulo'. Revisar AdminContentDao o la DB.");
+        }
+
+        return $result;
     }
 
     public function updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
         $id = (int)$id;
         $titulo = trim($titulo);
-        if (empty($id) || empty($titulo)) return false;
-        return $this->adminDao->updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
+
+        LoggerUtil::info("Manager: Intentando editar contenido ID: $id. Nuevo Título: '$titulo'");
+
+        if (empty($id) || empty($titulo)) {
+            LoggerUtil::error("Manager: Error al editar - ID ($id) o Título ('$titulo') faltantes.");
+            return false;
+        }
+
+        $result = $this->adminDao->updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
+
+        if ($result) {
+            LoggerUtil::info("Manager: Contenido ID $id actualizado con éxito.");
+        } else {
+            LoggerUtil::error("Manager: El DAO devolvió FALSE al actualizar contenido ID $id.");
+        }
+
+        return $result;
     }
 
     public function deleteContent($id) {
-        return $this->adminDao->deleteContent((int)$id);
+        $id = (int)$id;
+        LoggerUtil::info("Manager: Intentando eliminar contenido ID: $id");
+
+        $result = $this->adminDao->deleteContent($id);
+
+        if ($result) {
+            LoggerUtil::info("Manager: Contenido ID $id eliminado correctamente.");
+        } else {
+            LoggerUtil::error("Manager: Fallo al eliminar contenido ID $id en el DAO.");
+        }
+
+        return $result;
     }
 }
