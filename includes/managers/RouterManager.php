@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/ContentManager.php';
 require_once __DIR__ . '/../utils/LoggerUtil.php';
-require_once __DIR__ . '/includes/managers/UserManager.php';
+require_once __DIR__ . './UserManager.php';
 
 function getPageConfigManager($page) {
     $baseDir = __DIR__ . '/../../includes/pages/';
