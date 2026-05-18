@@ -10,9 +10,10 @@ function getPageConfigManager($page) {
 
     if (preg_match('/\.(jpg|jpeg|png|gif|ico|css|js|svg)$/i', $_SERVER['REQUEST_URI'])) {
         $userManager = new UserManager();
-        return (strpos($_SERVER['REQUEST_URI'], '/admin/') !== false && !$userManager->isAdmin($_SESSION['user_role'] ?? 0)) 
-            ? ['path' => 'includes/pages/Error.php', 'title' => '403', 'isRoot' => false, 'errorCode' => '403'] 
-                : null;
+        if (strpos($_SERVER['REQUEST_URI'], '/admin/') !== false && !$userManager->isAdmin($_SESSION['user_role'] ?? 0)) {
+            return ['path' => 'includes/pages/Error.php', 'title' => '403', 'isRoot' => false, 'errorCode' => '403'];
+        }
+        exit;
     }
 
     if ($page === 'admin') {
