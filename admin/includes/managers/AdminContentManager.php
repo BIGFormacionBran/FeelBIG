@@ -59,7 +59,6 @@ class AdminContentManager {
 
         $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
 
-        // Evitar que una categoría sea su propio padre
         if ($id === $parentId) return false;
 
         $result = $this->adminDao->updateCategory($id, $nombre, $parentId);
@@ -83,13 +82,16 @@ class AdminContentManager {
     }
 
     public function createContent($titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
+        $titulo = trim($titulo);
         if (empty($titulo) || empty($id_categoria)) return false;
         return $this->adminDao->insertContent($titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
     }
 
     public function updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
+        $id = (int)$id;
+        $titulo = trim($titulo);
         if (empty($id) || empty($titulo)) return false;
-        return $this->adminDao->updateContent((int)$id, $titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
+        return $this->adminDao->updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
     }
 
     public function deleteContent($id) {

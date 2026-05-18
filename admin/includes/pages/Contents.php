@@ -5,16 +5,23 @@ $adminManager = new AdminContentManager();
 $status = ""; $message = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
+    $nombre = $_POST['nombre'] ?? '';
+    $subtitulo = $_POST['subtitulo'] ?? ''; // Captura de subtitulo
+    $descripcion = $_POST['descripcion'] ?? '';
+    $imagen = $_POST['imagen'] ?? '';
+    $id_categoria = $_POST['id_categoria'] ?? '';
+    $id = $_POST['id'] ?? null;
+
     if ($action === 'add') {
-        if ($adminManager->createContent($_POST['nombre'], $_POST['subtitulo'], $_POST['descripcion'], $_POST['imagen'], $_POST['id_categoria'])) $status = "success";
+        if ($adminManager->createContent($nombre, $subtitulo, $descripcion, $imagen, $id_categoria)) $status = "success";
         else $status = "error";
     }
     elseif ($action === 'edit') {
-        if ($adminManager->updateContent($_POST['id'], $_POST['nombre'], $_POST['subtitulo'], $_POST['descripcion'], $_POST['imagen'], $_POST['id_categoria'])) $status = "success";
+        if ($adminManager->updateContent($id, $nombre, $subtitulo, $descripcion, $imagen, $id_categoria)) $status = "success";
         else $status = "error";
     }
     elseif ($action === 'delete') {
-        if ($adminManager->deleteContent($_POST['id'])) $status = "success";
+        if ($adminManager->deleteContent($id)) $status = "success";
         else $status = "error";
     }
 }
@@ -44,6 +51,8 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                     <label class="admin-label">Título:</label>
                     <input type="text" name="nombre" id="cont-nombre" required class="admin-input">
                 </div>
+
+                <input type="hidden" name="subtitulo" id="cont-subtitulo" value="">
 
                 <div class="admin-form-group">
                     <label class="admin-label">Categoría:</label>
