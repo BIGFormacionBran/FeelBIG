@@ -77,4 +77,22 @@ class AdminContentManager {
         }
         return $result;
     }
+
+    public function listAllContents() {
+        return $this->adminDao->getAllContents();
+    }
+
+    public function createContent($titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
+        if (empty($titulo) || empty($id_categoria)) return false;
+        return $this->adminDao->insertContent($titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
+    }
+
+    public function updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
+        if (empty($id) || empty($titulo)) return false;
+        return $this->adminDao->updateContent((int)$id, $titulo, $subtitulo, $descripcion, $imagen, (int)$id_categoria);
+    }
+
+    public function deleteContent($id) {
+        return $this->adminDao->deleteContent((int)$id);
+    }
 }

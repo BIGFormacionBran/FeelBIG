@@ -87,5 +87,5 @@ if (!isset($_SESSION['user_id']) && !in_array($page, $authPages) && !$isError) {
 
 // 5. Page Config Load
 $mainCss = getMinifiedCssUtil();
-$adminCss = getMinifiedCssUtil('admin');
+$adminCss = getMinifiedCssUtil('admin', 'admin/assets/css');
 $needsSwiper = false;

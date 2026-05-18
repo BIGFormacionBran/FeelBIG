@@ -28,4 +28,27 @@ class AdminContentDao {
         $stmt = $this->db->prepare("DELETE FROM CATEGORIA WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public function insertContent($titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
+        $stmt = $this->db->prepare("INSERT INTO CONTENIDO (nombre, subtitulo, descripcion, imagen, id_categoria) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([$titulo, $subtitulo, $descripcion, $imagen, $id_categoria]);
+    }
+
+    public function updateContent($id, $titulo, $subtitulo, $descripcion, $imagen, $id_categoria) {
+        $stmt = $this->db->prepare("UPDATE CONTENIDO SET nombre = ?, subtitulo = ?, descripcion = ?, imagen = ?, id_categoria = ? WHERE id = ?");
+        return $stmt->execute([$titulo, $subtitulo, $descripcion, $imagen, $id_categoria, $id]);
+    }
+
+    public function deleteContent($id) {
+        $stmt = $this->db->prepare("DELETE FROM CONTENIDO WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function getAllContents() {
+        $sql = "SELECT c.*, cat.nombre as categoria_nombre 
+                FROM CONTENIDO c 
+                JOIN CATEGORIA cat ON c.id_categoria = cat.id 
+                ORDER BY c.id DESC";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
