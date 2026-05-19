@@ -140,7 +140,7 @@
     box-shadow: 0 0 0 3px var(--color-principal-soft);
 }
 
-.admin-textarea-small { min-height: 50px; resize: vertical; }
+.admin-textarea-small { min-height: 50px; resize: vertical; will-change: height; transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; }
 
 .form-buttons {
     display: flex;
