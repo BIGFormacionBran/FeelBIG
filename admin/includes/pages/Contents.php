@@ -92,8 +92,8 @@ $categorias = $adminManager->listAllCategoriesOrdered();
             
             <div class="admin-list-header">
                 <div class="col-id">ID</div>
-                <div class="col-name">Título y Descripción</div>
-                <div class="col-info">Info / Archivos</div>
+                <div class="col-name">Título / Descripción</div>
+                <div class="col-info">Clasificación / Archivos</div>
                 <div class="col-level">Categoría</div>
                 <div class="col-actions">Acciones</div>
             </div>
@@ -103,15 +103,15 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                     <div class="col-id"><?php echo $con['id']; ?></div>
                     
                     <div class="col-name">
-                        <span class="bold"><?php echo htmlspecialchars($con['nombre']); ?></span>
-                        <span class="small-text"><?php echo htmlspecialchars(mb_strimwidth($con['descripcion_breve'], 0, 60, "...")); ?></span>
+                        <div class="bold"><?php echo htmlspecialchars($con['nombre']); ?></div>
+                        <div class="small-text"><?php echo htmlspecialchars(mb_strimwidth($con['descripcion_breve'], 0, 80, "...")); ?></div>
                     </div>
 
                     <div class="col-info">
-                        <div><strong>Tipo:</strong> <?php echo htmlspecialchars($con['clasificacion'] ?: '-'); ?></div>
+                        <div><?php echo htmlspecialchars($con['clasificacion'] ?: 'Sin clasificar'); ?></div>
                         <div class="small-text">
-                            <?php if($con['video']): ?> 🎥 <?php echo htmlspecialchars($con['video']); endif; ?>
-                            <?php if($con['imagen']): ?> 🖼️ Imagen lista<?php endif; ?>
+                            Video: <?php echo $con['video'] ? htmlspecialchars($con['video']) : 'No'; ?> / 
+                            Img: <?php echo $con['imagen'] ? 'Sí' : 'No'; ?>
                         </div>
                     </div>
 

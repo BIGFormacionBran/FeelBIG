@@ -149,7 +149,7 @@
     gap: 10px;
 }
 
-/* --- SISTEMA DE LISTADO UNIFICADO (DIVS) --- */
+/* --- SISTEMA DE LISTADO UNIFICADO --- */
 .admin-list-header {
     display: flex;
     background: #F8F9FA;
@@ -168,24 +168,25 @@
     padding: 15px;
     border-bottom: 1px solid var(--color-border);
     gap: 15px;
-    transition: background 0.2s ease;
 }
 
-.admin-list-row:hover { background-color: #fcfdfe; }
 .admin-list-row.is-child { background-color: #FCFDFE; }
 
-.col-id { width: 60px; color: var(--color-texto-muted); }
-.col-name { flex: 2; display: flex; align-items: center; }
+/* Columnas calculadas para que quepa todo el contenido */
+.col-id { width: 50px; color: var(--color-texto-muted); flex-shrink: 0; }
+.col-name { flex: 2; min-width: 200px; }
 .col-info { flex: 1.5; font-size: 0.85rem; color: var(--color-texto-muted); }
-.col-level { flex: 1; }
-.col-actions { flex: 1; display: flex; justify-content: flex-end; gap: 10px; }
-.small-text { font-size: 0.8rem; display: block; margin-top: 4px; }
-.bold { font-weight: 700; }
+.col-level { width: 150px; flex-shrink: 0; }
+.col-actions { width: 160px; display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; }
 
+.bold { font-weight: 700; color: var(--color-texto); }
+.small-text { font-size: 0.8rem; display: block; margin-top: 2px; }
+
+/* Badges de estado/categoría */
 .admin-badge {
     display: inline-block;
-    padding: 4px 10px;
-    border-radius: 6px;
+    padding: 2px 10px;
+    border-radius: 4px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -194,15 +195,13 @@
 .admin-badge.root { background: #e0f2fe; color: #0369a1; }
 .admin-badge.child { background: #f1f5f9; color: #475569; }
 
-/* Espaciador para jerarquía */
 .indent-spacer {
     width: 20px;
     height: 20px;
     border-left: 2px solid var(--color-border);
     border-bottom: 2px solid var(--color-border);
-    margin-right: 15px;
+    margin-right: 10px;
     display: inline-block;
-    vertical-align: middle;
 }
 
 /* --- BOTONES DE ACCIÓN --- */
