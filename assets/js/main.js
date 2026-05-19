@@ -88,7 +88,7 @@
                 
                 try {
                     new Swiper(swiperEl, {
-                        slidesPerView: 'auto', 
+                        slidesPerView: 1, 
                         spaceBetween: 25,
                         grabCursor: true,
                         loop: slideCount > 4,
