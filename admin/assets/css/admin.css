@@ -1,8 +1,13 @@
-/* FEEL BIG - ADMIN SPECIFIC STYLES */
+
+:root {
+    --color-principal-admin: #D71539;
+    --color-secundario-admin: #D21A1A;
+    --color-principal-admin-soft: #F9BEC9;
+}
 
 /* --- LAYOUT DE ADMINISTRACIÓN --- */
 .admin-main-header {
-    background-color: var(--color-texto); /* Usa el negro de tu root */
+    background-color: var(--color-texto);
     padding: 0 30px;
     height: 70px;
     display: flex;
@@ -27,6 +32,23 @@
     font-size: 1.2rem;
     font-weight: 700;
     text-decoration: none;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+/* Efectos para el Logo */
+.admin-logo-link:hover {
+    color: var(--color-secundario);
+}
+
+.admin-logo-link:focus {
+    outline: 2px solid var(--color-secundario);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.admin-logo-link:active {
+    transform: scale(0.95);
 }
 
 .admin-subtitle {
@@ -60,17 +82,6 @@
     font-size: 0.85rem;
     padding-left: 20px;
     border-left: 1px solid rgba(255,255,255,0.1);
-}
-
-.admin-logout-btn {
-    background-color: rgba(220, 38, 38, 0.15);
-    color: #ff4d4d;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
 /* --- ESTRUCTURA DE PÁGINA --- */
@@ -142,9 +153,9 @@
 
 .form-buttons {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     gap: 10px;
-    margin-top: 20px;
 }
 
 /* --- TABLAS --- */
@@ -214,16 +225,64 @@
     border-radius: 6px;
     font-weight: 700;
     cursor: pointer;
+    transition: var(--transition);
 }
 
 .action-delete-clean {
-    background: rgba(220, 38, 38, 0.05);
-    color: #DC2626;
-    border: none;
+    background: var(--color-principal-admin-soft);
+    color: var(--color-principal-admin);
+    border: 1px solid transparent;
     padding: 6px 12px;
     border-radius: 6px;
     font-weight: 700;
     cursor: pointer;
+    transition: var(--transition);
+}
+
+.action-edit:hover, .action-edit:focus,.action-delete-clean:hover, .action-delete-clean:focus {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: var(--color-blanco);
+}
+
+.action-edit:hover, .action-edit:focus {
+    background: var(--color-secundario);
+}
+
+.action-delete-clean:hover, .action-delete-clean:focus {
+    background: var(--color-secundario-admin);
+}
+
+.action-edit:active, .action-delete-clean:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-secundario, .admin-logout-btn {
+    display: inline-flex;
+    text-transform: uppercase;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: var(--color-principal-admin);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-secundario:hover, .btn-secundario:focus, .admin-logout-btn:hover, .admin-logout-btn:focus {
+    background-color: var(--color-secundario-admin);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secundario:active, .admin-logout-btn:active {
+    transform: translateY(0) scale(0.98);
 }
 
 /* --- ALERTAS --- */
