@@ -460,10 +460,12 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .swiper-wrapper {
     will-change: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Forzamos que los slides de Swiper tengan un tamaño consistente */
 .swiper-slide { 
+    width: auto !important;
     height: auto !important;
     display: flex !important; 
     max-height: 400px !important;

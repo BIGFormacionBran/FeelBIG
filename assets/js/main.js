@@ -91,6 +91,11 @@
                         slidesPerView: 1,
                         spaceBetween: 20,
                         loop: slideCount > 1,
+                        autoplay: slideCount > 1 ? {
+                            delay: 2000, 
+                            disableOnInteraction: false, 
+                            pauseOnMouseEnter: true, 
+                        } : false,
                         navigation: {
                             nextEl: container.querySelector('.swiper-button-next'),
                             prevEl: container.querySelector('.swiper-button-prev'),
