@@ -545,33 +545,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     border-radius: 4px;
 }
 
-/* --- VISTA INDIVIDUAL (TIPO CREISS) --- */
-.creiss-single-wrapper {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: var(--color-blanco);
-    border-radius: var(--radio);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-}
-
-.creiss-single-header {
-    padding: 30px 40px 10px;
-}
-
-.creiss-title {
-    font-size: 32px;
-    margin: 0;
-    color: var(--color-texto);
-}
-
-.creiss-meta-flex {
-    display: flex;
-    gap: 20px;
-    padding: 0 40px 25px;
-    flex-wrap: wrap;
-}
-
 .meta-item-box {
     display: flex;
     flex-direction: column;
@@ -592,19 +565,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     color: var(--color-principal);
 }
 
-.creiss-featured-image {
-    position: relative;
-    width: 100%;
-}
-
-.creiss-featured-image img {
-    width: 100%;
-    height: auto;
-    max-height: 500px;
-    object-fit: cover;
-    display: block;
-}
-
 .badge-float {
     position: absolute;
     top: 20px;
@@ -617,20 +577,10 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     font-weight: 600;
 }
 
-.creiss-body-content {
-    padding: 40px;
-}
-
 .text-area {
     font-size: 16px;
     line-height: 1.8;
     color: var(--color-texto);
-}
-
-.creiss-footer-actions {
-    margin-top: 40px;
-    border-top: 1px solid var(--color-border);
-    padding-top: 20px;
 }
 
 .btn-back {
