@@ -88,11 +88,12 @@
                 
                 try {
                     new Swiper(swiperEl, {
-                        slidesPerView: 1,
-                        spaceBetween: 20,
+                        slidesPerView: 'auto',
+                        spaceBetween: 25,
+                        centeredSlides: false,
                         loop: slideCount > 1,
                         autoplay: slideCount > 1 ? {
-                            delay: 5000, 
+                            delay: 3000, 
                             disableOnInteraction: false, 
                             pauseOnMouseEnter: true, 
                         } : false,
@@ -106,6 +107,7 @@
                         },
                         observer: true,
                         observeParents: true,
+                        watchSlidesProgress: true,
                         on: {
                             init: function () {
                                 swiperEl.classList.remove('is-loading');
