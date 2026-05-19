@@ -442,7 +442,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     align-items: center;
     gap: 15px;
     width: 100%;
-    max-width: 1300px; /* Limitamos ancho máximo */
     margin: 0 auto;
 }
 
@@ -451,6 +450,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     min-height: 400px;
     visibility: hidden;
     padding: 10px !important;
+    overflow: hidden;
 }
 
 .swiper-feelbig-generic.swiper-initialized {
@@ -694,9 +694,8 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     box-shadow: var(--shadow-sm);
     transition: var(--transition);
     margin: 0 auto;
-    width: 100%;
+    width: 300px;
     height: 100%;
-    max-width: 300px;
 }
 
 .card-column:hover, .card-row:hover {
