@@ -106,6 +106,11 @@
                             el: container.querySelector('.swiper-pagination-custom'),
                             clickable: true,
                         },
+                        breakpoints: {
+                            768: { slidesPerView: 2 },
+                            1024: { slidesPerView: 3 },
+                            1440: { slidesPerView: 4 }
+                        },
                         on: {
                             init: function () {
                                 swiperEl.classList.remove('is-loading');
