@@ -78,14 +78,9 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                     <input type="text" name="enlace_externo" id="con-enlace_externo" class="admin-input">
                 </div>
 
-                <div class="admin-form-group">
-                    <label>Fecha Publicación:</label>
-                    <input type="date" name="fecha_publicacion" id="con-fecha_publicacion" class="admin-input" value="<?php echo date('Y-m-d'); ?>" readonly>
-                </div>
-
                 <div class="form-buttons">
                     <button type="submit" class="btn-primario" id="btn-submit">Guardar Contenido</button>
-                    <button type="button" class="btn-secundario hidden" id="btn-cancel" onclick="resetForm('content')">Cancelar Edición</button>
+                    <button type="button" class="btn-secundario hidden" id="btn-cancel" onclick="resetForm(this)">Cancelar Edición</button>
                 </div>
             </form>
         </div>

@@ -60,7 +60,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
 
                 <div class="form-buttons">
                     <button type="submit" class="btn-primario" id="btn-submit">Guardar Categoría</button>
-                    <button type="button" class="btn-secundario hidden mt-10" id="btn-cancel" onclick="resetForm('category')">Cancelar Edición</button>
+                    <button type="button" class="btn-secundario hidden mt-10" id="btn-cancel" onclick="resetForm(this)">Cancelar Edición</button>
                 </div>
             </form>
         </div>

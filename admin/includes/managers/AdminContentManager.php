@@ -65,6 +65,8 @@ class AdminContentManager {
 
     public function createContent(array $datos) {
         if (empty($datos['nombre']) || empty($datos['id_categoria'])) return false;
+        // Insertamos la fecha actual automáticamente
+        $datos['fecha_publicacion'] = date('Y-m-d');
         return $this->adminDao->insertContent($datos);
     }
 

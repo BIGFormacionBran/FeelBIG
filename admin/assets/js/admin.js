@@ -5,14 +5,18 @@ function prepareEdit(data) {
     
     if (!form) return;
 
-    const prefix = form.id.split('-')[0].substring(0, 3) + '-';
+    // AUTOMÁTICO: Detecta prefijo (cat- o con-) desde el primer input con guion
+    const idInput = form.querySelector('input[id*="-"]');
+    const prefix = idInput ? idInput.id.split('-')[0] + '-' : '';
     
     if (formTitle) {
-        const entityName = document.querySelector('.side-form').getAttribute('data-entity') || 'Elemento';
+        const entityName = form.closest('.side-form').getAttribute('data-entity') || 'Elemento';
         formTitle.innerText = "Editar " + entityName;
     }
 
-    document.getElementById('form-action').value = "edit";
+    const actionInput = document.getElementById('form-action');
+    if (actionInput) actionInput.value = "edit";
+
     Object.keys(data).forEach(key => {
         const input = document.getElementById(prefix + key);
         if (input) {
@@ -25,19 +29,28 @@ function prepareEdit(data) {
     });
 
     if (btnCancel) btnCancel.classList.remove('hidden');
-    document.querySelector('.side-form')?.scrollIntoView({ behavior: 'smooth' });
+    form.closest('.side-form')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-function resetForm(type) {
-    const formId = type === 'category' ? 'category-form' : 'content-form';
-    const form = document.getElementById(formId);
-    if (form) form.reset();
+function resetForm(btn) {
+    // AUTOMÁTICO: Busca el formulario y el contenedor de la tarjeta
+    const container = btn.closest('.side-form');
+    const form = container.querySelector('form');
+    if (!form) return;
 
-    const title = document.getElementById('form-title');
-    if (title) title.innerText = (type === 'category') ? 'Nueva Categoría' : 'Nuevo Contenido';
+    form.reset();
+
+    // Restaurar título original desde data-entity
+    const title = container.querySelector('#form-title');
+    if (title) {
+        const entityName = container.getAttribute('data-entity') || 'Elemento';
+        title.innerText = "Nuevo " + entityName;
+    }
     
-    const actionInput = document.getElementById('form-action');
+    // Resetear acción a 'add'
+    const actionInput = form.querySelector('#form-action');
     if (actionInput) actionInput.value = 'add';
     
-    document.getElementById('btn-cancel')?.classList.add('hidden');
+    // Ocultar botón cancelar
+    btn.classList.add('hidden');
 }
