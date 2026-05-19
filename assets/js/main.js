@@ -92,7 +92,7 @@
                         spaceBetween: 20,
                         loop: slideCount > 1,
                         autoplay: slideCount > 1 ? {
-                            delay: 2000, 
+                            delay: 5000, 
                             disableOnInteraction: false, 
                             pauseOnMouseEnter: true, 
                         } : false,
