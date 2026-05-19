@@ -5,8 +5,8 @@ function prepareEdit(data) {
     
     if (!form) return;
 
-    // AUTOMÁTICO: Detecta prefijo (cat- o con-) desde el primer input con guion
-    const idInput = form.querySelector('input[id*="-"]');
+    // AUTOMÁTICO: Detecta prefijo (cat- o con-) desde el primer input que use el patrón de ID
+    const idInput = form.querySelector('input[id*="-id"]');
     const prefix = idInput ? idInput.id.split('-')[0] + '-' : '';
     
     if (formTitle) {
@@ -14,9 +14,11 @@ function prepareEdit(data) {
         formTitle.innerText = "Editar " + entityName;
     }
 
-    const actionInput = document.getElementById('form-action');
+    // Localización automática de inputs de control por nombre o ID
+    const actionInput = form.querySelector('[name="action"]');
     if (actionInput) actionInput.value = "edit";
 
+    // Mapeo automático de datos al formulario usando el prefijo detectado
     Object.keys(data).forEach(key => {
         const input = document.getElementById(prefix + key);
         if (input) {
@@ -33,24 +35,24 @@ function prepareEdit(data) {
 }
 
 function resetForm(btn) {
-    // AUTOMÁTICO: Busca el formulario y el contenedor de la tarjeta
     const container = btn.closest('.side-form');
     const form = container.querySelector('form');
     if (!form) return;
 
     form.reset();
 
-    // Restaurar título original desde data-entity
+    // Limpiar explícitamente el input de ID oculto
+    const idInput = form.querySelector('input[id*="-id"]');
+    if (idInput) idInput.value = "";
+
     const title = container.querySelector('#form-title');
     if (title) {
         const entityName = container.getAttribute('data-entity') || 'Elemento';
-        title.innerText = "Nuevo " + entityName;
+        title.innerText = "Nueva " + entityName;
     }
     
-    // Resetear acción a 'add'
-    const actionInput = form.querySelector('#form-action');
+    const actionInput = form.querySelector('[name="action"]');
     if (actionInput) actionInput.value = 'add';
     
-    // Ocultar botón cancelar
     btn.classList.add('hidden');
 }
