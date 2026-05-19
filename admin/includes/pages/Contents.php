@@ -23,7 +23,9 @@ $categorias = $adminManager->listAllCategoriesOrdered();
 ?>
 
 <div class="admin-page-container">
-    <h2>Gestión de Contenidos</h2>
+    <div class="admin-header-section">
+        <h2>Gestión de Contenidos</h2>
+    </div>
 
     <?php if ($status === "success"): ?>
         <div class="admin-status-alert success">✅ Operación realizada con éxito.</div>
@@ -39,12 +41,12 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                 <input type="hidden" name="id" id="con-id" value="">
                 
                 <div class="admin-form-group">
-                    <label>Título:</label>
+                    <label class="admin-label">Título:</label>
                     <input type="text" name="nombre" id="con-nombre" required class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
-                    <label>Categoría:</label>
+                    <label class="admin-label">Categoría:</label>
                     <select name="id_categoria" id="con-id_categoria" required class="admin-select">
                         <option value="">-- Seleccionar --</option>
                         <?php foreach($categorias as $c): ?>
@@ -54,27 +56,27 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                 </div>
 
                 <div class="admin-form-group">
-                    <label>Clasificación:</label>
+                    <label class="admin-label">Clasificación:</label>
                     <input type="text" name="clasificacion" id="con-clasificacion" class="admin-input" placeholder="Ej: Formación">
                 </div>
 
                 <div class="admin-form-group">
-                    <label>URL Imagen:</label>
+                    <label class="admin-label">URL Imagen:</label>
                     <input type="text" name="imagen" id="con-imagen" class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
-                    <label>Video (Nombre archivo):</label>
+                    <label class="admin-label">Video (Archivo):</label>
                     <input type="text" name="video" id="con-video" class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
-                    <label>Descripción Breve:</label>
+                    <label class="admin-label">Descripción Breve:</label>
                     <textarea name="descripcion_breve" id="con-descripcion_breve" class="admin-input admin-textarea-small"></textarea>
                 </div>
 
                 <div class="admin-form-group">
-                    <label>Enlace Externo:</label>
+                    <label class="admin-label">Enlace Externo:</label>
                     <input type="text" name="enlace_externo" id="con-enlace_externo" class="admin-input">
                 </div>
 
@@ -87,33 +89,48 @@ $categorias = $adminManager->listAllCategoriesOrdered();
 
         <div class="admin-card main-list">
             <div class="admin-card-title">Listado de Contenidos</div>
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Categoría</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($contenidos as $con): ?>
-                    <tr>
-                        <td><?php echo $con['id']; ?></td>
-                        <td><strong><?php echo htmlspecialchars($con['nombre']); ?></strong></td>
-                        <td><?php echo htmlspecialchars($con['categoria_nombre']); ?></td>
-                        <td class="col-actions">
-                            <button class="action-edit" onclick='prepareEdit(<?php echo json_encode($con); ?>)'>Editar</button>
-                            <form method="POST" class="inline" onsubmit="return confirm('¿Borrar este contenido?');">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="id" value="<?php echo $con['id']; ?>">
-                                <button type="submit" class="action-delete-clean">Borrar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            
+            <div class="admin-list-header">
+                <div class="col-id">ID</div>
+                <div class="col-name">Título y Descripción</div>
+                <div class="col-info">Info / Archivos</div>
+                <div class="col-level">Categoría</div>
+                <div class="col-actions">Acciones</div>
+            </div>
+
+            <?php foreach($contenidos as $con): ?>
+                <div class="admin-list-row">
+                    <div class="col-id"><?php echo $con['id']; ?></div>
+                    
+                    <div class="col-name">
+                        <span class="bold"><?php echo htmlspecialchars($con['nombre']); ?></span>
+                        <span class="small-text"><?php echo htmlspecialchars(mb_strimwidth($con['descripcion_breve'], 0, 60, "...")); ?></span>
+                    </div>
+
+                    <div class="col-info">
+                        <div><strong>Tipo:</strong> <?php echo htmlspecialchars($con['clasificacion'] ?: '-'); ?></div>
+                        <div class="small-text">
+                            <?php if($con['video']): ?> 🎥 <?php echo htmlspecialchars($con['video']); endif; ?>
+                            <?php if($con['imagen']): ?> 🖼️ Imagen lista<?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="col-level">
+                        <span class="admin-badge badge-category">
+                            <?php echo htmlspecialchars($con['categoria_nombre']); ?>
+                        </span>
+                    </div>
+
+                    <div class="col-actions">
+                        <button class="action-edit" onclick='prepareEdit(<?php echo json_encode($con); ?>)'>Editar</button>
+                        <form method="POST" class="inline" onsubmit="return confirm('¿Borrar este contenido?');">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="id" value="<?php echo $con['id']; ?>">
+                            <button type="submit" class="action-delete-clean">Borrar</button>
+                        </form>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>

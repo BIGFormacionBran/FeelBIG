@@ -28,24 +28,15 @@
 }
 
 .admin-logo-link {
-    color: var(--color-blanco);
-    font-size: 1.2rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: var(--transition);
     display: inline-block;
+    color: var(--color-principal);
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
 }
 
 /* Efectos para el Logo */
-.admin-logo-link:hover {
-    color: var(--color-secundario);
-}
-
-.admin-logo-link:focus {
-    outline: 2px solid var(--color-secundario);
-    outline-offset: 4px;
-    border-radius: 4px;
-}
+.admin-logo-link:hover { color: var(--color-secundario); transform: translateY(-2px);}
 
 .admin-logo-link:active {
     transform: scale(0.95);
@@ -158,30 +149,7 @@
     gap: 10px;
 }
 
-/* --- TABLAS --- */
-.admin-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.admin-table th {
-    text-align: left;
-    padding: 15px;
-    background: #F8F9FA;
-    border-bottom: 2px solid var(--color-border);
-    color: var(--color-texto-muted);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-}
-
-.admin-table td { 
-    padding: 15px; 
-    border-bottom: 1px solid var(--color-border);
-    font-size: 0.9rem;
-}
-
-/* Jerarquía de Categorías */
+/* --- SISTEMA DE LISTADO UNIFICADO (DIVS) --- */
 .admin-list-header {
     display: flex;
     background: #F8F9FA;
@@ -191,6 +159,7 @@
     color: var(--color-texto-muted);
     text-transform: uppercase;
     border-bottom: 2px solid var(--color-border);
+    gap: 15px;
 }
 
 .admin-list-row {
@@ -198,22 +167,42 @@
     align-items: center;
     padding: 15px;
     border-bottom: 1px solid var(--color-border);
+    gap: 15px;
+    transition: background 0.2s ease;
 }
 
+.admin-list-row:hover { background-color: #fcfdfe; }
 .admin-list-row.is-child { background-color: #FCFDFE; }
 
 .col-id { width: 60px; color: var(--color-texto-muted); }
 .col-name { flex: 2; display: flex; align-items: center; }
+.col-info { flex: 1.5; font-size: 0.85rem; color: var(--color-texto-muted); }
 .col-level { flex: 1; }
 .col-actions { flex: 1; display: flex; justify-content: flex-end; gap: 10px; }
+.small-text { font-size: 0.8rem; display: block; margin-top: 4px; }
+.bold { font-weight: 700; }
 
+.admin-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.admin-badge.badge-category { background: var(--color-principal-soft); color: var(--color-principal); }
+.admin-badge.root { background: #e0f2fe; color: #0369a1; }
+.admin-badge.child { background: #f1f5f9; color: #475569; }
+
+/* Espaciador para jerarquía */
 .indent-spacer {
     width: 20px;
     height: 20px;
     border-left: 2px solid var(--color-border);
     border-bottom: 2px solid var(--color-border);
     margin-right: 15px;
-    margin-top: -10px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* --- BOTONES DE ACCIÓN --- */
@@ -281,7 +270,7 @@
     box-shadow: var(--shadow-md);
 }
 
-.btn-secundario:active, .admin-logout-btn:active {
+.btn-secundario:active, .admin-logout-btn:active, .admin-logo-link:active {
     transform: translateY(0) scale(0.98);
 }
 
