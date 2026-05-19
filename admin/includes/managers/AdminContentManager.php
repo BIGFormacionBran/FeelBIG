@@ -4,7 +4,9 @@ require_once __DIR__ . '/../../../includes/daos/ContentDao.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class AdminContentManager {
+    /** @var AdminContentDao */
     private $adminDao;
+    /** @var ContentDao */
     private $publicDao;
 
     public function __construct() {
@@ -13,22 +15,16 @@ class AdminContentManager {
     }
 
     public function createCategory($nombre, $id_padre = null) {
-        $nombre = trim($nombre);
+        $nombre = trim((string)$nombre);
         if (empty($nombre)) return false;
-
         $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
 
         if ($this->adminDao->checkExists($nombre)) {
-            LoggerUtil::error("Manager: Intento de crear categoría duplicada: $nombre");
+            LoggerUtil::error("Manager: Categoría duplicada: $nombre");
             return false;
         }
 
-        $result = $this->adminDao->insertCategory($nombre, $parentId);
-        
-        if ($result) {
-            LoggerUtil::info("Manager: Categoría '$nombre' creada (Padre: " . ($parentId ?? 'Raíz') . ")");
-        }
-        return $result;
+        return $this->adminDao->insertCategory($nombre, $parentId);
     }
 
     public function listAllCategoriesOrdered() {
@@ -43,9 +39,7 @@ class AdminContentManager {
                 $branch[] = $element;
                 $children = $this->buildTree($elements, $element['id']);
                 if ($children) {
-                    foreach($children as $child) {
-                        $branch[] = $child;
-                    }
+                    foreach($children as $child) { $branch[] = $child; }
                 }
             }
         }
@@ -54,56 +48,34 @@ class AdminContentManager {
 
     public function updateCategory($id, $nombre, $id_padre) {
         $id = (int)$id;
-        $nombre = trim($nombre);
-        if (empty($nombre)) return false;
-
+        $nombre = trim((string)$nombre);
         $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
-
         if ($id === $parentId) return false;
 
-        $result = $this->adminDao->updateCategory($id, $nombre, $parentId);
-        if ($result) {
-            LoggerUtil::info("Manager: Categoría ID $id actualizada a '$nombre'");
-        }
-        return $result;
+        return $this->adminDao->updateCategory($id, $nombre, $parentId);
     }
 
     public function deleteCategory($id) {
-        $id = (int)$id;
-        $result = $this->adminDao->deleteCategory($id);
-        if ($result) {
-            LoggerUtil::info("Manager: Categoría ID $id eliminada");
-        }
-        return $result;
+        return $this->adminDao->deleteCategory((int)$id);
     }
+
+    // --- CONTENIDOS ---
 
     public function listAllContents() {
         return $this->adminDao->getAllContents();
     }
 
-    public function createContent($titulo, $descripcion, $imagen, $id_categoria) {
-        $titulo = trim($titulo);
-        LoggerUtil::info("Manager: Intentando crear contenido. Título: '$titulo', Cat: '$id_categoria'");
-
-        if (empty($titulo) || empty($id_categoria)) {
-            LoggerUtil::error("Manager: Datos incompletos para crear contenido.");
-            return false;
-        }
-        return $this->adminDao->insertContent($titulo, $descripcion, $imagen, (int)$id_categoria);
+    public function createContent(array $datos) {
+        if (empty($datos['nombre']) || empty($datos['id_categoria'])) return false;
+        return $this->adminDao->insertContent($datos);
     }
 
-    public function updateContent($id, $titulo, $descripcion, $imagen, $id_categoria) {
-        $id = (int)$id;
-        $titulo = trim($titulo);
-        LoggerUtil::info("Manager: Intentando actualizar contenido ID: $id");
-
-        if (empty($id) || empty($titulo)) return false;
-        return $this->adminDao->updateContent($id, $titulo, $descripcion, $imagen, (int)$id_categoria);
+    public function updateContent($id, array $datos) {
+        if (empty($id) || empty($datos['nombre'])) return false;
+        return $this->adminDao->updateContent((int)$id, $datos);
     }
 
     public function deleteContent($id) {
-        $id = (int)$id;
-        LoggerUtil::info("Manager: Intentando eliminar contenido ID: $id");
-        return $this->adminDao->deleteContent($id);
+        return $this->adminDao->deleteContent((int)$id);
     }
 }

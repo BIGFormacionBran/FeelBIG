@@ -2,15 +2,16 @@
 require_once __DIR__ . '/../managers/AdminContentManager.php';
 $adminManager = new AdminContentManager();
 
-$status = ""; $message = "";
+$status = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     if ($action === 'add') {
-        if ($adminManager->createContent($_POST['nombre'], $_POST['descripcion'], $_POST['imagen'], $_POST['id_categoria'])) $status = "success";
+        // Pasamos el array $_POST completo al Manager
+        if ($adminManager->createContent($_POST)) $status = "success";
         else $status = "error";
     }
     elseif ($action === 'edit') {
-        if ($adminManager->updateContent($_POST['id'], $_POST['nombre'], $_POST['descripcion'], $_POST['imagen'], $_POST['id_categoria'])) $status = "success";
+        if ($adminManager->updateContent($_POST['id'], $_POST)) $status = "success";
         else $status = "error";
     }
     elseif ($action === 'delete') {
@@ -23,9 +24,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
 ?>
 
 <div class="admin-page-container">
-    <div class="admin-header-section">
-        <h2>Gestión de Contenidos</h2>
-    </div>
+    <h2>Gestión de Contenidos</h2>
 
     <?php if ($status === "success"): ?>
         <div class="admin-status-alert success">✅ Éxito.</div>
@@ -41,13 +40,13 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                 <input type="hidden" name="id" id="cont-id" value="">
                 
                 <div class="admin-form-group">
-                    <label class="admin-label">Título:</label>
+                    <label>Título:</label>
                     <input type="text" name="nombre" id="cont-nombre" required class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Categoría:</label>
-                    <select name="id_categoria" id="cont-categoria" required class="admin-select">
+                    <label>Categoría:</label>
+                    <select name="id_categoria" id="cont-id_categoria" required class="admin-select">
                         <option value="">-- Seleccionar --</option>
                         <?php foreach($categorias as $c): ?>
                             <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['nombre']); ?></option>
@@ -56,18 +55,38 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">URL Imagen:</label>
+                    <label>Clasificación:</label>
+                    <input type="text" name="clasificacion" id="cont-clasificacion" class="admin-input" placeholder="Ej: Formación">
+                </div>
+
+                <div class="admin-form-group">
+                    <label>URL Imagen:</label>
                     <input type="text" name="imagen" id="cont-imagen" class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Descripción:</label>
-                    <textarea name="descripcion" id="cont-descripcion" class="admin-input admin-textarea-small"></textarea>
+                    <label>Video (Nombre archivo):</label>
+                    <input type="text" name="video" id="cont-video" class="admin-input">
+                </div>
+
+                <div class="admin-form-group">
+                    <label>Descripción Breve:</label>
+                    <textarea name="descripcion_breve" id="cont-descripcion_breve" class="admin-input admin-textarea-small"></textarea>
+                </div>
+
+                <div class="admin-form-group">
+                    <label>Enlace Externo:</label>
+                    <input type="text" name="enlace_externo" id="cont-enlace_externo" class="admin-input">
+                </div>
+
+                <div class="admin-form-group">
+                    <label>Fecha Publicación:</label>
+                    <input type="date" name="fecha_publicacion" id="cont-fecha_publicacion" class="admin-input" value="<?php echo date('Y-m-d'); ?>">
                 </div>
 
                 <div class="form-buttons">
                     <button type="submit" class="btn-primario" id="btn-submit">Guardar</button>
-                    <button type="button" class="btn-secundario hidden mt-10" id="btn-cancel" onclick="resetForm('content')">Cancelar</button>
+                    <button type="button" class="btn-secundario hidden" id="btn-cancel" onclick="location.reload()">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -88,7 +107,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                     <tr>
                         <td><?php echo $con['id']; ?></td>
                         <td><strong><?php echo htmlspecialchars($con['nombre']); ?></strong></td>
-                        <td><span class="admin-badge root"><?php echo htmlspecialchars($con['categoria_nombre']); ?></span></td>
+                        <td><?php echo htmlspecialchars($con['categoria_nombre']); ?></td>
                         <td class="col-actions">
                             <button class="action-edit" onclick='prepareEditContent(<?php echo json_encode($con); ?>)'>Editar</button>
                             <form method="POST" class="inline" onsubmit="return confirm('¿Borrar?');">
