@@ -465,7 +465,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 /* Forzamos que los slides de Swiper tengan un tamaño consistente */
 .swiper-slide { 
-    width: 300px !important;
     height: auto !important;
     display: flex !important; 
     max-height: 400px !important;
