@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/MediaManager.php';
 require_once __DIR__ . '/../daos/AdminContentDao.php';
 require_once __DIR__ . '/../../../includes/daos/ContentDao.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
@@ -78,4 +79,11 @@ class AdminContentManager {
     public function deleteContent($id) {
         return $this->adminDao->deleteContent((int)$id);
     }
+
+    public function saveContent(array $postData) {
+    if (!empty($postData['id'])) {
+        return $this->updateContent((int)$postData['id'], $postData);
+    }
+    return $this->createContent($postData);
+}
 }
