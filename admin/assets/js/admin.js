@@ -1,23 +1,30 @@
-function prepareEditContent(data) {
+function prepareEdit(data) {
+    const form = document.querySelector('.side-form form');
     const formTitle = document.getElementById('form-title');
-    const formAction = document.getElementById('form-action');
     const btnCancel = document.getElementById('btn-cancel');
+    
+    if (!form) return;
 
-    if(formTitle) formTitle.innerText = "Editar Contenido";
-    if(formAction) formAction.value = "edit";
+    const prefix = form.id.split('-')[0].substring(0, 3) + '-';
     
-    document.getElementById('cont-id').value = data.id;
-    document.getElementById('cont-nombre').value = data.nombre;
-    document.getElementById('cont-id_categoria').value = data.id_categoria;
-    document.getElementById('cont-clasificacion').value = data.clasificacion || '';
-    document.getElementById('cont-imagen').value = data.imagen || '';
-    document.getElementById('cont-video').value = data.video || '';
-    document.getElementById('cont-descripcion_breve').value = data.descripcion_breve || '';
-    document.getElementById('cont-enlace_externo').value = data.enlace_externo || '';
-    document.getElementById('cont-fecha_publicacion').value = data.fecha_publicacion || '';
-    
-    if(btnCancel) btnCancel.classList.remove('hidden');
-    
+    if (formTitle) {
+        const entityName = document.querySelector('.side-form').getAttribute('data-entity') || 'Elemento';
+        formTitle.innerText = "Editar " + entityName;
+    }
+
+    document.getElementById('form-action').value = "edit";
+    Object.keys(data).forEach(key => {
+        const input = document.getElementById(prefix + key);
+        if (input) {
+            if (key === 'id_padre' && data[key] === null) {
+                input.value = "null";
+            } else {
+                input.value = data[key] !== null ? data[key] : '';
+            }
+        }
+    });
+
+    if (btnCancel) btnCancel.classList.remove('hidden');
     document.querySelector('.side-form')?.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -26,9 +33,11 @@ function resetForm(type) {
     const form = document.getElementById(formId);
     if (form) form.reset();
 
-    document.getElementById('form-title').innerText = (type === 'category') ? 'Nueva Categoría' : 'Nuevo Contenido';
-    document.getElementById('form-action').value = 'add';
+    const title = document.getElementById('form-title');
+    if (title) title.innerText = (type === 'category') ? 'Nueva Categoría' : 'Nuevo Contenido';
     
-    const btnCancel = document.getElementById('btn-cancel');
-    if(btnCancel) btnCancel.classList.add('hidden');
+    const actionInput = document.getElementById('form-action');
+    if (actionInput) actionInput.value = 'add';
+    
+    document.getElementById('btn-cancel')?.classList.add('hidden');
 }

@@ -59,8 +59,6 @@ class AdminContentManager {
         return $this->adminDao->deleteCategory((int)$id);
     }
 
-    // --- CONTENIDOS ---
-
     public function listAllContents() {
         return $this->adminDao->getAllContents();
     }

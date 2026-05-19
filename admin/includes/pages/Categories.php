@@ -35,7 +35,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
     <?php endif; ?>
 
     <div class="admin-flex-layout">
-        <div class="admin-card side-form">
+        <div class="admin-card side-form" data-entity="Categoría">
             <div class="admin-card-title" id="form-title">Nueva Categoría</div>
             <form method="POST" id="category-form">
                 <input type="hidden" name="action" id="form-action" value="add">
@@ -48,7 +48,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
 
                 <div class="admin-form-group">
                     <label class="admin-label">Depende de:</label>
-                    <select name="id_padre" id="cat-padre" class="admin-select">
+                    <select name="id_padre" id="cat-id_padre" class="admin-select">
                         <option value="null">-- Categoría Principal --</option>
                         <?php foreach($categorias as $c): ?>
                             <option value="<?php echo $c['id']; ?>">
@@ -89,7 +89,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                     </div>
                     <div class="col-actions">
                         <button class="action-edit" onclick='prepareEdit(<?php echo json_encode($c); ?>)'>Editar</button>
-                        <form method="POST" class="inline" onsubmit="return confirm('¿Eliminar?');">
+                        <form method="POST" class="inline" onsubmit="return confirm('¿Eliminar esta categoría?');">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" value="<?php echo $c['id']; ?>">
                             <button type="submit" class="action-delete-clean">Borrar</button>

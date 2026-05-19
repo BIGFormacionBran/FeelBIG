@@ -6,7 +6,6 @@ $status = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     if ($action === 'add') {
-        // Pasamos el array $_POST completo al Manager
         if ($adminManager->createContent($_POST)) $status = "success";
         else $status = "error";
     }
@@ -27,26 +26,26 @@ $categorias = $adminManager->listAllCategoriesOrdered();
     <h2>Gestión de Contenidos</h2>
 
     <?php if ($status === "success"): ?>
-        <div class="admin-status-alert success">✅ Éxito.</div>
+        <div class="admin-status-alert success">✅ Operación realizada con éxito.</div>
     <?php elseif ($status === "error"): ?>
         <div class="admin-status-alert error">❌ Error en la operación.</div>
     <?php endif; ?>
 
     <div class="admin-flex-layout">
-        <div class="admin-card side-form">
+        <div class="admin-card side-form" data-entity="Contenido">
             <div class="admin-card-title" id="form-title">Nuevo Contenido</div>
             <form method="POST" id="content-form">
                 <input type="hidden" name="action" id="form-action" value="add">
-                <input type="hidden" name="id" id="cont-id" value="">
+                <input type="hidden" name="id" id="con-id" value="">
                 
                 <div class="admin-form-group">
                     <label>Título:</label>
-                    <input type="text" name="nombre" id="cont-nombre" required class="admin-input">
+                    <input type="text" name="nombre" id="con-nombre" required class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
                     <label>Categoría:</label>
-                    <select name="id_categoria" id="cont-id_categoria" required class="admin-select">
+                    <select name="id_categoria" id="con-id_categoria" required class="admin-select">
                         <option value="">-- Seleccionar --</option>
                         <?php foreach($categorias as $c): ?>
                             <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['nombre']); ?></option>
@@ -56,43 +55,43 @@ $categorias = $adminManager->listAllCategoriesOrdered();
 
                 <div class="admin-form-group">
                     <label>Clasificación:</label>
-                    <input type="text" name="clasificacion" id="cont-clasificacion" class="admin-input" placeholder="Ej: Formación">
+                    <input type="text" name="clasificacion" id="con-clasificacion" class="admin-input" placeholder="Ej: Formación">
                 </div>
 
                 <div class="admin-form-group">
                     <label>URL Imagen:</label>
-                    <input type="text" name="imagen" id="cont-imagen" class="admin-input">
+                    <input type="text" name="imagen" id="con-imagen" class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
                     <label>Video (Nombre archivo):</label>
-                    <input type="text" name="video" id="cont-video" class="admin-input">
+                    <input type="text" name="video" id="con-video" class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
                     <label>Descripción Breve:</label>
-                    <textarea name="descripcion_breve" id="cont-descripcion_breve" class="admin-input admin-textarea-small"></textarea>
+                    <textarea name="descripcion_breve" id="con-descripcion_breve" class="admin-input admin-textarea-small"></textarea>
                 </div>
 
                 <div class="admin-form-group">
                     <label>Enlace Externo:</label>
-                    <input type="text" name="enlace_externo" id="cont-enlace_externo" class="admin-input">
+                    <input type="text" name="enlace_externo" id="con-enlace_externo" class="admin-input">
                 </div>
 
                 <div class="admin-form-group">
                     <label>Fecha Publicación:</label>
-                    <input type="date" name="fecha_publicacion" id="cont-fecha_publicacion" class="admin-input" value="<?php echo date('Y-m-d'); ?>">
+                    <input type="date" name="fecha_publicacion" id="con-fecha_publicacion" class="admin-input" value="<?php echo date('Y-m-d'); ?>" readonly>
                 </div>
 
                 <div class="form-buttons">
-                    <button type="submit" class="btn-primario" id="btn-submit">Guardar</button>
-                    <button type="button" class="btn-secundario hidden" id="btn-cancel" onclick="location.reload()">Cancelar</button>
+                    <button type="submit" class="btn-primario" id="btn-submit">Guardar Contenido</button>
+                    <button type="button" class="btn-secundario hidden" id="btn-cancel" onclick="resetForm('content')">Cancelar Edición</button>
                 </div>
             </form>
         </div>
 
         <div class="admin-card main-list">
-            <div class="admin-card-title">Contenidos</div>
+            <div class="admin-card-title">Listado de Contenidos</div>
             <table class="admin-table">
                 <thead>
                     <tr>
@@ -109,8 +108,8 @@ $categorias = $adminManager->listAllCategoriesOrdered();
                         <td><strong><?php echo htmlspecialchars($con['nombre']); ?></strong></td>
                         <td><?php echo htmlspecialchars($con['categoria_nombre']); ?></td>
                         <td class="col-actions">
-                            <button class="action-edit" onclick='prepareEditContent(<?php echo json_encode($con); ?>)'>Editar</button>
-                            <form method="POST" class="inline" onsubmit="return confirm('¿Borrar?');">
+                            <button class="action-edit" onclick='prepareEdit(<?php echo json_encode($con); ?>)'>Editar</button>
+                            <form method="POST" class="inline" onsubmit="return confirm('¿Borrar este contenido?');">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?php echo $con['id']; ?>">
                                 <button type="submit" class="action-delete-clean">Borrar</button>
