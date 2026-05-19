@@ -88,9 +88,10 @@
                 
                 try {
                     new Swiper(swiperEl, {
-                        slidesPerView: 'auto', // Tamaño fijo dictado por CSS
+                        slidesPerView: 'auto', 
                         spaceBetween: 25,
-                        loop: slideCount > 1,
+                        grabCursor: true,
+                        loop: slideCount > 4,
                         centeredSlides: false,
                         autoplay: slideCount > 1 ? {
                             delay: 3000,
