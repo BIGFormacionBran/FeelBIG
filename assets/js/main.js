@@ -88,19 +88,15 @@
                 
                 try {
                     new Swiper(swiperEl, {
-                        slidesPerView: 1,
+                        slidesPerView: 'auto', // Tamaño fijo dictado por CSS
                         spaceBetween: 25,
                         loop: slideCount > 1,
+                        centeredSlides: false,
                         autoplay: slideCount > 1 ? {
                             delay: 3000,
                             disableOnInteraction: false,
                             pauseOnMouseEnter: true,
                         } : false,
-                        breakpoints: {
-                            640: { slidesPerView: 2 },
-                            1024: { slidesPerView: 3 },
-                            1300: { slidesPerView: 4 }
-                        },
                         navigation: {
                             nextEl: container.querySelector('.swiper-button-next'),
                             prevEl: container.querySelector('.swiper-button-prev'),
@@ -109,8 +105,6 @@
                             el: container.querySelector('.swiper-pagination-custom'),
                             clickable: true,
                         },
-                        observer: true,
-                        observeParents: true,
                         on: {
                             init: function () {
                                 swiperEl.classList.remove('is-loading');

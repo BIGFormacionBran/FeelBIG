@@ -465,7 +465,7 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 /* Forzamos que los slides de Swiper tengan un tamaño consistente */
 .swiper-slide { 
-    width: 100% !important;
+    width: 300px !important;
     height: auto !important;
     display: flex !important; 
     max-height: 400px !important;
@@ -805,7 +805,11 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 }
 
 /* --- RESPONSIVE --- */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
+    .swiper-slide {
+        width: 260px !important; 
+    }
+} @media (max-width: 768px) {
     .nav-menu { display: none; }
     .info-container-global { flex-direction: column; text-align: center; gap: 10px; }
     
