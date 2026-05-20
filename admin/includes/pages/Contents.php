@@ -1,12 +1,10 @@
 <?php
-// Usamos el AdminManager como orquestador único
 require_once __DIR__ . '/../managers/AdminManager.php';
 $admin = new AdminManager();
 
 $status = "";
 $message = "";
 
-// Procesamiento de peticiones a través del Orquestador
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $result = $admin->handleRequest($_POST);
     if ($result) {
@@ -17,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Obtenemos datos a través de los sub-managers del orquestador
 $contenidos = $admin->contents->listAllContents();
 $categorias = $admin->contents->listAllCategoriesOrdered();
 ?>
@@ -37,7 +34,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
         <div class="admin-card side-form" data-entity="Contenido">
             <div class="admin-card-title" id="form-title">Nuevo Contenido</div>
             <form method="POST" id="content-form">
-                <input type="hidden" name="action" id="con-action" value="add">
+                <input type="hidden" name="action" id="form-action" value="add">
                 <input type="hidden" name="id" id="con-id" value="">
                 
                 <div class="admin-form-group">
@@ -128,7 +125,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                     <div class="col-actions">
                         <button class="action-edit" onclick='prepareEdit(<?php echo json_encode($con); ?>)'>Editar</button>
                         
-                        <form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este contenido?');">
+                        <form method="POST" class="inline" onsubmit="return confirm('¿Borrar?');">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" value="<?php echo $con['id']; ?>">
                             <button type="submit" class="action-delete-clean">Borrar</button>
@@ -139,11 +136,4 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
         </div>
     </div>
 </div>
-
-<?php 
-/**
- * Solo llamamos a la renderización del Manager de Archivos una vez.
- * El orquestador se encarga de incluir el componente necesario.
- */
-$admin->renderFileManager(); 
-?>
+<?php $admin->renderFileManager(); ?>
