@@ -29,17 +29,18 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
     <div class="admin-flex-layout">
         <div class="admin-card side-form" data-entity="Contenido">
             <div class="admin-card-title" id="form-title">Nuevo Contenido</div>
+            
             <form method="POST" id="content-form">
                 <input type="hidden" name="action" id="form-action" value="add">
                 <input type="hidden" name="id" id="con-id" value="">
                 
                 <div class="admin-form-group">
-                    <label class="admin-label">Título:</label>
+                    <label class="admin-label" for="con-nombre">Título:</label>
                     <input type="text" name="nombre" id="con-nombre" required class="admin-input" placeholder="Nombre del contenido">
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Categoría:</label>
+                    <label class="admin-label" for="con-id_categoria">Categoría:</label>
                     <select name="id_categoria" id="con-id_categoria" required class="admin-select">
                         <option value="">-- Seleccionar Categoría --</option>
                         <?php foreach($categorias as $c): ?>
@@ -51,83 +52,67 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Imagen de Portada:</label>
-                    <div class="admin-file-picker">
+                    <label class="admin-label" for="con-imagen">Imagen de Portada:</label>
+                    <div class="media-selector-wrapper">
                         <input type="hidden" name="imagen" id="con-imagen">
-                        <div id="con-imagen-preview" class="media-preview-box mb-10">
+                        <div id="con-imagen-preview" class="media-preview-box">
                             <span class="text-muted">Sin archivo</span>
                         </div>
-                        <button type="button" class="btn-open-filemanager" data-target="con-imagen">Seleccionar Imagen</button>
+                        <button type="button" class="btn-open-filemanager btn-secundario" data-target="con-imagen">
+                            Seleccionar Imagen
+                        </button>
                     </div>
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Archivo de Video:</label>
-                    <div class="admin-file-picker">
+                    <label class="admin-label" for="con-video">Archivo de Video:</label>
+                    <div class="media-selector-wrapper">
                         <input type="hidden" name="video" id="con-video">
-                        <div id="con-video-preview" class="media-preview-box mb-10">
+                        <div id="con-video-preview" class="media-preview-box">
                             <span class="text-muted">Sin archivo</span>
                         </div>
-                        <button type="button" class="btn-open-filemanager" data-target="con-video">Seleccionar Video</button>
+                        <button type="button" class="btn-open-filemanager btn-secundario" data-target="con-video">
+                            Seleccionar Video
+                        </button>
                     </div>
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Clasificación:</label>
+                    <label class="admin-label" for="con-clasificacion">Clasificación:</label>
                     <input type="text" name="clasificacion" id="con-clasificacion" class="admin-input" placeholder="Ej: Formación, Tutorial...">
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Descripción:</label>
-                    <textarea name="descripcion_breve" id="con-descripcion_breve" class="admin-input admin-textarea-small" placeholder="Breve resumen del contenido..."></textarea>
-                </div>
-
-                <div class="admin-form-group">
-                    <label class="admin-label">Enlace Externo (Opcional):</label>
-                    <input type="text" name="enlace_externo" id="con-enlace_externo" class="admin-input" placeholder="https://...">
+                    <label class="admin-label" for="con-descripcion_breve">Descripción:</label>
+                    <textarea name="descripcion_breve" id="con-descripcion_breve" class="admin-input admin-textarea-small" placeholder="Breve resumen..."></textarea>
                 </div>
 
                 <div class="form-buttons">
-                    <button type="submit" class="btn-primario" id="btn-submit">Guardar Contenido</button>
-                    <button type="button" class="btn-secundario hidden" id="btn-cancel" onclick="resetForm(this)">Cancelar Edición</button>
+                    <button type="submit" class="btn-secundario" style="margin-top:0;">Guardar</button>
+                    <button type="button" id="btn-cancel" class="action-delete-clean hidden" onclick="resetForm(this)">
+                        Cancelar
+                    </button>
                 </div>
             </form>
         </div>
 
         <div class="admin-card main-list">
-            <div class="admin-card-title">Listado de Contenidos</div>
+            <div class="admin-card-title">Listado</div>
             <div class="admin-list-header">
                 <div class="col-id">ID</div>
-                <div class="col-name">Título / Descripción</div>
-                <div class="col-info">Multimedia</div>
+                <div class="col-name">Título</div>
                 <div class="col-level">Categoría</div>
                 <div class="col-actions">Acciones</div>
             </div>
 
-            <?php if (empty($contenidos)): ?>
-                <div class="admin-list-row">No hay contenidos registrados.</div>
-            <?php endif; ?>
-
             <?php foreach($contenidos as $con): ?>
                 <div class="admin-list-row">
                     <div class="col-id"><?php echo $con['id']; ?></div>
-                    <div class="col-name">
-                        <div class="bold"><?php echo htmlspecialchars($con['nombre']); ?></div>
-                        <div class="small-text text-muted"><?php echo htmlspecialchars(substr($con['descripcion_breve'] ?? '', 0, 60)) . '...'; ?></div>
-                    </div>
-                    <div class="col-info">
-                        <span class="admin-badge <?php echo $con['imagen'] ? 'badge-success' : 'badge-empty'; ?>">IMG</span>
-                        <span class="admin-badge <?php echo $con['video'] ? 'badge-success' : 'badge-empty'; ?>">VID</span>
-                    </div>
-                    <div class="col-level">
-                        <span class="admin-badge badge-category">
-                            <?php echo htmlspecialchars($con['categoria_nombre']); ?>
-                        </span>
-                    </div>
+                    <div class="col-name"><strong><?php echo htmlspecialchars($con['nombre']); ?></strong></div>
+                    <div class="col-level"><span class="admin-badge badge-category"><?php echo htmlspecialchars($con['categoria_nombre']); ?></span></div>
                     <div class="col-actions">
                         <button class="action-edit" onclick='prepareEdit(<?php echo json_encode($con); ?>)'>Editar</button>
-                        
-                        <form method="POST" class="inline" onsubmit="return confirm('¿Borrar?');">
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" value="<?php echo $con['id']; ?>">
                             <button type="submit" class="action-delete-clean">Borrar</button>
