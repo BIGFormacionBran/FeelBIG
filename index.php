@@ -23,7 +23,7 @@ $isAdmin = $userManager->isAdmin($_SESSION['user_role'] ?? 0);
     <div class="body-section">
         <?php 
             if ($isAdmin) {
-                include __DIR__ . '/admin/includes/components/AdminHeader.php';
+                include __DIR__ . '/admin/includes/components/Header.php';
             }
             renderPageLayoutManager($page, $pageConfig, $authPages); 
         ?>
