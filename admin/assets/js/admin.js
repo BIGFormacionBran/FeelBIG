@@ -39,7 +39,6 @@
             state.modal = document.getElementById('file-manager-modal');
             if (!state.modal) return;
 
-            // Manejo de Pestañas
             const tabBtns = state.modal.querySelectorAll('.fm-tab-btn');
             const tabContents = state.modal.querySelectorAll('.fm-tab-content');
 
@@ -50,9 +49,7 @@
                 });
             });
 
-            // Eventos Delegados
             document.addEventListener('click', (e) => {
-                // Abrir Manager
                 const openBtn = e.target.closest('.btn-open-filemanager');
                 if (openBtn) {
                     state.currentTargetInputId = openBtn.getAttribute('data-target');
@@ -61,13 +58,11 @@
                     return;
                 }
 
-                // Cerrar Manager
                 if (e.target.closest('.btn-close-modal') || e.target === state.modal) {
                     ui.toggleHidden(state.modal, true);
                     return;
                 }
 
-                // Seleccionar Archivo
                 const fileItem = e.target.closest('.file-item');
                 if (fileItem && !e.target.closest('.btn-fm-delete')) {
                     const path = fileItem.getAttribute('data-path');
@@ -75,7 +70,6 @@
                     return;
                 }
 
-                // Borrar Archivo
                 const deleteBtn = e.target.closest('.btn-fm-delete');
                 if (deleteBtn) {
                     e.stopPropagation();
@@ -140,8 +134,14 @@
             if (!form) return;
 
             const container = form.closest('.side-form');
+            const titleEl = document.getElementById('form-title');
+            const actionInput = document.getElementById('form-action');
             const idInput = form.querySelector('input[id*="-id"]');
             const prefix = idInput ? idInput.id.split('-')[0] + '-' : '';
+
+            // CAMBIO CLAVE: Cambiar acción a edit y actualizar título
+            if(actionInput) actionInput.value = 'edit';
+            if(titleEl) titleEl.innerText = 'Editar ' + container.dataset.entity;
 
             Object.entries(data).forEach(([key, value]) => {
                 const input = document.getElementById(prefix + key);
@@ -158,8 +158,17 @@
         reset(btn) {
             const container = btn.closest('.side-form');
             const form = container.querySelector('form');
+            const titleEl = document.getElementById('form-title');
+            const actionInput = document.getElementById('form-action');
+            
             if (!form) return;
+            
             form.reset();
+            
+            // Restaurar a modo "Añadir"
+            if(actionInput) actionInput.value = 'add';
+            if(titleEl) titleEl.innerText = 'Nueva ' + container.dataset.entity;
+            
             container.querySelectorAll('.media-preview-box').forEach(p => p.innerHTML = '<span class="text-muted">Sin archivo</span>');
             ui.toggleHidden(btn, true);
         }
