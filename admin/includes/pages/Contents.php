@@ -58,9 +58,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                         <div id="con-imagen-preview" class="media-preview-box">
                             <span class="text-muted">Sin archivo</span>
                         </div>
-                        <button type="button" class="btn-open-filemanager btn-secundario" data-target="con-imagen">
-                            Seleccionar Imagen
-                        </button>
+                        <button type="button" class="btn-open-filemanager btn-primario" data-target="con-imagen">Seleccionar Imagen</button>
                     </div>
                 </div>
 
@@ -71,9 +69,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                         <div id="con-video-preview" class="media-preview-box">
                             <span class="text-muted">Sin archivo</span>
                         </div>
-                        <button type="button" class="btn-open-filemanager btn-secundario" data-target="con-video">
-                            Seleccionar Video
-                        </button>
+                        <button type="button" class="btn-open-filemanager btn-primario" data-target="con-video">Seleccionar Video</button>
                     </div>
                 </div>
 
@@ -88,10 +84,8 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                 </div>
 
                 <div class="form-buttons">
-                    <button type="submit" class="btn-secundario" style="margin-top:0;">Guardar</button>
-                    <button type="button" id="btn-cancel" class="action-delete-clean hidden" onclick="resetForm(this)">
-                        Cancelar
-                    </button>
+                    <button type="submit" class="btn-primario" style="margin-top:0;">Guardar</button>
+                    <button type="button" id="btn-cancel" class="action-delete-clean hidden" onclick="resetForm(this)">Cancelar</button>
                 </div>
             </form>
         </div>
