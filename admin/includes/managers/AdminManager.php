@@ -34,7 +34,9 @@ class AdminManager {
                 return $this->media->$method($_FILES['file']);
 
             case 'fm-delete-file':
-                return FileUtil::delete($postData['path']);
+                LoggerUtil::info("FM-Delete: Solicitud para ruta -> " . ($postData['path'] ?? 'VACÍO'));
+                $res = FileUtil::delete($postData['path']);
+                return $res;
 
             default:
                 return null;

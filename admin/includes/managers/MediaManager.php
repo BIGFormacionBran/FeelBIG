@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../utils/FileUtil.php';
+require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class MediaManager {
     /**
@@ -23,20 +24,28 @@ class MediaManager {
 
                 $actualFiles = array_diff(scandir($monthPath), ['.', '..']);
                 foreach ($actualFiles as $f) {
+                    $pathForDb = './assets/uploads/' . $type . '/' . $year . '/' . $month . '/' . $f;
                     $files[] = [
                         'name' => $f,
-                        'path' => $type . '/' . $year . '/' . $month . '/' . $f,
-                        'url'  => '/assets/uploads/' . $type . '/' . $year . '/' . $month . '/' . $f,
+                        'path' => $pathForDb,
+                        'url'  => $pathForDb,
                         'date' => $year . '-' . $month
                     ];
                 }
             }
         }
-        return array_reverse($files); // Lo más nuevo primero
+        return array_reverse($files); 
     }
 
-    public function uploadContentImage($file) { return FileUtil::upload($file, 'images'); }
-    public function uploadContentVideo($file) { return FileUtil::upload($file, 'videos'); }
+    public function uploadContentImage($file) { 
+        LoggerUtil::info("Subiendo imagen...");
+        return FileUtil::upload($file, 'images'); 
+    }
+
+    public function uploadContentVideo($file) { 
+        LoggerUtil::info("Subiendo video...");
+        return FileUtil::upload($file, 'videos'); 
+    }
     
     public function deleteContentFiles($imagePath = null, $videoPath = null) {
         if ($imagePath) FileUtil::delete($imagePath);

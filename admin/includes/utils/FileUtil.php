@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class FileUtil {
     private static $baseUploadPath = __DIR__ . '/../../../assets/uploads/';
@@ -11,7 +12,6 @@ class FileUtil {
             return false;
         }
 
-        // Estructura: assets/uploads/{images|videos}/2024/05/
         $dateFolder = date('Y/m');
         $relativeSubdir = $type . '/' . $dateFolder;
         $targetDir = self::$baseUploadPath . $relativeSubdir . '/';
@@ -25,8 +25,8 @@ class FileUtil {
         $targetPath = $targetDir . $fileName;
 
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-            // Retornamos la ruta relativa para guardar en BD: "images/2024/05/archivo.jpg"
-            return $relativeSubdir . '/' . $fileName;
+            // Retornamos la ruta relativa corregida para visualización directa
+            return './assets/uploads/' . $relativeSubdir . '/' . $fileName;
         }
 
         return false;
@@ -35,11 +35,19 @@ class FileUtil {
     public static function delete(string $relativeFilePath) {
         if (empty($relativeFilePath)) return true;
         
-        $filePath = self::$baseUploadPath . $relativeFilePath;
+        // Limpiamos el ./ para localizar el archivo en el sistema de archivos
+        $cleanPath = ltrim($relativeFilePath, './');
+        $filePath = __DIR__ . '/../../../' . $cleanPath;
         
+        LoggerUtil::info("Intentando borrar archivo físico en: " . $filePath);
+
         if (file_exists($filePath)) {
-            return unlink($filePath);
+            $res = unlink($filePath);
+            LoggerUtil::info($res ? "Borrado exitoso" : "Fallo al borrar unlink");
+            return $res;
         }
+        
+        LoggerUtil::error("Archivo no encontrado para borrar: " . $filePath);
         return true; 
     }
 }

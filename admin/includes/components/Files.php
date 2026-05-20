@@ -31,7 +31,7 @@ $files = $manager->media->listPhysicalFiles($type);
                             <?php else: ?>
                                 <div class="video-icon">🎬</div>
                             <?php endif; ?>
-                            <button class="btn-fm-delete" onclick="fileManager.deleteFile('<?php echo $file['path']; ?>', this)">×</button>
+                            <button class="btn-fm-delete" onclick="event.stopPropagation(); window.fileManager.deleteFile('<?php echo $file['path']; ?>', this)">×</button>
                         </div>
                         <span class="file-name"><?php echo $file['name']; ?></span>
                     </div>
