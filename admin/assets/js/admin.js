@@ -22,37 +22,65 @@
             state.modal = document.getElementById('file-manager-modal');
             if (!state.modal) return;
 
-            // Delegación de eventos para botones de abrir y cerrar
+            // Listener para subida automática al seleccionar archivo
+            document.getElementById('fm-upload-input')?.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) this.uploadFile(e.target.files[0]);
+            });
+
             document.addEventListener('click', (e) => {
-                // Abrir modal
+                const fileItem = e.target.closest('.file-item');
+                if (fileItem && !e.target.closest('.btn-fm-delete')) {
+                    const path = fileItem.getAttribute('data-path');
+                    if (state.currentTargetInputId) {
+                        const input = document.getElementById(state.currentTargetInputId);
+                        if (input) input.value = path;
+                    }
+                    ui.toggleHidden(state.modal, true); // Cerrar al seleccionar
+                    return;
+                }
+
                 const openBtn = e.target.closest('.btn-open-filemanager');
                 if (openBtn) {
                     state.currentTargetInputId = openBtn.getAttribute('data-target');
+                    this.highlightCurrent(); // Marcar el que ya está seleccionado
                     ui.toggleHidden(state.modal, false);
                     return;
                 }
 
-                // Cerrar modal
                 if (e.target.closest('.btn-close-modal') || e.target === state.modal) {
                     ui.toggleHidden(state.modal, true);
                     return;
                 }
-
-                // Seleccionar archivo (delegación en el grid)
-                const fileItem = e.target.closest('.file-item');
-                if (fileItem) {
-                    const path = fileItem.getAttribute('data-path'); // Asegúrate de añadir este atributo en el HTML
-                    this.select(path);
-                }
             });
         },
 
-        select(path) {
-            if (state.currentTargetInputId) {
-                const input = document.getElementById(state.currentTargetInputId);
-                if (input) input.value = path;
-            }
-            ui.toggleHidden(state.modal, true);
+        // Marca visualmente el archivo que ya está escrito en el input
+        highlightCurrent() {
+            const currentPath = document.getElementById(state.currentTargetInputId)?.value;
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.toggle('is-selected', item.getAttribute('data-path') === currentPath);
+            });
+        },
+
+        async uploadFile(file) {
+            const formData = new FormData();
+            formData.append('action', 'fm-upload');
+            formData.append('file', file);
+            formData.append('type', new URLSearchParams(window.location.search).get('file_type') || 'images');
+
+            const response = await fetch(window.location.href, { method: 'POST', body: formData });
+            if (response.ok) location.reload(); // Recargamos para ver el nuevo archivo en la lista
+        },
+
+        async deleteFile(path, btn) {
+            if (!confirm('¿Eliminar este archivo permanentemente del servidor?')) return;
+            
+            const formData = new FormData();
+            formData.append('action', 'fm-delete-file');
+            formData.append('path', path);
+
+            const response = await fetch(window.location.href, { method: 'POST', body: formData });
+            if (response.ok) btn.closest('.file-item').remove();
         }
     };
 

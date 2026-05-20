@@ -38,7 +38,7 @@ class MediaManager {
     public function uploadContentImage($file) { return FileUtil::upload($file, 'images'); }
     public function uploadContentVideo($file) { return FileUtil::upload($file, 'videos'); }
     
-    public function deleteContentFiles($imagePath, $videoPath) {
+    public function deleteContentFiles($imagePath = null, $videoPath = null) {
         if ($imagePath) FileUtil::delete($imagePath);
         if ($videoPath) FileUtil::delete($videoPath);
         return true;

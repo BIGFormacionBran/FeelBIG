@@ -1,5 +1,4 @@
 <?php
-// CORRECCIÓN: Aseguramos que el manager esté disponible sin importar el scope de la inclusión
 if (!isset($admin) || $admin === null) {
     require_once __DIR__ . '/../managers/AdminManager.php';
     $manager = new AdminManager();
@@ -15,24 +14,25 @@ $files = $manager->media->listPhysicalFiles($type);
     <div class="modal-content">
         <div class="modal-header">
             <h3>Explorador de Archivos (<?php echo ucfirst($type); ?>)</h3>
-            <button type="button" class="btn-close-modal" id="btn-close-modal">&times;</button>
+            <div class="header-actions">
+                <input type="file" id="fm-upload-input" class="hidden" accept="<?php echo $type === 'images' ? 'image/*' : 'video/*'; ?>">
+                <button type="button" class="btn-primario" onclick="document.getElementById('fm-upload-input').click()">+ Subir</button>
+                <button type="button" class="btn-close-modal">&times;</button>
+            </div>
         </div>
         
         <div class="modal-body">
             <div class="file-grid" id="file-grid">
-                <?php if (empty($files)): ?>
-                    <p class="empty-msg">No hay archivos en esta categoría.</p>
-                <?php endif; ?>
-
                 <?php foreach ($files as $file): ?>
-                    <div class="file-item" 
-                         data-path="<?php echo $file['path']; ?>" 
-                         title="<?php echo $file['name']; ?>">
-                        <?php if ($type === 'images'): ?>
-                            <img src="<?php echo $file['url']; ?>" alt="Preview">
-                        <?php else: ?>
-                            <div class="video-icon">🎬</div>
-                        <?php endif; ?>
+                    <div class="file-item" data-path="<?php echo $file['path']; ?>">
+                        <div class="file-preview">
+                            <?php if ($type === 'images'): ?>
+                                <img src="<?php echo $file['url']; ?>" alt="Preview">
+                            <?php else: ?>
+                                <div class="video-icon">🎬</div>
+                            <?php endif; ?>
+                            <button class="btn-fm-delete" onclick="fileManager.deleteFile('<?php echo $file['path']; ?>', this)">×</button>
+                        </div>
                         <span class="file-name"><?php echo $file['name']; ?></span>
                     </div>
                 <?php endforeach; ?>

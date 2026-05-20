@@ -358,3 +358,35 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Marca visual para el archivo seleccionado */
+.file-item.is-selected {
+    border: 2px solid var(--color-principal);
+    background: #fff5f6;
+    box-shadow: 0 0 10px rgba(215, 21, 57, 0.2);
+}
+
+/* Botón de eliminar dentro del grid */
+.file-preview { position: relative; }
+
+.btn-fm-delete {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--color-principal-admin);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    cursor: pointer;
+    display: none; /* Se oculta por defecto */
+    z-index: 10;
+}
+
+.file-item:hover .btn-fm-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

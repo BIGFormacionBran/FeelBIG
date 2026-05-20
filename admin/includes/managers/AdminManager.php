@@ -21,10 +21,21 @@ class AdminManager {
 
         switch ($postData['action']) {
             case 'add':
+                return $this->contents->createContent($postData);
             case 'edit':
-                return $this->contents->saveContent($postData);
+                return $this->contents->updateContent($postData['id'], $postData);
+
             case 'delete':
                 return $this->contents->deleteContent($postData['id']);
+
+            case 'fm-upload':
+                $type = $postData['type'] ?? 'images';
+                $method = ($type === 'videos') ? 'uploadContentVideo' : 'uploadContentImage';
+                return $this->media->$method($_FILES['file']);
+
+            case 'fm-delete-file':
+                return FileUtil::delete($postData['path']);
+
             default:
                 return null;
         }
