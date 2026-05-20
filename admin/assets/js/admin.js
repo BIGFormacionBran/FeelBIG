@@ -114,7 +114,8 @@
                 
                 if (resp.ok) {
                     element.remove();
-                    // Limpiar input activo si es el borrado
+                    
+                    // Limpiar input activo si corresponde
                     ['con-imagen', 'con-video'].forEach(id => {
                         const input = document.getElementById(id);
                         if (input && input.value === path) {
@@ -123,17 +124,52 @@
                         }
                     });
 
-                    // CRÍTICO: Limpiar el archivo fantasma del botón "Editar" en la tabla HTML
+                    // CRÍTICO: Limpiar el archivo fantasma del botón "Editar" en la tabla HTML de manera segura
                     document.querySelectorAll('.action-edit').forEach(btn => {
-                        let attr = btn.getAttribute('onclick');
-                        if (attr && attr.includes(path)) {
-                            try {
-                                let jsonStr = attr.substring(attr.indexOf('{'), attr.lastIndexOf('}') + 1);
-                                let data = JSON.parse(jsonStr);
-                                if (data.imagen === path) data.imagen = null;
-                                if (data.video === path) data.video = null;
-                                btn.setAttribute('onclick', `prepareEdit(${JSON.stringify(data)})`);
-                            } catch(e) {}
+                        let data = null;
+                        try {
+                            // Usamos el caché del DOM si ya lo hemos modificado antes
+                            if (btn._contentData) {
+                                data = btn._contentData;
+                            } else {
+                                // Extraemos el JSON del atributo onclick original
+                                let attr = btn.getAttribute('onclick');
+                                if (attr && attr.includes('{')) {
+                                    let jsonStr = attr.substring(attr.indexOf('{'), attr.lastIndexOf('}') + 1);
+                                    data = JSON.parse(jsonStr);
+                                }
+                            }
+
+                            if (data) {
+                                let updated = false;
+                                if (data.imagen === path) { data.imagen = null; updated = true; }
+                                if (data.video === path) { data.video = null; updated = true; }
+
+                                if (updated) {
+                                    // Guardamos la memoria limpia en el elemento
+                                    btn._contentData = data;
+                                    // Eliminamos el HTML antiguo
+                                    btn.removeAttribute('onclick');
+                                    // Asignamos el comportamiento mediante JS directo para no romper comillas
+                                    btn.onclick = function() { window.prepareEdit(data); };
+                                    
+                                    // Actualizamos visualmente los badges de la tabla
+                                    const row = btn.closest('.admin-list-row');
+                                    if (row) {
+                                        const badges = row.querySelectorAll('.col-info .admin-badge');
+                                        if (data.imagen === null && badges[0]) {
+                                            badges[0].classList.remove('badge-success');
+                                            badges[0].classList.add('badge-empty');
+                                        }
+                                        if (data.video === null && badges[1]) {
+                                            badges[1].classList.remove('badge-success');
+                                            badges[1].classList.add('badge-empty');
+                                        }
+                                    }
+                                }
+                            }
+                        } catch(e) {
+                            console.error("Error limpiando referencias fantasma:", e);
                         }
                     });
                 }
@@ -162,7 +198,6 @@
                 const result = JSON.parse(text.substring(jsonStart));
                 
                 if (result.success) {
-                    // CRÍTICO: Añadir el nuevo archivo al Grid visualmente
                     const grid = document.getElementById('file-grid');
                     if (grid) {
                         const emptyMsg = grid.querySelector('.text-muted');
@@ -183,17 +218,14 @@
                             </div>
                             <span class="file-name">${result.name || 'Nuevo archivo'}</span>
                         `;
-                        grid.prepend(newItem); // Añadir arriba del todo
+                        grid.prepend(newItem);
                     }
 
-                    // Seleccionar automáticamente
                     this.selectFile(result.path);
                     
-                    // Volver a la pestaña de explorar
                     const browseBtn = state.modal.querySelector('[data-tab="fm-tab-browse"]');
                     browseBtn && browseBtn.click();
                     
-                    // Resetear input de subida
                     document.getElementById('fm-upload-input').value = ""; 
                 } else {
                     alert("Error al subir archivo");

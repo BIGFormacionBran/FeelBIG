@@ -309,13 +309,11 @@
 
 .fm-tab-btn:hover {
     color: var(--color-principal);
-    border-bottom: 2px solid var(--color-principal);
 }
 
 .fm-tab-btn.active {
     background: var(--color-blanco);
     color: var(--color-principal);
-    border-bottom: 2px solid var(--color-principal);
 }
 
 .upload-zone {
