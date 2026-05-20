@@ -24,7 +24,6 @@ class AdminManager {
                 return $this->contents->createContent($postData);
             case 'edit':
                 return $this->contents->updateContent($postData['id'], $postData);
-
             case 'delete':
                 return $this->contents->deleteContent($postData['id']);
 
@@ -34,8 +33,16 @@ class AdminManager {
                 return $this->media->$method($_FILES['file']);
 
             case 'fm-delete-file':
-                LoggerUtil::info("FM-Delete: Solicitud para ruta -> " . ($postData['path'] ?? 'VACÍO'));
-                $res = FileUtil::delete($postData['path']);
+                $path = $postData['path'] ?? '';
+                if (empty($path)) return false;
+                
+                // 1. Borrar archivo físico
+                $res = FileUtil::delete($path);
+                
+                // 2. Notificar al DAO para limpiar referencias en DB
+                if ($res) {
+                    $this->contents->clearReferences($path);
+                }
                 return $res;
 
             default:

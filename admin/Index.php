@@ -7,8 +7,8 @@
         
         <h3>Accesos Directos</h3>
         <div class="admin-grid-shortcuts">
-            <a href="/admin/categories" class="btn-primario">📁 Gestionar Categorías</a>
-            <a href="/admin/contents" class="btn-primario">📝 Gestionar Contenidos</a>
+            <a href="/admin/categories" class="btn-primario">Gestionar Categorías</a>
+            <a href="/admin/contents" class="btn-primario">Gestionar Contenidos</a>
         </div>
     </div>
 </div>

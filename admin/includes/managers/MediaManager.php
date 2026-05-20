@@ -24,7 +24,7 @@ class MediaManager {
 
                 $actualFiles = array_diff(scandir($monthPath), ['.', '..']);
                 foreach ($actualFiles as $f) {
-                    $pathForDb = './assets/uploads/' . $type . '/' . $year . '/' . $month . '/' . $f;
+                    $pathForDb = 'assets/uploads/' . $type . '/' . $year . '/' . $month . '/' . $f;
                     $files[] = [
                         'name' => $f,
                         'path' => $pathForDb,

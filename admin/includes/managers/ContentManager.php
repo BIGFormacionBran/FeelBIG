@@ -24,7 +24,6 @@ class AdminContentManager {
             LoggerUtil::error("Manager: Categoría duplicada: $nombre");
             return false;
         }
-
         return $this->adminDao->insertCategory($nombre, $parentId);
     }
 
@@ -52,7 +51,6 @@ class AdminContentManager {
         $nombre = trim((string)$nombre);
         $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
         if ($id === $parentId) return false;
-
         return $this->adminDao->updateCategory($id, $nombre, $parentId);
     }
 
@@ -66,7 +64,6 @@ class AdminContentManager {
 
     public function createContent(array $datos) {
         if (empty($datos['nombre']) || empty($datos['id_categoria'])) return false;
-        // Insertamos la fecha actual automáticamente
         $datos['fecha_publicacion'] = date('Y-m-d');
         return $this->adminDao->insertContent($datos);
     }
@@ -80,10 +77,14 @@ class AdminContentManager {
         return $this->adminDao->deleteContent((int)$id);
     }
 
-    public function saveContent(array $postData) {
-    if (!empty($postData['id'])) {
-        return $this->updateContent((int)$postData['id'], $postData);
+    public function clearReferences($path) {
+        return $this->adminDao->clearFileReferences($path);
     }
-    return $this->createContent($postData);
-}
+
+    public function saveContent(array $postData) {
+        if (!empty($postData['id'])) {
+            return $this->updateContent((int)$postData['id'], $postData);
+        }
+        return $this->createContent($postData);
+    }
 }

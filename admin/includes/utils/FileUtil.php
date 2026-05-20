@@ -26,7 +26,7 @@ class FileUtil {
 
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
             // Retornamos la ruta relativa corregida para visualización directa
-            return './assets/uploads/' . $relativeSubdir . '/' . $fileName;
+            return 'assets/uploads/' . $relativeSubdir . '/' . $fileName;
         }
 
         return false;

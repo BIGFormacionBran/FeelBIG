@@ -28,11 +28,7 @@ $categorias = $adminManager->listAllCategoriesOrdered();
         <h2>Gestión de Categorías</h2>
     </div>
 
-    <?php if ($status === "success"): ?>
-        <div class="admin-status-alert success">✅ Operación realizada con éxito.</div>
-    <?php elseif ($status === "error"): ?>
-        <div class="admin-status-alert error">❌ <?php echo $message; ?></div>
-    <?php endif; ?>
+    <?php include __DIR__ . '/../components/Alerts.php'; ?>
 
     <div class="admin-flex-layout">
         <div class="admin-card side-form" data-entity="Categoría">

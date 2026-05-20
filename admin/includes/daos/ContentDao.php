@@ -8,7 +8,7 @@ class AdminContentDao {
         $this->db = DbUtil::getConnection();
     }
 
-    /* --- MÉTODOS DE CATEGORÍAS (FALTABAN AQUÍ) --- */
+    /* --- MÉTODOS DE CATEGORÍAS --- */
 
     public function checkExists($nombre) {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM CATEGORIA WHERE nombre = ?");
@@ -87,5 +87,13 @@ class AdminContentDao {
     public function deleteContent($id) {
         $stmt = $this->db->prepare("DELETE FROM CONTENIDO WHERE id = ?");
         return $stmt->execute([(int)$id]);
+    }
+
+    public function clearFileReferences($path) {
+        // Si una imagen o video coincide con el path borrado, se pone a NULL
+        $stmt = $this->db->prepare("UPDATE CONTENIDO SET imagen = NULL WHERE imagen = ?");
+        $stmt->execute([$path]);
+        $stmt = $this->db->prepare("UPDATE CONTENIDO SET video = NULL WHERE video = ?");
+        return $stmt->execute([$path]);
     }
 }

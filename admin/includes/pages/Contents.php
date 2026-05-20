@@ -24,11 +24,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
         <h2>Gestión de Contenidos</h2>
     </div>
 
-    <?php if ($status === "success"): ?>
-        <div class="admin-status-alert success">✅ Operación realizada con éxito.</div>
-    <?php elseif ($status === "error"): ?>
-        <div class="admin-status-alert error">❌ <?php echo $message ?: "Error en la operación."; ?></div>
-    <?php endif; ?>
+    <?php include __DIR__ . '/../components/Alerts.php'; ?>
 
     <div class="admin-flex-layout">
         <div class="admin-card side-form" data-entity="Contenido">
@@ -114,8 +110,8 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                         <div class="small-text text-muted"><?php echo htmlspecialchars(substr($con['descripcion_breve'] ?? '', 0, 60)) . '...'; ?></div>
                     </div>
                     <div class="col-info">
-                        <span title="Imagen"><?php echo $con['imagen'] ? '🖼️' : '⚪'; ?></span>
-                        <span title="Video"><?php echo $con['video'] ? '🎬' : '⚪'; ?></span>
+                        <span class="admin-badge <?php echo $con['imagen'] ? 'badge-success' : 'badge-empty'; ?>">IMG</span>
+                        <span class="admin-badge <?php echo $con['video'] ? 'badge-success' : 'badge-empty'; ?>">VID</span>
                     </div>
                     <div class="col-level">
                         <span class="admin-badge badge-category">

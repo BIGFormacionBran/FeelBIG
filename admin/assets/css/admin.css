@@ -289,104 +289,130 @@
 
 .hidden { display: none !important; }
 
-/* --- MODAL FILE MANAGER --- */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
+/* --- GESTOR DE ARCHIVOS --- */
+.fm-tabs {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
+    background: #f4f4f4;
+    border-bottom: 1px solid #ddd;
 }
 
-.modal-content {
-    background: white;
-    width: 90%;
-    max-width: 900px;
-    max-height: 80vh;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
+.fm-tab-btn {
+    padding: 12px 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s;
 }
 
-.modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.fm-tab-btn.active {
+    background: #fff;
+    color: var(--color-principal-admin);
+    border-bottom: 2px solid var(--color-principal-admin);
 }
 
-.modal-body {
-    padding: 20px;
-    overflow-y: auto;
+.upload-zone {
+    border: 2px dashed #ddd;
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 8px;
+    margin: 20px;
+}
+
+.upload-zone p {
+    margin-bottom: 15px;
+    color: #888;
 }
 
 .file-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 20px;
+    padding: 10px;
 }
 
 .file-item {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 8px;
+    transition: transform 0.1s;
 }
 
 .file-item:hover {
-    border-color: var(--color-principal);
-    background: #fff5f6;
+    border-color: #ccc;
+    background: #f9f9f9;
 }
 
-.file-item img {
-    width: 100%;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 5px;
-}
-
-.file-name {
-    font-size: 10px;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Marca visual para el archivo seleccionado */
 .file-item.is-selected {
-    border: 2px solid var(--color-principal);
-    background: #fff5f6;
-    box-shadow: 0 0 10px rgba(215, 21, 57, 0.2);
+    border: 2px solid var(--color-principal-admin);
+    background: #fffafa;
 }
 
-/* Botón de eliminar dentro del grid */
-.file-preview { position: relative; }
-
-.btn-fm-delete {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--color-principal-admin);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    font-size: 14px;
-    cursor: pointer;
-    display: none; /* Se oculta por defecto */
-    z-index: 10;
-}
-
-.file-item:hover .btn-fm-delete {
+.file-preview {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: #eee;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.file-preview img, .preview-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-placeholder {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #999;
+}
+
+.btn-fm-delete {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    display: none;
+}
+
+.file-item:hover .btn-fm-delete {
+    display: block;
+}
+
+/* --- PREVISUALIZACIÓN EN FORMULARIO --- */
+.media-selector-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.media-preview-box {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background: #fcfcfc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.media-preview-box .preview-media {
+    max-width: 100%;
+    max-height: 100%;
 }
