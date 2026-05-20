@@ -61,7 +61,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                     <label class="admin-label">Imagen de Portada:</label>
                     <div class="admin-file-picker">
                         <input type="text" name="imagen" id="con-imagen" readonly placeholder="Ningún archivo seleccionado" class="admin-input">
-                        <button type="button" class="btn-open-filemanager" data-target="con-imagen" data-type="images">Seleccionar</button>
+                        <button type="button" class="btn-open-filemanager" data-target="con-imagen">Seleccionar</button>
                     </div>
                 </div>
 
@@ -69,7 +69,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                     <label class="admin-label">Archivo de Video:</label>
                     <div class="admin-file-picker">
                         <input type="text" name="video" id="con-video" readonly placeholder="Ningún archivo seleccionado" class="admin-input">
-                        <button type="button" class="btn-open-filemanager" data-target="con-video" data-type="videos">Seleccionar</button>
+                        <button type="button" class="btn-open-filemanager" data-target="con-video">Seleccionar</button>
                     </div>
                 </div>
 

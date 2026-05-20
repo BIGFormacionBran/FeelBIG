@@ -11,19 +11,11 @@ class AdminManager {
         $this->media = new MediaManager();
     }
 
-    /**
-     * Inyecta el componente HTML del explorador de archivos una sola vez
-     */
     public function renderFileManager() {
         $file = __DIR__ . '/../components/Files.php';
-        if (file_exists($file)) {
-            include $file;
-        }
+        if (file_exists($file)) include $file;
     }
 
-    /**
-     * Método centralizado para procesar cualquier acción de administrador
-     */
     public function handleRequest(array $postData) {
         if (!isset($postData['action'])) return null;
 
