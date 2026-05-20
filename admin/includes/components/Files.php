@@ -6,14 +6,15 @@ if (!isset($admin) || $admin === null) {
     $manager = $admin;
 }
 
-$type = $_GET['file_type'] ?? 'images';
-$files = $manager->media->listPhysicalFiles($type);
+$images = $manager->media->listPhysicalFiles('images');
+$videos = $manager->media->listPhysicalFiles('videos');
+$allFiles = array_merge($images, $videos);
 ?>
 
 <div id="file-manager-modal" class="modal-overlay hidden">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Gestor de Archivos (<?php echo strtoupper($type); ?>)</h3>
+            <h3>Gestor de Archivos</h3>
             <button type="button" class="btn-close-modal" id="fm-close-x">&times;</button>
         </div>
 
@@ -25,14 +26,15 @@ $files = $manager->media->listPhysicalFiles($type);
         <div class="modal-body">
             <div id="fm-tab-browse" class="fm-tab-content">
                 <div class="file-grid" id="file-grid">
-                    <?php if (empty($files)): ?>
+                    <?php if (empty($allFiles)): ?>
                         <p class="text-muted">No hay archivos disponibles.</p>
                     <?php endif; ?>
-                    <?php foreach ($files as $file): ?>
-                        <div class="file-item" data-path="<?php echo $file['path']; ?>">
+                    <?php foreach ($allFiles as $file): ?>
+                        <?php $isVid = strpos($file['path'], '/videos/') !== false; ?>
+                        <div class="file-item" data-path="<?php echo $file['path']; ?>" data-type="<?php echo $isVid ? 'videos' : 'images'; ?>">
                             <div class="file-preview">
-                                <?php if ($type === 'images'): ?>
-                                    <img src="/<?php echo $file['url']; ?>" alt="Vista previa">
+                                <?php if (!$isVid): ?>
+                                    <img src="/<?php echo $file['url']; ?>" alt="Preview">
                                 <?php else: ?>
                                     <div class="video-placeholder">VIDEO</div>
                                 <?php endif; ?>
@@ -46,8 +48,8 @@ $files = $manager->media->listPhysicalFiles($type);
 
             <div id="fm-tab-upload" class="fm-tab-content hidden">
                 <div class="upload-zone" id="fm-drop-zone">
-                    <p>Seleccionar archivo para subir</p>
-                    <input type="file" id="fm-upload-input" class="hidden" accept="<?php echo $type === 'images' ? 'image/*' : 'video/*'; ?>">
+                    <p id="upload-instruction">Seleccionar archivo</p>
+                    <input type="file" id="fm-upload-input" class="hidden" accept="image/*,video/*">
                     <button type="button" class="btn-primario" onclick="document.getElementById('fm-upload-input').click()">Examinar</button>
                 </div>
             </div>

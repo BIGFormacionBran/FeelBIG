@@ -21,9 +21,9 @@
 
             const isVideo = path.toLowerCase().match(/\.(mp4|webm|ogg)$/);
             if (isVideo) {
-                previewContainer.innerHTML = `<video src="/${path}" class="preview-media"></video>`;
+                previewContainer.innerHTML = `<video src="/${path}" class="preview-media" style="max-width:100%; height:auto;"></video>`;
             } else {
-                previewContainer.innerHTML = `<img src="/${path}" class="preview-media" alt="Preview">`;
+                previewContainer.innerHTML = `<img src="/${path}" class="preview-media" alt="Preview" style="max-width:100%; height:auto;">`;
             }
         },
 
@@ -37,56 +37,65 @@
     const fileManager = {
         init() {
             state.modal = document.getElementById('file-manager-modal');
-            if (!state.modal) return;
+            if (!state.modal) return; // Si no hay modal en esta página, no hacemos nada.
 
+            const closeX = document.getElementById('fm-close-x');
             const tabBtns = state.modal.querySelectorAll('.fm-tab-btn');
             const tabContents = state.modal.querySelectorAll('.fm-tab-content');
+            const uploadInput = document.getElementById('fm-upload-input');
 
-            tabBtns.forEach(btn => {
+            // Abrir modal desde botones de la página
+            document.querySelectorAll('.btn-open-filemanager').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    ui.switchTab(btn.dataset.tab, tabBtns, tabContents);
-                    btn.classList.add('active');
+                    state.currentTargetInputId = btn.dataset.target;
+                    const type = state.currentTargetInputId.includes('video') ? 'videos' : 'images';
+                    this.filterGrid(type);
+                    ui.toggleHidden(state.modal, false);
                 });
             });
 
-            document.addEventListener('click', (e) => {
-                const openBtn = e.target.closest('.btn-open-filemanager');
-                if (openBtn) {
-                    state.currentTargetInputId = openBtn.getAttribute('data-target');
-                    this.highlightCurrent();
-                    ui.toggleHidden(state.modal, false);
-                    return;
-                }
+            // Cerrar modal
+            closeX?.addEventListener('click', () => ui.toggleHidden(state.modal, true));
+            state.modal.addEventListener('click', (e) => {
+                if (e.target === state.modal) ui.toggleHidden(state.modal, true);
+            });
 
-                if (e.target.closest('.btn-close-modal') || e.target === state.modal) {
-                    ui.toggleHidden(state.modal, true);
-                    return;
-                }
+            // Tabs
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    ui.switchTab(btn.dataset.tab, tabBtns, tabContents);
+                });
+            });
 
-                const fileItem = e.target.closest('.file-item');
-                if (fileItem && !e.target.closest('.btn-fm-delete')) {
-                    const path = fileItem.getAttribute('data-path');
-                    this.selectFile(path);
-                    return;
-                }
-
-                const deleteBtn = e.target.closest('.btn-fm-delete');
-                if (deleteBtn) {
-                    e.stopPropagation();
-                    this.deleteFile(deleteBtn.dataset.path, deleteBtn);
+            // Seleccionar archivo
+            state.modal.addEventListener('click', (e) => {
+                const item = e.target.closest('.file-item');
+                if (item && !e.target.classList.contains('btn-fm-delete')) {
+                    this.selectFile(item.dataset.path);
                 }
             });
 
-            document.getElementById('fm-upload-input')?.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) this.uploadFile(e.target.files[0]);
+            // Borrar archivo
+            state.modal.addEventListener('click', async (e) => {
+                const delBtn = e.target.closest('.btn-fm-delete');
+                if (delBtn && confirm('¿Eliminar archivo físico permanentemente?')) {
+                    await this.deleteFile(delBtn.dataset.path, delBtn.closest('.file-item'));
+                }
             });
+
+            // Subida
+            uploadInput?.addEventListener('change', () => this.handleUpload(uploadInput.files[0]));
         },
 
-        highlightCurrent() {
-            const currentPath = document.getElementById(state.currentTargetInputId)?.value;
+        filterGrid(type) {
+            if (!state.modal) return;
             state.modal.querySelectorAll('.file-item').forEach(item => {
-                item.classList.toggle('is-selected', item.getAttribute('data-path') === currentPath);
+                ui.toggleHidden(item, item.dataset.type !== type);
             });
+            const instruction = document.getElementById('upload-instruction');
+            if(instruction) instruction.innerText = `Subir ${type === 'videos' ? 'Video' : 'Imagen'}`;
         },
 
         selectFile(path) {
@@ -100,48 +109,43 @@
             ui.toggleHidden(state.modal, true);
         },
 
-        async uploadFile(file) {
-            const formData = new FormData();
-            formData.append('action', 'fm-upload');
-            formData.append('file', file);
-            formData.append('type', state.currentTargetInputId?.includes('video') ? 'videos' : 'images');
-
-            const response = await fetch(window.location.href, { method: 'POST', body: formData });
-            if (response.ok) location.reload();
-        },
-
-        async deleteFile(path, btn) {
-            if (!confirm('Eliminar archivo del servidor?')) return;
-            
+        async deleteFile(path, element) {
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
-            const response = await fetch(window.location.href, { method: 'POST', body: formData });
-            if (response.ok) {
-                if (document.getElementById(state.currentTargetInputId)?.value === path) {
-                    document.getElementById(state.currentTargetInputId).value = "";
-                    ui.updatePreview("", state.currentTargetInputId);
-                }
-                btn.closest('.file-item').remove();
-            }
+            try {
+                const resp = await fetch(window.location.href, { method: 'POST', body: formData });
+                if (resp.ok) element.remove();
+            } catch (err) { console.error("Error borrando:", err); }
+        },
+
+        async handleUpload(file) {
+            if (!file) return;
+            const type = state.currentTargetInputId.includes('video') ? 'videos' : 'images';
+            const formData = new FormData();
+            formData.append('action', 'fm-upload');
+            formData.append('type', type);
+            formData.append('file', file);
+
+            try {
+                const resp = await fetch(window.location.href, { method: 'POST', body: formData });
+                if (resp.ok) location.reload(); // Recargamos para ver el nuevo archivo
+            } catch (err) { console.error("Error subiendo:", err); }
         }
     };
 
     const contentForm = {
         prepareEdit(data) {
-            const form = document.querySelector('.side-form form');
-            if (!form) return;
+            const container = document.querySelector('.side-form');
+            if (!container) return;
+            
+            const prefix = container.dataset.entity === 'Contenido' ? 'con-' : 'cat-';
+            const formAction = document.getElementById('form-action');
+            const formTitle = document.getElementById('form-title');
 
-            const container = form.closest('.side-form');
-            const titleEl = document.getElementById('form-title');
-            const actionInput = document.getElementById('form-action');
-            const idInput = form.querySelector('input[id*="-id"]');
-            const prefix = idInput ? idInput.id.split('-')[0] + '-' : '';
-
-            // CAMBIO CLAVE: Cambiar acción a edit y actualizar título
-            if(actionInput) actionInput.value = 'edit';
-            if(titleEl) titleEl.innerText = 'Editar ' + container.dataset.entity;
+            if (formAction) formAction.value = 'edit';
+            if (formTitle) formTitle.innerText = 'Editando ' + container.dataset.entity;
 
             Object.entries(data).forEach(([key, value]) => {
                 const input = document.getElementById(prefix + key);
@@ -162,10 +166,8 @@
             const actionInput = document.getElementById('form-action');
             
             if (!form) return;
-            
             form.reset();
             
-            // Restaurar a modo "Añadir"
             if(actionInput) actionInput.value = 'add';
             if(titleEl) titleEl.innerText = 'Nueva ' + container.dataset.entity;
             
@@ -180,5 +182,9 @@
         window.resetForm = contentForm.reset;
     };
 
-    document.addEventListener("DOMContentLoaded", init);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
