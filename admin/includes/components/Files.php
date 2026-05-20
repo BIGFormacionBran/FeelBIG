@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../managers/AdminContentManager.php';
+require_once __DIR__ . '/../managers/ContentManager.php';
 $adminManager = new AdminContentManager();
 
 $status = "";

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/MediaManager.php';
-require_once __DIR__ . '/../daos/AdminContentDao.php';
+require_once __DIR__ . '/../daos/ContentDao.php';
 require_once __DIR__ . '/../../../includes/daos/ContentDao.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
