@@ -27,13 +27,15 @@ $allFiles = array_merge($images, $videos);
             <div id="fm-tab-browse" class="fm-tab-content">
                 <div class="file-grid" id="file-grid">
                     <?php if (empty($allFiles)): ?>
-                        <p class="text-muted">No hay archivos disponibles.</p>
+                        <p class="text-muted">No hay archivos en el servidor.</p>
                     <?php endif; ?>
-                    <?php foreach ($allFiles as $file): ?>
-                        <?php $isVid = strpos($file['path'], '/videos/') !== false; ?>
-                        <div class="file-item" data-path="<?php echo $file['path']; ?>" data-type="<?php echo $isVid ? 'videos' : 'images'; ?>">
+                    
+                    <?php foreach ($allFiles as $file): 
+                        $type = (strpos($file['path'], 'videos/') !== false) ? 'videos' : 'images';
+                    ?>
+                        <div class="file-item" data-path="<?php echo $file['path']; ?>" data-type="<?php echo $type; ?>">
                             <div class="file-preview">
-                                <?php if (!$isVid): ?>
+                                <?php if ($type === 'images'): ?>
                                     <img src="/<?php echo $file['url']; ?>" alt="Preview">
                                 <?php else: ?>
                                     <div class="video-placeholder">VIDEO</div>
@@ -48,7 +50,7 @@ $allFiles = array_merge($images, $videos);
 
             <div id="fm-tab-upload" class="fm-tab-content hidden">
                 <div class="upload-zone" id="fm-drop-zone">
-                    <p id="upload-instruction">Seleccionar archivo</p>
+                    <p id="upload-instruction">Seleccionar archivo para subir</p>
                     <input type="file" id="fm-upload-input" class="hidden" accept="image/*,video/*">
                     <button type="button" class="btn-primario" onclick="document.getElementById('fm-upload-input').click()">Examinar</button>
                 </div>
