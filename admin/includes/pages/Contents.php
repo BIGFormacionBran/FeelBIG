@@ -2,13 +2,14 @@
 require_once __DIR__ . '/../managers/AdminManager.php';
 $admin = new AdminManager();
 
-// CORRECCIÓN: Manejo de respuesta AJAX al principio absoluto para evitar fugas de HTML
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && strpos($_POST['action'], 'fm-') === 0) {
-    if (ob_get_length()) ob_clean(); // Limpiamos cualquier HTML que se haya enviado ya (cabeceras, etc)
+    if (ob_get_length()) ob_clean(); // Limpiamos cualquier HTML previo
     $result = $admin->handleRequest($_POST);
     header('Content-Type: application/json');
     if ($_POST['action'] === 'fm-upload') {
-        echo json_encode(['success' => (bool)$result, 'path' => $result]);
+        // Devolvemos también el nombre del archivo para dibujarlo en el grid
+        $name = basename($result);
+        echo json_encode(['success' => (bool)$result, 'path' => $result, 'name' => $name]);
     } else {
         echo json_encode(['success' => (bool)$result]);
     }
@@ -65,7 +66,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Imagen de Portada:</label>
+                    <span class="admin-label">Imagen de Portada:</span>
                     <div class="media-selector-wrapper">
                         <input type="hidden" name="imagen" id="con-imagen">
                         <div id="con-imagen-preview" class="media-preview-box">
@@ -76,7 +77,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Archivo de Video:</label>
+                    <span class="admin-label">Archivo de Video:</span>
                     <div class="media-selector-wrapper">
                         <input type="hidden" name="video" id="con-video">
                         <div id="con-video-preview" class="media-preview-box">

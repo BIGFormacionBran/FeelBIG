@@ -29,7 +29,6 @@
 
         switchTab: (tabId, btns, contents) => {
             contents.forEach(c => c.classList.add('hidden'));
-            // CORREGIDO: No quitamos la clase active aquí, ya se gestiona en el event listener
             document.getElementById(tabId)?.classList.remove('hidden');
         }
     };
@@ -112,14 +111,29 @@
                     body: formData,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
+                
                 if (resp.ok) {
                     element.remove();
-                    // Si el archivo borrado estaba seleccionado en el formulario, limpiarlo
+                    // Limpiar input activo si es el borrado
                     ['con-imagen', 'con-video'].forEach(id => {
                         const input = document.getElementById(id);
                         if (input && input.value === path) {
                             input.value = '';
                             ui.updatePreview(null, id);
+                        }
+                    });
+
+                    // CRÍTICO: Limpiar el archivo fantasma del botón "Editar" en la tabla HTML
+                    document.querySelectorAll('.action-edit').forEach(btn => {
+                        let attr = btn.getAttribute('onclick');
+                        if (attr && attr.includes(path)) {
+                            try {
+                                let jsonStr = attr.substring(attr.indexOf('{'), attr.lastIndexOf('}') + 1);
+                                let data = JSON.parse(jsonStr);
+                                if (data.imagen === path) data.imagen = null;
+                                if (data.video === path) data.video = null;
+                                btn.setAttribute('onclick', `prepareEdit(${JSON.stringify(data)})`);
+                            } catch(e) {}
                         }
                     });
                 }
@@ -142,16 +156,44 @@
                 });
                 
                 const text = await resp.text();
-                // Buscamos el inicio del JSON por si el servidor ha colado HTML accidentalmente
                 const jsonStart = text.indexOf('{"');
                 if (jsonStart === -1) throw new Error("Respuesta no válida del servidor");
                 
                 const result = JSON.parse(text.substring(jsonStart));
                 
                 if (result.success) {
+                    // CRÍTICO: Añadir el nuevo archivo al Grid visualmente
+                    const grid = document.getElementById('file-grid');
+                    if (grid) {
+                        const emptyMsg = grid.querySelector('.text-muted');
+                        if (emptyMsg && emptyMsg.innerText.includes('No hay archivos')) emptyMsg.remove();
+                        
+                        const previewHtml = type === 'images' 
+                            ? `<img src="/${result.path}" alt="Preview">` 
+                            : `<div class="video-placeholder">VIDEO</div>`;
+                            
+                        const newItem = document.createElement('div');
+                        newItem.className = 'file-item';
+                        newItem.dataset.path = result.path;
+                        newItem.dataset.type = type;
+                        newItem.innerHTML = `
+                            <div class="file-preview">
+                                ${previewHtml}
+                                <button type="button" class="btn-fm-delete" data-path="${result.path}">&times;</button>
+                            </div>
+                            <span class="file-name">${result.name || 'Nuevo archivo'}</span>
+                        `;
+                        grid.prepend(newItem); // Añadir arriba del todo
+                    }
+
+                    // Seleccionar automáticamente
                     this.selectFile(result.path);
+                    
+                    // Volver a la pestaña de explorar
                     const browseBtn = state.modal.querySelector('[data-tab="fm-tab-browse"]');
                     browseBtn && browseBtn.click();
+                    
+                    // Resetear input de subida
                     document.getElementById('fm-upload-input').value = ""; 
                 } else {
                     alert("Error al subir archivo");
