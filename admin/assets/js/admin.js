@@ -88,8 +88,6 @@
             state.modal.querySelectorAll('.file-item').forEach(item => {
                 ui.toggleHidden(item, item.dataset.type !== type);
             });
-            const instruction = document.getElementById('upload-instruction');
-            if(instruction) instruction.innerText = `Subir ${type === 'videos' ? 'Video' : 'Imagen'}`;
         },
 
         selectFile(path) {
@@ -132,13 +130,18 @@
                     body: formData,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
-                const result = await resp.json();
+                
+                const text = await resp.text(); // Leemos como texto primero para debug si falla
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch(e) {
+                    console.error("Respuesta no es JSON:", text);
+                    throw e;
+                }
                 
                 if (result.success) {
-                    // 1. Añadir al grid visualmente (opcional, ya que lo seleccionamos directo)
-                    // 2. Seleccionar automáticamente el archivo subido
                     this.selectFile(result.path);
-                    // 3. Volver a la pestaña de explorar para la próxima vez
                     const browseBtn = state.modal.querySelector('[data-tab="fm-tab-browse"]');
                     browseBtn && browseBtn.click();
                     document.getElementById('fm-upload-input').value = ""; 

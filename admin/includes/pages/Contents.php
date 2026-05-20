@@ -8,15 +8,18 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $result = $admin->handleRequest($_POST);
     
-    // Si es una petición AJAX del gestor de archivos, respondemos JSON y terminamos ejecución
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+    // CORRECCIÓN: Detectar petición AJAX de forma robusta y devolver JSON limpio
+    if (
+        (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
+        (isset($_POST['action']) && strpos($_POST['action'], 'fm-') === 0)
+    ) {
         header('Content-Type: application/json');
         if ($_POST['action'] === 'fm-upload') {
             echo json_encode(['success' => (bool)$result, 'path' => $result]);
         } else {
             echo json_encode(['success' => (bool)$result]);
         }
-        exit;
+        exit; // CRÍTICO: Detener ejecución para que no se imprima el HTML debajo
     }
 
     if ($result) {

@@ -51,7 +51,7 @@ $allFiles = array_merge($images, $videos);
             <div id="fm-tab-upload" class="fm-tab-content hidden">
                 <div class="upload-zone" id="fm-drop-zone">
                     <label class="admin-label" for="fm-upload-input">Seleccionar archivo:</label>
-                    <input type="file" id="fm-upload-input" class="hidden" accept="image/*,video/*">
+                    <input type="file" id="fm-upload-input" style="display:none;" accept="image/*,video/*">
                     <button type="button" class="btn-primario" onclick="document.getElementById('fm-upload-input').click()">Examinar</button>
                 </div>
             </div>
