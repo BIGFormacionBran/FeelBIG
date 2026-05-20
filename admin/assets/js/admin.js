@@ -42,6 +42,7 @@
             const tabBtns = state.modal.querySelectorAll('.fm-tab-btn');
             const tabContents = state.modal.querySelectorAll('.fm-tab-content');
             const uploadInput = document.getElementById('fm-upload-input');
+            const dropZone = document.getElementById('fm-drop-zone');
 
             document.querySelectorAll('.btn-open-filemanager').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -80,6 +81,23 @@
             });
 
             uploadInput?.addEventListener('change', () => this.handleUpload(uploadInput.files[0]));
+
+            // NUEVA LÓGICA DRAG & DROP
+            if (dropZone) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => {
+                    dropZone.addEventListener(name, (e) => { e.preventDefault(); e.stopPropagation(); });
+                });
+                ['dragenter', 'dragover'].forEach(name => {
+                    dropZone.addEventListener(name, () => dropZone.classList.add('drag-over'));
+                });
+                ['dragleave', 'drop'].forEach(name => {
+                    dropZone.addEventListener(name, () => dropZone.classList.remove('drag-over'));
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    const files = e.dataTransfer.files;
+                    if (files.length) this.handleUpload(files[0]);
+                });
+            }
         },
 
         filterGrid(type) {
@@ -114,8 +132,6 @@
                 
                 if (resp.ok) {
                     element.remove();
-                    
-                    // Limpiar input activo si corresponde
                     ['con-imagen', 'con-video'].forEach(id => {
                         const input = document.getElementById(id);
                         if (input && input.value === path) {
@@ -124,15 +140,12 @@
                         }
                     });
 
-                    // CRÍTICO: Limpiar el archivo fantasma del botón "Editar" en la tabla HTML de manera segura
                     document.querySelectorAll('.action-edit').forEach(btn => {
                         let data = null;
                         try {
-                            // Usamos el caché del DOM si ya lo hemos modificado antes
                             if (btn._contentData) {
                                 data = btn._contentData;
                             } else {
-                                // Extraemos el JSON del atributo onclick original
                                 let attr = btn.getAttribute('onclick');
                                 if (attr && attr.includes('{')) {
                                     let jsonStr = attr.substring(attr.indexOf('{'), attr.lastIndexOf('}') + 1);
@@ -146,14 +159,10 @@
                                 if (data.video === path) { data.video = null; updated = true; }
 
                                 if (updated) {
-                                    // Guardamos la memoria limpia en el elemento
                                     btn._contentData = data;
-                                    // Eliminamos el HTML antiguo
                                     btn.removeAttribute('onclick');
-                                    // Asignamos el comportamiento mediante JS directo para no romper comillas
                                     btn.onclick = function() { window.prepareEdit(data); };
                                     
-                                    // Actualizamos visualmente los badges de la tabla
                                     const row = btn.closest('.admin-list-row');
                                     if (row) {
                                         const badges = row.querySelectorAll('.col-info .admin-badge');
@@ -168,9 +177,7 @@
                                     }
                                 }
                             }
-                        } catch(e) {
-                            console.error("Error limpiando referencias fantasma:", e);
-                        }
+                        } catch(e) {}
                     });
                 }
             } catch (err) { console.error("Error borrando:", err); }
@@ -222,17 +229,15 @@
                     }
 
                     this.selectFile(result.path);
-                    
                     const browseBtn = state.modal.querySelector('[data-tab="fm-tab-browse"]');
                     browseBtn && browseBtn.click();
-                    
                     document.getElementById('fm-upload-input').value = ""; 
                 } else {
                     alert("Error al subir archivo");
                 }
             } catch (err) { 
                 console.error("Error subiendo:", err);
-                alert("Error crítico al subir el archivo. Revisa la consola.");
+                alert("Error crítico al subir el archivo.");
             }
         }
     };
