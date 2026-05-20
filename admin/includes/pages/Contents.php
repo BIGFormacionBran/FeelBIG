@@ -7,6 +7,18 @@ $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $result = $admin->handleRequest($_POST);
+    
+    // Si es una petición AJAX del gestor de archivos, respondemos JSON y terminamos ejecución
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+        header('Content-Type: application/json');
+        if ($_POST['action'] === 'fm-upload') {
+            echo json_encode(['success' => (bool)$result, 'path' => $result]);
+        } else {
+            echo json_encode(['success' => (bool)$result]);
+        }
+        exit;
+    }
+
     if ($result) {
         $status = "success";
     } else {

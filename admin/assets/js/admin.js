@@ -21,7 +21,7 @@
 
             const isVideo = path.toLowerCase().match(/\.(mp4|webm|ogg)$/);
             if (isVideo) {
-                previewContainer.innerHTML = `<video src="/${path}" class="preview-media" style="max-width:100%; height:auto;"></video>`;
+                previewContainer.innerHTML = `<video src="/${path}" class="preview-media" style="max-width:100%; height:auto;" controls></video>`;
             } else {
                 previewContainer.innerHTML = `<img src="/${path}" class="preview-media" alt="Preview" style="max-width:100%; height:auto;">`;
             }
@@ -37,14 +37,13 @@
     const fileManager = {
         init() {
             state.modal = document.getElementById('file-manager-modal');
-            if (!state.modal) return; // Si no hay modal en esta página, no hacemos nada.
+            if (!state.modal) return; 
 
             const closeX = document.getElementById('fm-close-x');
             const tabBtns = state.modal.querySelectorAll('.fm-tab-btn');
             const tabContents = state.modal.querySelectorAll('.fm-tab-content');
             const uploadInput = document.getElementById('fm-upload-input');
 
-            // Abrir modal desde botones de la página
             document.querySelectorAll('.btn-open-filemanager').forEach(btn => {
                 btn.addEventListener('click', () => {
                     state.currentTargetInputId = btn.dataset.target;
@@ -54,13 +53,11 @@
                 });
             });
 
-            // Cerrar modal
             closeX?.addEventListener('click', () => ui.toggleHidden(state.modal, true));
             state.modal.addEventListener('click', (e) => {
                 if (e.target === state.modal) ui.toggleHidden(state.modal, true);
             });
 
-            // Tabs
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     tabBtns.forEach(b => b.classList.remove('active'));
@@ -69,7 +66,6 @@
                 });
             });
 
-            // Seleccionar archivo
             state.modal.addEventListener('click', (e) => {
                 const item = e.target.closest('.file-item');
                 if (item && !e.target.classList.contains('btn-fm-delete')) {
@@ -77,7 +73,6 @@
                 }
             });
 
-            // Borrar archivo
             state.modal.addEventListener('click', async (e) => {
                 const delBtn = e.target.closest('.btn-fm-delete');
                 if (delBtn && confirm('¿Eliminar archivo físico permanentemente?')) {
@@ -85,7 +80,6 @@
                 }
             });
 
-            // Subida
             uploadInput?.addEventListener('change', () => this.handleUpload(uploadInput.files[0]));
         },
 
@@ -115,7 +109,11 @@
             formData.append('path', path);
 
             try {
-                const resp = await fetch(window.location.href, { method: 'POST', body: formData });
+                const resp = await fetch(window.location.href, { 
+                    method: 'POST', 
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
                 if (resp.ok) element.remove();
             } catch (err) { console.error("Error borrando:", err); }
         },
@@ -129,8 +127,24 @@
             formData.append('file', file);
 
             try {
-                const resp = await fetch(window.location.href, { method: 'POST', body: formData });
-                if (resp.ok) location.reload(); // Recargamos para ver el nuevo archivo
+                const resp = await fetch(window.location.href, { 
+                    method: 'POST', 
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const result = await resp.json();
+                
+                if (result.success) {
+                    // 1. Añadir al grid visualmente (opcional, ya que lo seleccionamos directo)
+                    // 2. Seleccionar automáticamente el archivo subido
+                    this.selectFile(result.path);
+                    // 3. Volver a la pestaña de explorar para la próxima vez
+                    const browseBtn = state.modal.querySelector('[data-tab="fm-tab-browse"]');
+                    browseBtn && browseBtn.click();
+                    document.getElementById('fm-upload-input').value = ""; 
+                } else {
+                    alert("Error al subir archivo");
+                }
             } catch (err) { console.error("Error subiendo:", err); }
         }
     };
