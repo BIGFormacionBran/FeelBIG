@@ -303,14 +303,24 @@
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #666;
+    color: var(--color-texto-muted);
     transition: all 0.2s;
 }
 
+.fm-tab-btn:hover, .fm-tab-btn:focus {
+    color: var(--color-principal);
+    border-bottom: 2px solid var(--color-principal);
+    transform: translateY(-2px);
+}
+
+.fm-tab-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
 .fm-tab-btn.active {
-    background: #fff;
-    color: var(--color-principal-admin);
-    border-bottom: 2px solid var(--color-principal-admin);
+    background: var(--color-blanco);
+    color: var(--color-principal);
+    border-bottom: 2px solid var(--color-principal);
 }
 
 .upload-zone {
