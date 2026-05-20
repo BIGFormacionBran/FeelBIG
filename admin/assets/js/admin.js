@@ -21,7 +21,12 @@
 
             const isVideo = path.toLowerCase().match(/\.(mp4|webm|ogg)$/);
             if (isVideo) {
-                previewContainer.innerHTML = `<video src="/${path}" class="preview-media" style="max-width:100%; height:auto;" controls></video>`;
+                // Previsualización simple con icono/placeholder para no cargar el video real en el form
+                previewContainer.innerHTML = `<div class="video-preview-thumb" style="text-align:center;">
+                    <span class="admin-badge badge-category" style="margin-bottom:5px; display:inline-block;">VIDEO</span><br>
+                    <img src="/assets/admin/img/video-placeholder.png" style="max-height:50px; width:auto;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIyIiB5PSIzIiB3aWR0aD0iMjAiIGhlaWdodD0iMTgiIHJ4PSIyIiByeT0iMiI+PC9yZWN0PjxwYXRoIGQ9Ik03IDJsNSA1IDUtNSI+PC9wYXRoPjwvc3ZnPg=='">
+                </div>
+                <small style="display:block; font-size:10px; color:#999; margin-top:4px;">${path.split('/').pop()}</small>`;
             } else {
                 previewContainer.innerHTML = `<img src="/${path}" class="preview-media" alt="Preview" style="max-width:100%; height:auto;">`;
             }
@@ -82,7 +87,6 @@
 
             uploadInput?.addEventListener('change', () => this.handleUpload(uploadInput.files[0]));
 
-            // NUEVA LÓGICA DRAG & DROP
             if (dropZone) {
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => {
                     dropZone.addEventListener(name, (e) => { e.preventDefault(); e.stopPropagation(); });
@@ -116,6 +120,27 @@
                 }
             }
             ui.toggleHidden(state.modal, true);
+        },
+
+        async getVideoThumbnail(file) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                video.preload = 'metadata';
+                video.muted = true;
+                video.src = URL.createObjectURL(file);
+                video.onloadeddata = () => {
+                    video.currentTime = 1; 
+                };
+                video.onseeked = () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const dataUri = canvas.toDataURL('image/jpeg');
+                    URL.revokeObjectURL(video.src);
+                    resolve(dataUri);
+                };
+            });
         },
 
         async deleteFile(path, element) {
@@ -185,10 +210,22 @@
 
         async handleUpload(file) {
             if (!file) return;
-            const type = state.currentTargetInputId.includes('video') ? 'videos' : 'images';
+            
+            const targetType = state.currentTargetInputId.includes('video') ? 'videos' : 'images';
+            
+            // VALIDACIÓN DE FORMATO ANTES DE SUBIR
+            if (targetType === 'images' && !file.type.startsWith('image/')) {
+                alert("Error: El archivo seleccionado debe ser una imagen.");
+                return;
+            }
+            if (targetType === 'videos' && !file.type.startsWith('video/')) {
+                alert("Error: El archivo seleccionado debe ser un vídeo.");
+                return;
+            }
+
             const formData = new FormData();
             formData.append('action', 'fm-upload');
-            formData.append('type', type);
+            formData.append('type', targetType);
             formData.append('file', file);
 
             try {
@@ -200,7 +237,7 @@
                 
                 const text = await resp.text();
                 const jsonStart = text.indexOf('{"');
-                if (jsonStart === -1) throw new Error("Respuesta no válida del servidor");
+                if (jsonStart === -1) throw new Error("Respuesta no válida");
                 
                 const result = JSON.parse(text.substring(jsonStart));
                 
@@ -210,20 +247,26 @@
                         const emptyMsg = grid.querySelector('.text-muted');
                         if (emptyMsg && emptyMsg.innerText.includes('No hay archivos')) emptyMsg.remove();
                         
-                        const previewHtml = type === 'images' 
-                            ? `<img src="/${result.path}" alt="Preview">` 
-                            : `<div class="video-placeholder">VIDEO</div>`;
+                        let previewHtml;
+                        if (targetType === 'images') {
+                            previewHtml = `<img src="/${result.path}" alt="Preview">`;
+                        } else {
+                            // Captura de frame para el vídeo recién subido
+                            const thumb = await this.getVideoThumbnail(file);
+                            previewHtml = `<img src="${thumb}" class="video-thumb-frame" alt="Video Preview">
+                                           <div class="video-overlay-icon">▶</div>`;
+                        }
                             
                         const newItem = document.createElement('div');
                         newItem.className = 'file-item';
                         newItem.dataset.path = result.path;
-                        newItem.dataset.type = type;
+                        newItem.dataset.type = targetType;
                         newItem.innerHTML = `
                             <div class="file-preview">
                                 ${previewHtml}
                                 <button type="button" class="btn-fm-delete" data-path="${result.path}">&times;</button>
                             </div>
-                            <span class="file-name">${result.name || 'Nuevo archivo'}</span>
+                            <span class="file-name">${result.name}</span>
                         `;
                         grid.prepend(newItem);
                     }
@@ -237,7 +280,7 @@
                 }
             } catch (err) { 
                 console.error("Error subiendo:", err);
-                alert("Error crítico al subir el archivo.");
+                alert("Error crítico al subir.");
             }
         }
     };

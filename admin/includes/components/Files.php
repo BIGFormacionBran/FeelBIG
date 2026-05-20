@@ -38,7 +38,11 @@ $allFiles = array_merge($images, $videos);
                                 <?php if ($type === 'images'): ?>
                                     <img src="/<?php echo $file['url']; ?>" alt="Preview">
                                 <?php else: ?>
-                                    <div class="video-placeholder">VIDEO</div>
+                                    <div class="video-preview">
+                                        <img src="/assets/admin/img/video-placeholder.png" class="video-thumb-frame" alt="Video">
+                                        <div class="video-overlay-icon">▶</div>
+                                        <span class="badge-video">VIDEO</span>
+                                    </div>
                                 <?php endif; ?>
                                 <button type="button" class="btn-fm-delete" data-path="<?php echo $file['path']; ?>">&times;</button>
                             </div>
