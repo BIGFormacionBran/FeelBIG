@@ -29,7 +29,7 @@
 
         switchTab: (tabId, btns, contents) => {
             contents.forEach(c => c.classList.add('hidden'));
-            btns.forEach(b => b.classList.remove('active'));
+            // CORREGIDO: No quitamos la clase active aquí, ya se gestiona en el event listener
             document.getElementById(tabId)?.classList.remove('hidden');
         }
     };
@@ -112,7 +112,17 @@
                     body: formData,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
-                if (resp.ok) element.remove();
+                if (resp.ok) {
+                    element.remove();
+                    // Si el archivo borrado estaba seleccionado en el formulario, limpiarlo
+                    ['con-imagen', 'con-video'].forEach(id => {
+                        const input = document.getElementById(id);
+                        if (input && input.value === path) {
+                            input.value = '';
+                            ui.updatePreview(null, id);
+                        }
+                    });
+                }
             } catch (err) { console.error("Error borrando:", err); }
         },
 
@@ -131,14 +141,12 @@
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
                 
-                const text = await resp.text(); // Leemos como texto primero para debug si falla
-                let result;
-                try {
-                    result = JSON.parse(text);
-                } catch(e) {
-                    console.error("Respuesta no es JSON:", text);
-                    throw e;
-                }
+                const text = await resp.text();
+                // Buscamos el inicio del JSON por si el servidor ha colado HTML accidentalmente
+                const jsonStart = text.indexOf('{"');
+                if (jsonStart === -1) throw new Error("Respuesta no válida del servidor");
+                
+                const result = JSON.parse(text.substring(jsonStart));
                 
                 if (result.success) {
                     this.selectFile(result.path);
@@ -148,7 +156,10 @@
                 } else {
                     alert("Error al subir archivo");
                 }
-            } catch (err) { console.error("Error subiendo:", err); }
+            } catch (err) { 
+                console.error("Error subiendo:", err);
+                alert("Error crítico al subir el archivo. Revisa la consola.");
+            }
         }
     };
 

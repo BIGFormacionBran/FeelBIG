@@ -2,26 +2,24 @@
 require_once __DIR__ . '/../managers/AdminManager.php';
 $admin = new AdminManager();
 
+// CORRECCIÓN: Manejo de respuesta AJAX al principio absoluto para evitar fugas de HTML
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && strpos($_POST['action'], 'fm-') === 0) {
+    if (ob_get_length()) ob_clean(); // Limpiamos cualquier HTML que se haya enviado ya (cabeceras, etc)
+    $result = $admin->handleRequest($_POST);
+    header('Content-Type: application/json');
+    if ($_POST['action'] === 'fm-upload') {
+        echo json_encode(['success' => (bool)$result, 'path' => $result]);
+    } else {
+        echo json_encode(['success' => (bool)$result]);
+    }
+    exit;
+}
+
 $status = "";
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $result = $admin->handleRequest($_POST);
-    
-    // CORRECCIÓN: Detectar petición AJAX de forma robusta y devolver JSON limpio
-    if (
-        (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
-        (isset($_POST['action']) && strpos($_POST['action'], 'fm-') === 0)
-    ) {
-        header('Content-Type: application/json');
-        if ($_POST['action'] === 'fm-upload') {
-            echo json_encode(['success' => (bool)$result, 'path' => $result]);
-        } else {
-            echo json_encode(['success' => (bool)$result]);
-        }
-        exit; // CRÍTICO: Detener ejecución para que no se imprima el HTML debajo
-    }
-
     if ($result) {
         $status = "success";
     } else {
@@ -67,7 +65,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label" for="con-imagen">Imagen de Portada:</label>
+                    <label class="admin-label">Imagen de Portada:</label>
                     <div class="media-selector-wrapper">
                         <input type="hidden" name="imagen" id="con-imagen">
                         <div id="con-imagen-preview" class="media-preview-box">
@@ -78,7 +76,7 @@ $categorias = $admin->contents->listAllCategoriesOrdered();
                 </div>
 
                 <div class="admin-form-group">
-                    <label class="admin-label" for="con-video">Archivo de Video:</label>
+                    <label class="admin-label">Archivo de Video:</label>
                     <div class="media-selector-wrapper">
                         <input type="hidden" name="video" id="con-video">
                         <div id="con-video-preview" class="media-preview-box">

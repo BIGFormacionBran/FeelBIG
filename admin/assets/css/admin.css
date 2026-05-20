@@ -307,14 +307,9 @@
     transition: all 0.2s;
 }
 
-.fm-tab-btn:hover, .fm-tab-btn:focus {
+.fm-tab-btn:hover {
     color: var(--color-principal);
     border-bottom: 2px solid var(--color-principal);
-    transform: translateY(-2px);
-}
-
-.fm-tab-btn:active {
-    transform: translateY(0) scale(0.98);
 }
 
 .fm-tab-btn.active {
