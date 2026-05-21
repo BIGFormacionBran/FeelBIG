@@ -2,7 +2,10 @@
 require_once __DIR__ . '/../managers/AdminManager.php';
 $admin = new AdminManager();
 
-// ... Lógica de control (POST) ...
+// Procesar acciones POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $admin->handleRequest($_POST);
+}
 
 $categorias = $admin->contents->listAllCategoriesOrdered();
 $options = ["null" => "-- Categoría Principal --"];

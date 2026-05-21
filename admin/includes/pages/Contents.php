@@ -1,6 +1,20 @@
 <?php
-// ... inicialización ...
+require_once __DIR__ . '/../managers/AdminManager.php';
+$admin = new AdminManager();
+
+// Procesar acciones POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $admin->handleRequest($_POST);
+}
+
 $contenidos = $admin->contents->listAllContents();
+$categorias = $admin->contents->listAllCategoriesOrdered();
+
+// Preparar opciones para el select de categorías
+$cat_options = [];
+foreach($categorias as $c) { 
+    $cat_options[$c['id']] = $c['nombre']; 
+}
 
 $config = [
     'title'  => 'Gestión de Contenidos',
