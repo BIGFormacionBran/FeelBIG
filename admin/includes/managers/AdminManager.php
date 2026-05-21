@@ -23,7 +23,9 @@ class AdminManager {
             case 'add':
                 return $this->contents->createContent($postData);
             case 'edit':
-                return $this->contents->updateContent($postData['id'], $postData);
+                // Se espera que 'id' venga en el postData (field-id)
+                $id = $postData['id'] ?? null;
+                return $this->contents->updateContent($id, $postData);
             case 'delete':
                 return $this->contents->deleteContent($postData['id']);
 
@@ -35,11 +37,7 @@ class AdminManager {
             case 'fm-delete-file':
                 $path = $postData['path'] ?? '';
                 if (empty($path)) return false;
-                
-                // 1. Borrar archivo físico
                 $res = FileUtil::delete($path);
-                
-                // 2. Notificar al DAO para limpiar referencias en DB
                 if ($res) {
                     $this->contents->clearReferences($path);
                 }

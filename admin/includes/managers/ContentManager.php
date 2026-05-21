@@ -15,23 +15,6 @@ class AdminContentManager {
         $this->publicDao = new ContentDao();
     }
 
-    public function createCategory($nombre, $id_padre = null) {
-        $nombre = trim((string)$nombre);
-        if (empty($nombre)) return false;
-        $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
-
-        if ($this->adminDao->checkExists($nombre)) {
-            LoggerUtil::error("Manager: Categoría duplicada: $nombre");
-            return false;
-        }
-        return $this->adminDao->insertCategory($nombre, $parentId);
-    }
-
-    public function listAllCategoriesOrdered() {
-        $all = $this->publicDao->getAllCategories();
-        return $this->buildTree($all);
-    }
-
     private function buildTree(array $elements, $parentId = null) {
         $branch = [];
         foreach ($elements as $element) {
@@ -46,12 +29,24 @@ class AdminContentManager {
         return $branch;
     }
 
-    public function updateCategory($id, $nombre, $id_padre) {
-        $id = (int)$id;
+    public function listAllCategoriesOrdered() {
+        $all = $this->publicDao->getAllCategories();
+        return $this->buildTree($all);
+    }
+
+    public function createCategory($nombre, $id_padre = null, $imagen = null) {
         $nombre = trim((string)$nombre);
+        if (empty($nombre)) return false;
         $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
-        if ($id === $parentId) return false;
-        return $this->adminDao->updateCategory($id, $nombre, $parentId);
+
+        if ($this->adminDao->checkExists($nombre)) return false;
+        
+        return $this->adminDao->insertCategory($nombre, $parentId, $imagen);
+    }
+    
+    public function updateCategory($id, $nombre, $id_padre, $imagen = null) {
+        $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
+        return $this->adminDao->updateCategory((int)$id, $nombre, $parentId, $imagen);
     }
 
     public function deleteCategory($id) {

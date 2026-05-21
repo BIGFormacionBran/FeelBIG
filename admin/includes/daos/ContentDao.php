@@ -9,21 +9,20 @@ class AdminContentDao {
     }
 
     /* --- MÉTODOS DE CATEGORÍAS --- */
-
     public function checkExists($nombre) {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM CATEGORIA WHERE nombre = ?");
         $stmt->execute([$nombre]);
         return $stmt->fetchColumn() > 0;
     }
 
-    public function insertCategory($nombre, $id_padre) {
-        $stmt = $this->db->prepare("INSERT INTO CATEGORIA (nombre, id_padre) VALUES (?, ?)");
-        return $stmt->execute([$nombre, $id_padre]);
+    public function insertCategory($nombre, $id_padre, $imagen = null) {
+        $stmt = $this->db->prepare("INSERT INTO CATEGORIA (nombre, id_padre, imagen) VALUES (?, ?, ?)");
+        return $stmt->execute([$nombre, $id_padre, $imagen]);
     }
 
-    public function updateCategory($id, $nombre, $id_padre) {
-        $stmt = $this->db->prepare("UPDATE CATEGORIA SET nombre = ?, id_padre = ? WHERE id = ?");
-        return $stmt->execute([$nombre, $id_padre, (int)$id]);
+    public function updateCategory($id, $nombre, $id_padre, $imagen = null) {
+        $stmt = $this->db->prepare("UPDATE CATEGORIA SET nombre = ?, id_padre = ?, imagen = ? WHERE id = ?");
+        return $stmt->execute([$nombre, $id_padre, $imagen, (int)$id]);
     }
 
     public function deleteCategory($id) {
@@ -32,6 +31,12 @@ class AdminContentDao {
     }
 
     /* --- MÉTODOS DE CONTENIDO --- */
+    public function getAllContents() {
+        $sql = "SELECT c.*, cat.nombre as categoria_nombre 
+                FROM CONTENIDO c JOIN CATEGORIA cat ON c.id_categoria = cat.id 
+                ORDER BY c.id ASC";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function insertContent($datos) {
         $sql = "INSERT INTO CONTENIDO (
@@ -76,24 +81,20 @@ class AdminContentDao {
         ]);
     }
 
-    public function getAllContents() {
-        $sql = "SELECT c.*, cat.nombre as categoria_nombre 
-                FROM CONTENIDO c 
-                JOIN CATEGORIA cat ON c.id_categoria = cat.id 
-                ORDER BY c.id DESC";
-        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function deleteContent($id) {
         $stmt = $this->db->prepare("DELETE FROM CONTENIDO WHERE id = ?");
         return $stmt->execute([(int)$id]);
     }
-
+    
+    /* --- LIMPIEZA DE REFERENCIAS DE ARCHIVOS --- */
     public function clearFileReferences($path) {
-        // Si una imagen o video coincide con el path borrado, se pone a NULL
         $stmt = $this->db->prepare("UPDATE CONTENIDO SET imagen = NULL WHERE imagen = ?");
         $stmt->execute([$path]);
         $stmt = $this->db->prepare("UPDATE CONTENIDO SET video = NULL WHERE video = ?");
+        $stmt->execute([$path]);
+        
+        // Nueva limpieza para la imagen de categoría
+        $stmt = $this->db->prepare("UPDATE CATEGORIA SET imagen = NULL WHERE imagen = ?");
         return $stmt->execute([$path]);
     }
 }
