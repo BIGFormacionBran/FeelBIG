@@ -107,12 +107,12 @@
         deleteFile(path, element) {
             logToServer(`Intento de borrado físico: ${path}`);
             if (!confirm('¿Eliminar archivo?')) return;
-            
+
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
-            fetch(window.location.pathname, { method: 'POST', body: formData })
+            fetch('/admin/ajax.php', { method: 'POST', body: formData })
                 .then(res => res.json())
                 .then(data => {
                     logToServer(`Respuesta borrado: ${JSON.stringify(data)}`);
@@ -154,7 +154,7 @@
             formData.append('action', 'fm-upload');
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
-            fetch(window.location.href, { method: 'POST', body: formData })
+            fetch('/admin/ajax.php', { method: 'POST', body: formData })
             .then(res => {
                 logToServer(`Status HTTP Upload: ${res.status}`);
                 return res.json();
@@ -199,7 +199,30 @@
     window.prepareEdit = contentForm.prepareEdit;
     window.resetForm = (btn) => {
         logToServer("Reset form click");
-        location.reload(); 
+        location.reload();
     };
-    document.addEventListener('DOMContentLoaded', () => fileManager.init());
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fileManager.init();
+
+        const form = document.getElementById('main-entity-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                logToServer('Enviando formulario: ' + form.id);
+
+                const formData = new FormData(form);
+                fetch('/admin/ajax.php', { method: 'POST', body: formData })
+                    .then(res => res.json())
+                    .then(data => {
+                        logToServer(`Respuesta formulario: ${JSON.stringify(data)}`);
+                        location.reload();
+                    })
+                    .catch(err => {
+                        logToServer(`ERROR formulario: ${err.message}`, 'ERROR');
+                        alert('Error: ' + err.message);
+                    });
+            });
+        }
+    });
 })();

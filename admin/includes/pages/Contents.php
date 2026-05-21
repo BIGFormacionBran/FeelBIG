@@ -1,16 +1,22 @@
 <?php
 require_once __DIR__ . '/../managers/AdminManager.php';
 
+ob_start();
 $admin = new AdminManager();
 
-// Obtenemos los datos necesarios para la vista
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['fm-upload', 'fm-delete-file', 'add', 'edit', 'delete'])) {
+    ob_end_clean();
+    exit;
+}
+
+ob_end_clean();
+
 $contenidos = $admin->contents->listAllContents();
 $categorias = $admin->contents->listAllCategoriesOrdered();
 
-// Preparamos las opciones para el selector de categorías
 $cat_options = [];
-foreach ($categorias as $c) { 
-    $cat_options[$c['id']] = $c['nombre']; 
+foreach ($categorias as $c) {
+    $cat_options[$c['id']] = $c['nombre'];
 }
 
 $config = [
@@ -29,6 +35,5 @@ $config = [
     ]
 ];
 
-// Corregido: Se incluye ListItems.php en lugar de un archivo inventado
 require_once __DIR__ . '/../components/ListItems.php';
 $admin->renderFileManager();
