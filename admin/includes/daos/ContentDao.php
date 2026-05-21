@@ -30,6 +30,11 @@ class AdminContentDao {
         return $stmt->execute([(int)$id]);
     }
 
+    public function listCategories() {
+        $sql = "SELECT * FROM CATEGORIA ORDER BY id_padre ASC, nombre ASC";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     /* --- MÉTODOS DE CONTENIDO --- */
     public function getAllContents() {
         $sql = "SELECT c.*, cat.nombre as categoria_nombre 
