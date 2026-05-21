@@ -3,15 +3,13 @@ require_once __DIR__ . '/../utils/FileUtil.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class MediaManager {
-    /**
-     * Lista los archivos físicos en el servidor según el tipo
-     */
+
     public function listPhysicalFiles(string $type = 'images'): array {
         $basePath = __DIR__ . '/../../../assets/uploads/' . $type . '/';
-        LoggerUtil::info("MEDIA_SCAN: Iniciando escaneo físico en: $basePath");
+        LoggerUtil::info("MEDIA_MANAGER: Escaneando archivos físicos tipo [$type] en [$basePath]");
 
         if (!is_dir($basePath)) {
-            LoggerUtil::error("MEDIA_SCAN: El directorio no existe: $basePath");
+            LoggerUtil::error("MEDIA_MANAGER: Directorio no existe: $basePath");
             return [];
         }
 
@@ -28,7 +26,7 @@ class MediaManager {
                 if (!is_dir($monthPath)) continue;
 
                 $actualFiles = array_diff(scandir($monthPath), ['.', '..']);
-                LoggerUtil::info("MEDIA_SCAN: Leídos " . count($actualFiles) . " archivos de $year/$month");
+                LoggerUtil::info("MEDIA_MANAGER: Carpeta $year/$month -> " . count($actualFiles) . " archivos encontrados.");
 
                 foreach ($actualFiles as $f) {
                     $pathForDb = 'assets/uploads/' . $type . '/' . $year . '/' . $month . '/' . $f;
@@ -41,21 +39,22 @@ class MediaManager {
                 }
             }
         }
+        LoggerUtil::info("MEDIA_MANAGER: Escaneo completado. Total: " . count($files) . " archivos.");
         return array_reverse($files); 
     }
 
     public function uploadContentImage($file) { 
-        LoggerUtil::info("MEDIA_MANAGER: Solicitud de upload de imagen.");
+        LoggerUtil::info("MEDIA_MANAGER: Petición de subida de IMAGEN detectada.");
         return FileUtil::upload($file, 'images'); 
     }
 
     public function uploadContentVideo($file) { 
-        LoggerUtil::info("MEDIA_MANAGER: Solicitud de upload de video.");
+        LoggerUtil::info("MEDIA_MANAGER: Petición de subida de VIDEO detectada.");
         return FileUtil::upload($file, 'videos'); 
     }
     
     public function deleteContentFiles($imagePath = null, $videoPath = null) {
-        LoggerUtil::info("MEDIA_MANAGER: Solicitud de borrado múltiple. IMG: $imagePath, VID: $videoPath");
+        LoggerUtil::info("MEDIA_MANAGER: Solicitud de borrado de archivos específicos: IMG[$imagePath], VID[$videoPath]");
         if ($imagePath) FileUtil::delete($imagePath);
         if ($videoPath) FileUtil::delete($videoPath);
         return true;
