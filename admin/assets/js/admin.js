@@ -5,7 +5,7 @@
         fetch('/includes/ajax/JsLogger.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ message: msg, level: lvl })
+            body: JSON.stringify({ message: `[JS_CLIENT]: ${msg}`, level: lvl })
         }).catch(() => {});
     };
 
@@ -15,6 +15,7 @@
         scrollTo: (el) => el?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
         toggleHidden: (el, force) => el?.classList.toggle('hidden', force),
         updatePreview: (path, targetId) => {
+            logToServer(`Actualizando preview para ${targetId}. Path: ${path}`);
             const previewContainer = document.getElementById(targetId + '-preview');
             if (!previewContainer) return;
             
@@ -39,38 +40,35 @@
 
     const fileManager = {
         init() {
+            logToServer("Inicializando File Manager");
             state.modal = document.getElementById('file-manager-modal');
             if (!state.modal) return;
 
-            // Delegación de eventos para el modal (Eficiencia máxima)
             state.modal.addEventListener('click', (e) => {
                 const target = e.target;
-                
-                // Cerrar
                 if (target.id === 'fm-close-x' || target.classList.contains('modal-overlay')) {
+                    logToServer("Cerrando modal");
                     ui.toggleHidden(state.modal, true);
                 }
-                // Tabs
                 if (target.classList.contains('fm-tab-btn')) {
+                    logToServer(`Cambiando a pestaña: ${target.dataset.tab}`);
                     this.switchTab(target);
                 }
-                // Eliminar archivo
                 if (target.classList.contains('btn-fm-delete')) {
                     e.stopPropagation();
                     this.deleteFile(target.dataset.path, target.closest('.file-item'));
                 }
-                // Seleccionar archivo
                 const item = target.closest('.file-item');
                 if (item && !target.classList.contains('btn-fm-delete')) {
                     this.selectFile(item.dataset.path);
                 }
             });
 
-            // Botones de apertura
             document.querySelectorAll('.btn-open-filemanager').forEach(btn => {
                 btn.addEventListener('click', () => {
                     state.currentTargetInputId = btn.dataset.target;
                     const type = state.currentTargetInputId.toLowerCase().includes('video') ? 'videos' : 'images';
+                    logToServer(`Abriendo FM para input: ${state.currentTargetInputId}, Filtro: ${type}`);
                     this.filterGrid(type);
                     ui.toggleHidden(state.modal, false);
                 });
@@ -95,6 +93,7 @@
         },
 
         selectFile(path) {
+            logToServer(`Archivo seleccionado: ${path} para input: ${state.currentTargetInputId}`);
             if (state.currentTargetInputId) {
                 const input = document.getElementById(state.currentTargetInputId);
                 if (input) {
@@ -106,7 +105,8 @@
         },
 
         deleteFile(path, element) {
-            if (!confirm('¿Eliminar archivo permanentemente del servidor? Se limpiarán las referencias en la BD.')) return;
+            logToServer(`Intento de borrado físico: ${path}`);
+            if (!confirm('¿Eliminar archivo?')) return;
             
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
@@ -115,8 +115,9 @@
             fetch(window.location.pathname, { method: 'POST', body: formData })
                 .then(res => res.json())
                 .then(data => {
+                    logToServer(`Respuesta borrado: ${JSON.stringify(data)}`);
                     if (data.success) element.remove();
-                    else alert("Error al eliminar: " + (data.message || 'Desconocido'));
+                    else alert("Error: " + data.message);
                 });
         },
 
@@ -128,17 +129,23 @@
             ['dragover', 'dragleave', 'drop'].forEach(evt => {
                 dropZone.addEventListener(evt, (e) => {
                     e.preventDefault();
-                    dropZone.classList.toggle('drag-over', evt === 'dragover');
-                    if (evt === 'drop' && e.dataTransfer.files.length) this.handleUpload(e.dataTransfer.files[0]);
+                    if (evt === 'drop' && e.dataTransfer.files.length) {
+                        logToServer(`Archivo dropeado: ${e.dataTransfer.files[0].name}`);
+                        this.handleUpload(e.dataTransfer.files[0]);
+                    }
                 });
             });
 
             fileInput.addEventListener('change', () => {
-                if (fileInput.files.length) this.handleUpload(fileInput.files[0]);
+                if (fileInput.files.length) {
+                    logToServer(`Archivo seleccionado via input: ${fileInput.files[0].name}`);
+                    this.handleUpload(fileInput.files[0]);
+                }
             });
         },
 
         handleUpload(file) {
+            logToServer(`Iniciando Fetch Upload: ${file.name}, Size: ${file.size}, Type: ${file.type}`);
             const instruction = document.getElementById('upload-instruction');
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
 
@@ -147,31 +154,29 @@
             formData.append('action', 'fm-upload');
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
-            fetch(window.location.href, { // Usar .href para asegurar que va a la misma página
-                method: 'POST',
-                body: formData
-            })
+            fetch(window.location.href, { method: 'POST', body: formData })
             .then(res => {
-                if (!res.ok) throw new Error('Respuesta del servidor no válida');
+                logToServer(`Status HTTP Upload: ${res.status}`);
                 return res.json();
             })
             .then(data => {
+                logToServer(`Respuesta JSON Upload: ${JSON.stringify(data)}`);
                 if (data.success) {
-                    instruction.textContent = `✓ Subida completada.`;
-                    setTimeout(() => location.reload(), 800); // Pequeño delay para ver el éxito
+                    setTimeout(() => location.reload(), 500);
                 } else {
-                    instruction.textContent = `Error: ${data.message || 'Error desconocido'}`;
+                    instruction.textContent = `Error: ${data.message}`;
                 }
             })
             .catch(err => { 
-                console.error(err);
-                instruction.textContent = 'Error de conexión o de formato en el servidor.'; 
+                logToServer(`ERROR CRITICO JS UPLOAD: ${err.message}`, 'ERROR');
+                instruction.textContent = 'Error de conexión.'; 
             });
         }
     };
 
     const contentForm = {
         prepareEdit(data) {
+            logToServer(`Preparando edición. Datos recibidos: ${JSON.stringify(data)}`);
             const container = document.querySelector('.side-form');
             if (!container) return;
             const prefix = (container.dataset.entity === 'Contenido') ? 'con-' : 'cat-';
@@ -188,19 +193,13 @@
             });
             ui.toggleHidden(document.getElementById('btn-cancel'), false);
             ui.scrollTo(container);
-        },
-        reset(btn) {
-            const container = btn.closest('.side-form');
-            const form = container.querySelector('form');
-            form.reset();
-            document.getElementById('form-action').value = 'add';
-            document.getElementById('form-title').innerText = 'Gestionar ' + container.dataset.entity;
-            container.querySelectorAll('.media-preview-box').forEach(p => p.innerHTML = '<span class="text-muted">Sin archivo</span>');
-            ui.toggleHidden(btn, true);
         }
     };
 
     window.prepareEdit = contentForm.prepareEdit;
-    window.resetForm = contentForm.reset;
+    window.resetForm = (btn) => {
+        logToServer("Reset form click");
+        location.reload(); 
+    };
     document.addEventListener('DOMContentLoaded', () => fileManager.init());
 })();

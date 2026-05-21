@@ -5,37 +5,29 @@ class FileUtil {
     private static $baseUploadPath = __DIR__ . '/../../../../assets/uploads/';
 
     public static function upload(array $file, string $type = 'images') {
-        LoggerUtil::info("FILE_UTIL: Iniciando proceso de upload. Tipo: $type. Nombre original: " . ($file['name'] ?? 'indefinido'));
+        LoggerUtil::info("FILE_UTIL: Procesando subida física. Nombre: " . ($file['name'] ?? '??'));
         
         if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
-            LoggerUtil::error("FILE_UTIL: Error de subida PHP: " . ($file['error'] ?? 'No error key'));
+            LoggerUtil::error("FILE_UTIL: Error PHP UPLOAD_ERR: " . ($file['error'] ?? 'no_key'));
             return false;
         }
 
-        $dateFolder = date('Y/m');
-        $relativeSubdir = $type . '/' . $dateFolder;
-        $targetDir = self::$baseUploadPath . $relativeSubdir . '/';
-
-        LoggerUtil::info("FILE_UTIL: Verificando directorio destino: $targetDir");
+        $targetDir = self::$baseUploadPath . $type . '/' . date('Y/m') . '/';
         if (!is_dir($targetDir)) {
-            LoggerUtil::info("FILE_UTIL: Creando directorio recursivamente...");
-            if(!mkdir($targetDir, 0777, true)) {
-                LoggerUtil::error("FILE_UTIL: No se pudo crear el directorio $targetDir");
-            }
+            LoggerUtil::info("FILE_UTIL: Creando directorio $targetDir");
+            mkdir($targetDir, 0777, true);
         }
 
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $fileName = uniqid('fb_', true) . '.' . $extension;
+        $fileName = uniqid('fb_', true) . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
         $targetPath = $targetDir . $fileName;
 
-        LoggerUtil::info("FILE_UTIL: Intentando mover de {$file['tmp_name']} a $targetPath");
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-            $dbPath = 'assets/uploads/' . $relativeSubdir . '/' . $fileName;
-            LoggerUtil::info("FILE_UTIL: Upload EXITOSO. Ruta DB: $dbPath");
+            $dbPath = 'assets/uploads/' . $type . '/' . date('Y/m') . '/' . $fileName;
+            LoggerUtil::info("FILE_UTIL: ¡EXITO! Archivo en: $dbPath");
             return $dbPath;
         }
         
-        LoggerUtil::error("FILE_UTIL: Fallo crítico en move_uploaded_file.");
+        LoggerUtil::error("FILE_UTIL: ERROR al mover archivo a $targetPath");
         return false;
     }
 
