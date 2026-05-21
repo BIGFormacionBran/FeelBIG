@@ -29,7 +29,6 @@ $config = [
     ]
 ];
 
-// Solo renderizado de componentes
-require_once __DIR__ . '/../components/AdminTable.php';
-require_once __DIR__ . '/../components/AdminModal.php';
+// Corregido: Se incluye ListItems.php en lugar de un archivo inventado
+require_once __DIR__ . '/../components/ListItems.php';
 $admin->renderFileManager();
