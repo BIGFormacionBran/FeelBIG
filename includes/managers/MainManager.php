@@ -1,14 +1,12 @@
 <?php
 require_once __DIR__ . '/../daos/ContentDao.php';
 require_once __DIR__ . '/UserManager.php';
-require_once __DIR__ . '/../utils/LoggerUtil.php';
 
 class MainManager {
     private $contentDao;
     public $userManager;
 
     public function __construct() {
-        LoggerUtil::info("MainManager: Initializing main manager.");
         $this->contentDao = new ContentDao();
         $this->userManager = new UserManager();
     }

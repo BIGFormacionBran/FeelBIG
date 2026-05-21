@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $level = $data['level'] ?? 'ERROR';
         $message = "[JS_CLIENT] " . $data['message'];
         
-        LoggerUtil::error($message); // Ajustado a LoggerUtil
+        LoggerUtil::error($message);
         echo json_encode(['status' => 'logged']);
     }
 }

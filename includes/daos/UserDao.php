@@ -53,17 +53,7 @@ class UserDao {
             $stmt->execute([$identifier, $identifier]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$user) {
-                LoggerUtil::info("UserDao: No user found for: $identifier");
-                return false;
-            }
-
-            if (password_verify($password, $user['password'])) {
-                return $user;
-            } else {
-                LoggerUtil::error("UserDao: Incorrect password for: $identifier");
-                return false;
-            }
+            return password_verify($password, $user['password']) && $user ? $user : false;
         } catch (PDOException $e) {
             LoggerUtil::error("UserDao: SQL Error in login: " . $e->getMessage());
             return false;

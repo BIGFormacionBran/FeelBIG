@@ -7,14 +7,11 @@ class DbUtil {
     private $connection;
 
     private function __construct() {
-        LoggerUtil::info("Database: Starting private constructor...");
         try {
             $host = ConfigUtil::get('DB_HOST');
             $name = ConfigUtil::get('DB_NAME');
             $user = ConfigUtil::get('DB_USER');
             $pass = ConfigUtil::get('DB_PASS');
-
-            LoggerUtil::info("Database: Attempting to connect to $host / $name with user $user");
 
             if (!$host || !$name) {
                 LoggerUtil::error("Database: Incomplete configuration. HOST: '$host', NAME: '$name'");
@@ -33,8 +30,6 @@ class DbUtil {
                 $pass,
                 $options
             );
-            
-            LoggerUtil::info("Database: PDO connection established successfully!");
 
         } catch (PDOException $e) {
             LoggerUtil::error("Database: PDO ERROR [" . $e->getCode() . "]: " . $e->getMessage());
@@ -46,10 +41,8 @@ class DbUtil {
     }
 
     public static function getConnection() {
-        LoggerUtil::info("Database: Requesting connection instance...");
         
         if (self::$instance === null) {
-            LoggerUtil::info("Database: No previous instance. Creating new...");
             self::$instance = new self();
         }
         return self::$instance->connection;

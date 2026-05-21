@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../daos/UserDao.php';
 require_once __DIR__ . '/../daos/PendingRegistrationDao.php';
 require_once __DIR__ . '/MailManager.php';
-require_once __DIR__ . '/../utils/LoggerUtil.php';
 
 class UserManager {
     private $userDao;
@@ -16,7 +15,6 @@ class UserManager {
     }
 
     public function startRegistration($name, $email, $pass) {
-        LoggerUtil::info("UserManager: Starting registration for $email");
         $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
         
         $dbResult = $this->pendingRegistrationDao->createTemporal($name, $email, $pass, $code);
@@ -27,7 +25,6 @@ class UserManager {
     }
 
     public function confirmRegistration($email, $code) {
-        LoggerUtil::info("UserManager: Confirming registration for $email");
         $data = $this->pendingRegistrationDao->getAndValidate($email, $code);
         if ($data) {
             if ($this->userDao->registerWithHash($data['nombre'], $data['correo'], $data['password'])) {

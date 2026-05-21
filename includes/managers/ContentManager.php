@@ -8,7 +8,6 @@ class ContentManager {
     public function __construct() {
         try {
             $this->contentDao = new ContentDao();
-            LoggerUtil::info("ContentManager: Content DAO instantiated correctly.");
         } catch (Exception $e) {
             LoggerUtil::error("ContentManager: Error instantiating ContentDao: " . $e->getMessage());
         }
