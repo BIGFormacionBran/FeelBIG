@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class FileUtil {
-    // Ajustado para llegar correctamente a assets/uploads desde admin/includes/utils
+    // CORRECCIÓN: Ruta ajustada para subir desde admin/includes/utils/ a assets/uploads/
     private static $baseUploadPath = __DIR__ . '/../../../../assets/uploads/';
 
     public static function upload(array $file, string $type = 'images') {
@@ -28,7 +28,7 @@ class FileUtil {
         if (empty($relativeFilePath)) return true;
         
         $cleanPath = ltrim($relativeFilePath, './');
-        // Ruta absoluta corregida: de admin/includes/utils/ a htdocs/
+        // CORRECCIÓN: Ruta absoluta para borrado físico
         $filePath = __DIR__ . '/../../../../' . $cleanPath;
 
         if (file_exists($filePath)) {

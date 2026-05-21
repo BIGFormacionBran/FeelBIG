@@ -1,9 +1,6 @@
 <?php
-/**
- * Componente de Alertas reutilizable
- * @var string $status  Puede ser "success", "error" o vacío
- * @var string $message Mensaje personalizado para errores
- */
+$status = $status ?? $_GET['status'] ?? null;
+$message = $message ?? $_GET['message'] ?? null;
 ?>
 
 <?php if ($status === "success"): ?>
