@@ -69,48 +69,38 @@ class AdminContentManager {
             return false;
         }
 
-        return ($entity === 'Categoría') 
-            ? $this->deleteCategory($id) 
-            : $this->deleteContent($id);
-    }
-
-    public function createCategory($nombre, $id_padre = null, $imagen = null) {
-        $nombre = trim((string)$nombre);
-        LoggerUtil::info("CONTENT_MANAGER: Creando categoría [$nombre]...");
-        
-        if (empty($nombre)) {
-            LoggerUtil::error("CONTENT_MANAGER: El nombre de la categoría está vacío.");
-            return false;
+        if ($entity === 'Categoría') {
+            return $this->deleteCategory($id);
         }
 
-        $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
-        
-        if ($this->adminDao->checkExists($nombre)) {
-            LoggerUtil::error("CONTENT_MANAGER: La categoría ya existe en la DB: $nombre");
-            return false;
+        if ($entity === 'Contenido') {
+            return $this->deleteContent($id);
         }
 
-        return $this->adminDao->insertCategory($nombre, $parentId, $imagen);
+        return false;
     }
-    
-    public function updateCategory($id, $nombre, $id_padre, $imagen = null) {
-        LoggerUtil::info("CONTENT_MANAGER: Actualizando categoría ID $id -> $nombre");
-        $parentId = ($id_padre === "null" || empty($id_padre)) ? null : (int)$id_padre;
-        return $this->adminDao->updateCategory((int)$id, $nombre, $parentId, $imagen);
+
+    public function createCategory($nombre, $idPadre, $imagen) {
+        LoggerUtil::info("CONTENT_MANAGER: Creando categoría [$nombre]");
+        if (empty($nombre)) return false;
+        return $this->adminDao->insertCategory($nombre, $idPadre, $imagen);
+    }
+
+    public function updateCategory($id, $nombre, $idPadre, $imagen) {
+        LoggerUtil::info("CONTENT_MANAGER: Actualizando categoría ID $id");
+        if (empty($id) || empty($nombre)) return false;
+        return $this->adminDao->updateCategory((int)$id, $nombre, $idPadre, $imagen);
     }
 
     public function deleteCategory($id) {
-        LoggerUtil::info("CONTENT_MANAGER: Eliminando categoría ID $id de la DB.");
+        LoggerUtil::info("CONTENT_MANAGER: Borrando categoría ID $id");
         return $this->adminDao->deleteCategory((int)$id);
     }
 
     public function createContent(array $datos) {
-        LoggerUtil::info("CONTENT_MANAGER: Creando nuevo contenido: " . ($datos['nombre'] ?? 'S/N'));
-        if (empty($datos['nombre']) || empty($datos['id_categoria'])) {
-            LoggerUtil::error("CONTENT_MANAGER: Faltan campos obligatorios (nombre/categoría).");
-            return false;
-        }
-        $datos['fecha_publicacion'] = date('Y-m-d');
+        LoggerUtil::info("CONTENT_MANAGER: Creando nuevo contenido.");
+        if (empty($datos['nombre'])) return false;
+        $datos['fecha_creacion'] = date('Y-m-d');
         return $this->adminDao->insertContent($datos);
     }
 
@@ -126,7 +116,8 @@ class AdminContentManager {
     }
 
     public function listAllCategoriesOrdered() {
-        return $this->buildTree($this->adminDao->getAllCategories());
+        // Corregido: AdminContentDao utiliza listCategories() según la nomenclatura estándar
+        return $this->buildTree($this->adminDao->listCategories());
     }
 
     public function listAllContents() {
@@ -145,7 +136,7 @@ class AdminContentManager {
                 $branch[] = $element;
                 $children = $this->buildTree($elements, $element['id']);
                 if ($children) {
-                    foreach($children as $child) { $branch[] = $child; }
+                    $element['children'] = $children;
                 }
             }
         }
