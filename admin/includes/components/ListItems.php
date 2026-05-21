@@ -15,6 +15,7 @@
             
             <form method="POST" id="main-entity-form" class="dynamic-form">
                 <input type="hidden" name="action" id="form-action" value="add">
+                <input type="hidden" name="entity_type" value="<?php echo $entity; ?>">
                 
                 <?php foreach($config['fields'] as $id => $f): ?>
                     <?php if($f['type'] === 'hidden'): ?>
@@ -97,6 +98,7 @@
                                     onclick='prepareEdit(<?php echo json_encode($row, JSON_HEX_APOS); ?>)'>Editar</button>
                             <form method="POST" class="inline-delete" onsubmit="return confirm('¿Eliminar registro?')">
                                 <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="entity_type" value="<?php echo $entity; ?>">
                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                 <button type="submit" class="action-delete-clean">Borrar</button>
                             </form>

@@ -17,30 +17,28 @@ class AdminManager {
     }
 
     public function handleRequest(array $postData) {
-        if (!isset($postData['action'])) return null;
+        $action = $postData['action'] ?? null;
+        if (!$action) return null;
 
-        switch ($postData['action']) {
+        // Delegación directa según la operación solicitada
+        switch ($action) {
             case 'add':
-                return $this->contents->createContent($postData);
+                return $this->contents->add($postData);
             case 'edit':
-                // Se espera que 'id' venga en el postData (field-id)
-                $id = $postData['id'] ?? null;
-                return $this->contents->updateContent($id, $postData);
+                return $this->contents->save($postData);
             case 'delete':
-                return $this->contents->deleteContent($postData['id']);
-
+                return $this->contents->remove($postData);
+            
+            // Gestión de medios (se mantiene independiente por lógica de archivos)
             case 'fm-upload':
                 $type = $postData['type'] ?? 'images';
                 $method = ($type === 'videos') ? 'uploadContentVideo' : 'uploadContentImage';
                 return $this->media->$method($_FILES['file']);
-
             case 'fm-delete-file':
                 $path = $postData['path'] ?? '';
                 if (empty($path)) return false;
                 $res = FileUtil::delete($path);
-                if ($res) {
-                    $this->contents->clearReferences($path);
-                }
+                if ($res) $this->contents->clearReferences($path);
                 return $res;
 
             default:
