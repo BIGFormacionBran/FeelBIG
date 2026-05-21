@@ -1,9 +1,14 @@
 <?php
 require_once __DIR__ . '/../managers/AdminManager.php';
+require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
+
 $admin = new AdminManager();
+
+LoggerUtil::info("VIEW_LOAD: Cargando Contents.php");
 
 // Procesar acciones POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    LoggerUtil::info("VIEW_POST (Contents): Datos recibidos: " . json_encode($_POST));
     $admin->handleRequest($_POST);
 }
 
