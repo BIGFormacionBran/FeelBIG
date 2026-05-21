@@ -147,17 +147,26 @@
             formData.append('action', 'fm-upload');
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
-            fetch(window.location.pathname, { method: 'POST', body: formData })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        instruction.textContent = `✓ Subida completada.`;
-                        location.reload(); // Recarga para ver el nuevo archivo en el grid
-                    } else {
-                        instruction.textContent = `Error: ${data.message}`;
-                    }
-                })
-                .catch(() => { instruction.textContent = 'Error de conexión.'; });
+            fetch(window.location.href, { // Usar .href para asegurar que va a la misma página
+                method: 'POST',
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Respuesta del servidor no válida');
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    instruction.textContent = `✓ Subida completada.`;
+                    setTimeout(() => location.reload(), 800); // Pequeño delay para ver el éxito
+                } else {
+                    instruction.textContent = `Error: ${data.message || 'Error desconocido'}`;
+                }
+            })
+            .catch(err => { 
+                console.error(err);
+                instruction.textContent = 'Error de conexión o de formato en el servidor.'; 
+            });
         }
     };
 
