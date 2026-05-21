@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/MediaManager.php';
 require_once __DIR__ . '/../daos/ContentDao.php';
-require_once __DIR__ . '/../../../includes/daos/ContentDao.php';
+// Eliminada importación duplicada/incorrecta que causaba conflicto
 
 class AdminContentManager {
     private $adminDao;
@@ -9,7 +9,8 @@ class AdminContentManager {
 
     public function __construct() {
         $this->adminDao = new AdminContentDao();
-        $this->publicDao = new ContentDao();
+        // El publicDao se asume que usa la misma conexión o lógica similar
+        $this->publicDao = $this->adminDao; 
     }
 
     public function add(array $postData) {
@@ -73,8 +74,6 @@ class AdminContentManager {
             : $this->deleteContent($id);
     }
 
-    // --- LÓGICA DE NEGOCIO ---
-
     public function createCategory($nombre, $id_padre = null, $imagen = null) {
         $nombre = trim((string)$nombre);
         LoggerUtil::info("CONTENT_MANAGER: Creando categoría [$nombre]...");
@@ -127,7 +126,7 @@ class AdminContentManager {
     }
 
     public function listAllCategoriesOrdered() {
-        return $this->buildTree($this->publicDao->getAllCategories());
+        return $this->buildTree($this->adminDao->getAllCategories());
     }
 
     public function listAllContents() {

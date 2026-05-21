@@ -2,7 +2,8 @@
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class FileUtil {
-    private static $baseUploadPath = __DIR__ . '/../../../../assets/uploads/';
+    // Corregida la ruta base para que apunte correctamente a la raíz/assets
+    private static $baseUploadPath = __DIR__ . '/../../../assets/uploads/';
 
     public static function upload(array $file, string $type = 'images') {
         $originalName = $file['name'] ?? 'indefinido';
@@ -49,7 +50,7 @@ class FileUtil {
         }
         
         $cleanPath = ltrim($relativeFilePath, './');
-        $filePath = __DIR__ . '/../../../../' . $cleanPath;
+        $filePath = __DIR__ . '/../../../' . $cleanPath; // Ajustada ruta de borrado
 
         if (file_exists($filePath)) {
             LoggerUtil::info("FILE_UTIL: Archivo localizado en disco: [$filePath]. Ejecutando unlink...");
