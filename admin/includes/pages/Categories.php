@@ -11,9 +11,11 @@ LoggerUtil::info("VIEW_LOAD: Cargando Categories.php");
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     LoggerUtil::info("VIEW_POST (Categories): Datos recibidos: " . json_encode($_POST));
 
+    // Manejo de subida AJAX para el File Manager
     if (($_POST['action'] ?? '') === 'fm-upload') {
         while (ob_get_level()) ob_end_clean();
         $result = $admin->handleRequest($_POST);
+        header('Content-Type: application/json');
         echo json_encode($result
             ? ['success' => true, 'path' => $result]
             : ['success' => false, 'message' => 'Error al subir el archivo.']
@@ -21,14 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Procesar acciones estándar (add, edit, delete)
     $result = $admin->handleRequest($_POST);
     $status  = $result ? 'success' : 'error';
-    $message = $result ? null : 'No se pudo completar la operación.';
+    $message = $result ? null : 'No se pudo completar la operación en categorías.';
 }
 
 $categorias = $admin->contents->listAllCategoriesOrdered();
 $options = ["null" => "-- Categoría Principal --"];
-foreach ($categorias as $c) { $options[$c['id']] = $c['nombre']; }
+foreach ($categorias as $c) { 
+    $options[$c['id']] = $c['nombre']; 
+}
 
 $config = [
     'title'  => 'Gestión de Categorías',
@@ -44,4 +49,3 @@ $config = [
 
 include __DIR__ . '/../components/ListItems.php';
 $admin->renderFileManager();
-?>

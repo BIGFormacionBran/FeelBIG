@@ -1,11 +1,6 @@
 <?php
-if (!isset($admin) || $admin === null) {
-    require_once __DIR__ . '/../managers/AdminManager.php';
-    $manager = new AdminManager();
-} else {
-    $manager = $admin;
-}
-
+// Asegurar que tenemos acceso al manager
+$manager = $admin ?? new AdminManager();
 $images = $manager->media->listPhysicalFiles('images');
 $videos = $manager->media->listPhysicalFiles('videos');
 $allFiles = array_merge($images, $videos);
@@ -31,20 +26,21 @@ $allFiles = array_merge($images, $videos);
                     <?php endif; ?>
                     
                     <?php foreach ($allFiles as $file): 
-                        $type = (strpos($file['path'], 'videos/') !== false) ? 'videos' : 'images';
+                        $isVid = (strpos($file['path'], 'videos/') !== false);
+                        $type = $isVid ? 'videos' : 'images';
                     ?>
                         <div class="file-item" data-path="<?php echo $file['path']; ?>" data-type="<?php echo $type; ?>">
                             <div class="file-preview">
-                                <?php if ($type === 'images'): ?>
-                                    <img src="/<?php echo $file['url']; ?>" alt="Preview">
+                                <?php if (!$isVid): ?>
+                                    <img src="/<?php echo $file['path']; ?>" alt="Preview">
                                 <?php else: ?>
                                     <div class="video-preview">
-                                        <img src="/assets/admin/img/video-placeholder.png" class="video-thumb-frame" alt="Video">
+                                        <img src="/assets/admin/img/video-placeholder.png" class="video-thumb-frame">
                                         <div class="video-overlay-icon">▶</div>
                                         <span class="badge-video">VIDEO</span>
                                     </div>
                                 <?php endif; ?>
-                                <button type="button" class="btn-fm-delete" data-path="<?php echo $file['path']; ?>">&times;</button>
+                                <button type="button" class="btn-fm-delete" data-path="<?php echo $file['path']; ?>" title="Eliminar permanentemente">&times;</button>
                             </div>
                             <span class="file-name"><?php echo $file['name']; ?></span>
                         </div>
@@ -54,16 +50,13 @@ $allFiles = array_merge($images, $videos);
 
             <div id="fm-tab-upload" class="fm-tab-content hidden">
                 <div class="upload-zone" id="fm-drop-zone">
-                    <label class="admin-label" for="fm-upload-input">Seleccionar archivo:</label>
-                    <input type="file" id="fm-upload-input" style="opacity:0; position:absolute; z-index:-1;" accept="image/*,video/*">
-                    
+                    <input type="file" id="fm-upload-input" style="display:none;" accept="image/*,video/*">
                     <div class="drop-zone-instruction">
                         <p>Arrastra y suelta tus archivos aquí</p>
                         <span>— o —</span>
                     </div>
-
-                    <button type="button" class="btn-primario" onclick="document.getElementById('fm-upload-input').click()">Examinar</button>
-                    <p class="text-muted" style="margin-top:10px;" id="upload-instruction">Haz clic en Examinar o arrastra un archivo</p>
+                    <button type="button" class="btn-primario" onclick="document.getElementById('fm-upload-input').click()">Examinar Equipo</button>
+                    <p class="text-muted" style="margin-top:15px;" id="upload-instruction">Formatos aceptados: JPG, PNG, MP4</p>
                 </div>
             </div>
         </div>

@@ -10,6 +10,7 @@
             $entity = $config['entity'];
             $prefix = ($entity === 'Contenido') ? 'con-' : 'cat-';
         ?>
+        
         <div class="admin-card side-form" data-entity="<?php echo $entity; ?>">
             <div class="admin-card-title" id="form-title">Gestionar <?php echo $entity; ?></div>
             
@@ -96,6 +97,7 @@
                         <div class="col-actions">
                             <button type="button" class="action-edit btn-trigger" 
                                     onclick='prepareEdit(<?php echo json_encode($row, JSON_HEX_APOS); ?>)'>Editar</button>
+                            
                             <form method="POST" class="inline-delete" onsubmit="return confirm('¿Eliminar registro?')">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="entity_type" value="<?php echo $entity; ?>">
