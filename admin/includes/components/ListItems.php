@@ -63,7 +63,7 @@
 
                 <div class="form-buttons">
                     <button type="submit" class="btn-primario" id="btn-save">Guardar</button>
-                    <button type="button" id="btn-cancel-edit" class="btn-secundario hidden" onclick="resetForm(this)">Cancelar</button>
+                    <button type="button" id="btn-cancel" class="btn-secundario hidden" onclick="resetForm(this)">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -94,7 +94,7 @@
                         <?php endforeach; ?>
                         
                         <div class="col-actions">
-                            <button type="button" class="action-edit btn-edit-trigger" 
+                            <button type="button" class="action-edit btn-trigger" 
                                     onclick='prepareEdit(<?php echo json_encode($row, JSON_HEX_APOS); ?>)'>Editar</button>
                             <form method="POST" class="inline-delete" onsubmit="return confirm('¿Eliminar registro?')">
                                 <input type="hidden" name="action" value="delete">

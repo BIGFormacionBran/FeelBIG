@@ -142,7 +142,7 @@
 
             const formAction = document.getElementById('form-action');
             const formTitle = document.getElementById('form-title');
-            const btnCancel = document.getElementById('btn-cancel-edit');
+            const btnCancel = document.getElementById('btn-cancel');
 
             if (formAction) formAction.value = 'edit';
             if (formTitle) formTitle.innerText = 'Editando ' + entity;
