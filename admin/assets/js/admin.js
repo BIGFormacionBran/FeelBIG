@@ -103,6 +103,8 @@
                     this.selectFile(item.dataset.path);
                 }
             });
+
+            this.initUpload();
         },
 
         filterGrid(type) {
@@ -124,6 +126,123 @@
                 }
             }
             ui.toggleHidden(state.modal, true);
+        },
+
+        initUpload() {
+            const dropZone = document.getElementById('fm-drop-zone');
+            const fileInput = document.getElementById('fm-upload-input');
+            const instruction = document.getElementById('upload-instruction');
+
+            if (!dropZone || !fileInput) {
+                logToServer("FM_UPLOAD: No se encontró drop-zone o file-input", 'ERROR');
+                return;
+            }
+
+            logToServer("FM_UPLOAD: Inicializando lógica de upload y drag & drop");
+
+            // Drag & drop eventos
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    logToServer(`FM_UPLOAD: Archivo soltado via drag & drop: ${files[0].name}`);
+                    this.handleUpload(files[0]);
+                }
+            });
+
+            // Selección via input file
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    logToServer(`FM_UPLOAD: Archivo seleccionado via explorador: ${fileInput.files[0].name}`);
+                    this.handleUpload(fileInput.files[0]);
+                }
+            });
+        },
+
+        handleUpload(file) {
+            const instruction = document.getElementById('upload-instruction');
+            logToServer(`FM_UPLOAD: Iniciando envío al servidor. Archivo: ${file.name}, Tipo: ${file.type}, Tamaño: ${file.size}`);
+
+            if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
+
+            const isVideo = file.type.startsWith('video/');
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('action', 'fm-upload');
+            formData.append('type', isVideo ? 'videos' : 'images');
+
+            fetch(window.location.pathname, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                logToServer(`FM_UPLOAD: Respuesta del servidor: ${JSON.stringify(data)}`);
+                if (data.success) {
+                    if (instruction) instruction.textContent = `✓ ${file.name} subido correctamente.`;
+                    this.addFileToGrid(data.path, file.name);
+                } else {
+                    if (instruction) instruction.textContent = `Error: ${data.message || 'No se pudo subir el archivo.'}`;
+                    logToServer(`FM_UPLOAD: Error reportado por servidor: ${data.message}`, 'ERROR');
+                }
+            })
+            .catch(err => {
+                logToServer(`FM_UPLOAD: Error de red en fetch: ${err}`, 'ERROR');
+                if (instruction) instruction.textContent = 'Error de conexión al subir el archivo.';
+            });
+        },
+
+        addFileToGrid(path, name) {
+            logToServer(`FM_UPLOAD: Añadiendo archivo al grid. Path: ${path}`);
+            const grid = document.getElementById('file-grid');
+            if (!grid) return;
+
+            const type = path.toLowerCase().match(/\.(mp4|webm|ogg)$/) ? 'videos' : 'images';
+
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.dataset.path = path;
+            item.dataset.type = type;
+
+            if (type === 'images') {
+                item.innerHTML = `
+                    <div class="file-preview">
+                        <img src="/${path}" alt="Preview">
+                        <button type="button" class="btn-fm-delete" data-path="${path}">&times;</button>
+                    </div>
+                    <span class="file-name">${name}</span>`;
+            } else {
+                item.innerHTML = `
+                    <div class="file-preview">
+                        <div class="video-preview">
+                            <img src="/assets/admin/img/video-placeholder.png" class="video-thumb-frame" alt="Video">
+                            <div class="video-overlay-icon">▶</div>
+                            <span class="badge-video">VIDEO</span>
+                        </div>
+                        <button type="button" class="btn-fm-delete" data-path="${path}">&times;</button>
+                    </div>
+                    <span class="file-name">${name}</span>`;
+            }
+
+            grid.prepend(item);
+
+            // Cambiar a la pestaña de explorar y filtrar correctamente
+            const tabBtns = state.modal.querySelectorAll('.fm-tab-btn');
+            const tabContents = state.modal.querySelectorAll('.fm-tab-content');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabBtns[0]?.classList.add('active');
+            ui.switchTab('fm-tab-browse', tabContents);
+            this.filterGrid(type);
         }
     };
 

@@ -6,16 +6,25 @@ $admin = new AdminManager();
 
 LoggerUtil::info("VIEW_LOAD: Cargando Contents.php");
 
-// Procesar acciones POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     LoggerUtil::info("VIEW_POST (Contents): Datos recibidos: " . json_encode($_POST));
+    
+    if (($_POST['action'] ?? '') === 'fm-upload') {
+        header('Content-Type: application/json');
+        $result = $admin->handleRequest($_POST);
+        echo json_encode($result 
+            ? ['success' => true, 'path' => $result] 
+            : ['success' => false, 'message' => 'Error al subir el archivo.']
+        );
+        exit;
+    }
+    
     $admin->handleRequest($_POST);
 }
 
 $contenidos = $admin->contents->listAllContents();
 $categorias = $admin->contents->listAllCategoriesOrdered();
 
-// Preparar opciones para el select de categorías
 $cat_options = [];
 foreach($categorias as $c) { 
     $cat_options[$c['id']] = $c['nombre']; 

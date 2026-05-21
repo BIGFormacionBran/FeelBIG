@@ -6,9 +6,19 @@ $admin = new AdminManager();
 
 LoggerUtil::info("VIEW_LOAD: Cargando Categories.php");
 
-// Procesar acciones POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     LoggerUtil::info("VIEW_POST (Categories): Datos recibidos: " . json_encode($_POST));
+    
+    if (($_POST['action'] ?? '') === 'fm-upload') {
+        header('Content-Type: application/json');
+        $result = $admin->handleRequest($_POST);
+        echo json_encode($result 
+            ? ['success' => true, 'path' => $result] 
+            : ['success' => false, 'message' => 'Error al subir el archivo.']
+        );
+        exit;
+    }
+    
     $admin->handleRequest($_POST);
 }
 
