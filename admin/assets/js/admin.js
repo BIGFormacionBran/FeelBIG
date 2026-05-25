@@ -85,40 +85,46 @@
         },
 
         selectFile(path) {
+            logToServer(`Seleccionando archivo del gestor: ${path}`);
             if (state.currentTargetInputId) {
                 const input = document.getElementById(state.currentTargetInputId);
                 if (input) {
                     input.value = path;
                     ui.updatePreview(path, state.currentTargetInputId);
+                    logToServer(`Input "${state.currentTargetInputId}" actualizado con la ruta del archivo.`);
                 }
             }
             ui.toggleHidden(state.modal, true);
         },
 
         deleteFile(path, element) {
-            if (!confirm('¿Eliminar archivo físicamente del servidor?')) return;
+            logToServer(`Usuario intentando eliminar archivo: ${path}`);
+            if (!confirm('¿Eliminar archivo físicamente del servidor?')) {
+                logToServer(`Eliminación cancelada por el usuario: ${path}`);
+                return;
+            }
 
-            logToServer(`Iniciando borrado de archivo: ${path}`);
+            logToServer(`Confirmación aceptada. Enviando petición de borrado para: ${path}`);
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
             fetch(window.location.href, { method: 'POST', body: formData })
                 .then(res => {
-                    logToServer(`Respuesta servidor borrado: ${res.status}`);
+                    logToServer(`Servidor respondió a borrado HTTP status: ${res.status}`);
                     return res.json();
                 })
                 .then(data => {
                     if (data.success) {
-                        logToServer(`Archivo borrado con éxito: ${path}`);
+                        logToServer(`BORRADO EXITOSO - El archivo ${path} ha sido eliminado del servidor.`);
                         element.remove();
                     } else {
-                        logToServer(`Fallo en borrado servidor: ${data.message}`, 'ERROR');
+                        logToServer(`BORRADO FALLIDO - El servidor devolvió error: ${data.message || 'Error desconocido'}`, 'ERROR');
                         alert("Error: " + (data.message || "No se pudo borrar"));
                     }
                 })
                 .catch(err => {
-                    logToServer(`Error red en deleteFile: ${err.message}`, 'ERROR');
+                    logToServer(`ERROR CRÍTICO (Red) al intentar borrar ${path}: ${err.message}`, 'ERROR');
                     alert("Error de comunicación con el servidor.");
                 });
         },
@@ -132,43 +138,51 @@
                 dropZone.addEventListener(evt, (e) => {
                     e.preventDefault();
                     if (evt === 'drop' && e.dataTransfer.files.length) {
+                        logToServer(`Archivo soltado (drag&drop): ${e.dataTransfer.files[0].name}`);
                         this.handleUpload(e.dataTransfer.files[0]);
                     }
                 });
             });
 
             fileInput.addEventListener('change', () => {
-                if (fileInput.files.length) this.handleUpload(fileInput.files[0]);
+                if (fileInput.files.length) {
+                    logToServer(`Archivo seleccionado vía input: ${fileInput.files[0].name}`);
+                    this.handleUpload(fileInput.files[0]);
+                }
             });
         },
 
         handleUpload(file) {
-            logToServer(`Iniciando handleUpload para: ${file.name}`);
+            const fileType = file.type.startsWith('video/') ? 'videos' : 'images';
+            logToServer(`Iniciando proceso de subida. Archivo: ${file.name}, Tamaño: ${file.size} bytes, Tipo: ${file.type}`);
+            
             const instruction = document.getElementById('upload-instruction');
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
 
             const formData = new FormData();
             formData.append('file', file);
             formData.append('action', 'fm-upload');
-            formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
+            formData.append('type', fileType);
+
+            logToServer(`Enviando POST multipart/form-data a ${window.location.href} con acción fm-upload`);
 
             fetch(window.location.href, { method: 'POST', body: formData })
             .then(res => {
-                logToServer(`Respuesta servidor upload: ${res.status}`);
+                logToServer(`Servidor respondió a subida HTTP status: ${res.status}`);
                 return res.json();
             })
             .then(data => {
                 if (data.success) {
-                    logToServer(`Subida exitosa: ${file.name}`);
+                    logToServer(`SUBIDA EXITOSA - Archivo guardado: ${file.name}. Recargando interfaz...`);
                     location.reload();
                 } else {
-                    logToServer(`Fallo subida servidor: ${data.message}`, 'ERROR');
+                    logToServer(`SUBIDA FALLIDA - Servidor rechazó el archivo ${file.name}. Mensaje: ${data.message}`, 'ERROR');
                     if (instruction) instruction.textContent = `Error: ${data.message}`;
                     alert("Error en subida: " + data.message);
                 }
             })
             .catch(err => { 
-                logToServer(`Error red en handleUpload: ${err.message}`, 'ERROR');
+                logToServer(`ERROR CRÍTICO (Red) durante la subida de ${file.name}: ${err.message}`, 'ERROR');
                 if (instruction) instruction.textContent = 'Error de conexión.'; 
                 alert("Error de conexión al subir archivo.");
             });
@@ -176,6 +190,7 @@
     };
 
     window.prepareEdit = (data) => {
+        logToServer(`Preparando edición de entidad. ID: ${data.id || 'N/A'}`);
         const container = document.querySelector('.side-form');
         if (!container) return;
         const prefix = (container.dataset.entity === 'Contenido') ? 'con-' : 'cat-';
@@ -194,28 +209,36 @@
         ui.scrollTo(container);
     };
 
-    window.resetForm = () => location.reload();
+    window.resetForm = () => {
+        logToServer('Reseteando formulario (reload)');
+        location.reload();
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
+        logToServer('DOM cargado - Inicializando gestor de archivos.');
         fileManager.init();
         const form = document.getElementById('main-entity-form');
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                logToServer('Enviando formulario principal de entidad...');
+                logToServer('Enviando formulario principal de entidad al servidor...');
+                
                 fetch(window.location.href, { method: 'POST', body: new FormData(form) })
-                    .then(res => res.json())
+                    .then(res => {
+                        logToServer(`Respuesta servidor (Form principal) HTTP: ${res.status}`);
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success) {
-                            logToServer('Entidad guardada con éxito.');
+                            logToServer('ENTIDAD ACTUALIZADA - Cambios guardados correctamente.');
                             location.reload();
                         } else {
-                            logToServer(`Error al guardar entidad: ${data.message}`, 'ERROR');
+                            logToServer(`ENTIDAD NO ACTUALIZADA - Error del servidor: ${data.message}`, 'ERROR');
                             alert('Error al guardar: ' + data.message);
                         }
                     })
                     .catch(err => {
-                        logToServer(`Error red en submit formulario: ${err.message}`, 'ERROR');
+                        logToServer(`ERROR CRÍTICO (Red) al enviar formulario principal: ${err.message}`, 'ERROR');
                         alert('Error de red: ' + err.message);
                     });
             });
