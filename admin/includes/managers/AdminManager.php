@@ -58,8 +58,10 @@ class AdminManager {
     }
 
     private function sendJson($data, $code = 200) {
-        // Limpiar cualquier salida previa para evitar "headers already sent"
-        if (ob_get_length()) ob_clean();
+        // CORRECCIÓN: Limpiar todos los niveles de búfer para eliminar salida de index.php
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
         
         http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');

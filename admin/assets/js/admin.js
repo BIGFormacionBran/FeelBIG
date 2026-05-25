@@ -145,10 +145,18 @@
             fetch(window.location.href, { method: 'POST', body: formData })
             .then(res => res.json())
             .then(data => {
-                if (data.success) location.reload();
-                else if (instruction) instruction.textContent = `Error: ${data.message}`;
+                // CORRECCIÓN: Solo recargar si tuvo éxito, si no, mostrar mensaje
+                if (data.success) {
+                    location.reload();
+                } else {
+                    if (instruction) instruction.textContent = `Error: ${data.message}`;
+                    alert("Error en subida: " + data.message);
+                }
             })
-            .catch(err => { if (instruction) instruction.textContent = 'Error de conexión.'; });
+            .catch(err => { 
+                if (instruction) instruction.textContent = 'Error de conexión.'; 
+                alert("Error de conexión al subir archivo.");
+            });
         }
     };
 
@@ -180,8 +188,12 @@
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 fetch(window.location.href, { method: 'POST', body: new FormData(form) })
-                    .then(() => location.reload())
-                    .catch(err => alert('Error al guardar: ' + err.message));
+                    .then(res => res.json()) // CORRECCIÓN: Esperar JSON y validar éxito
+                    .then(data => {
+                        if (data.success) location.reload();
+                        else alert('Error al guardar: ' + data.message);
+                    })
+                    .catch(err => alert('Error de red: ' + err.message));
             });
         }
     });
