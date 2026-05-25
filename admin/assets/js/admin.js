@@ -30,8 +30,8 @@
             const isVideo = path.toLowerCase().match(/\.(mp4|webm|ogg)$/);
             if (isVideo) {
                 previewContainer.innerHTML = `
-                    <div class="video-preview-thumb" style="text-align:center;">
-                        <span class="admin-badge badge-category" style="margin-bottom:5px; display:inline-block;">VIDEO</span><br>
+                    <div class="video-preview-thumb">
+                        <span class="admin-badge badge-category">VIDEO</span><br>
                         <img src="/assets/admin/img/video-placeholder.png" style="max-height:50px; width:auto;">
                     </div>`;
             } else {
@@ -121,15 +121,12 @@
             formData.append('path', path);
 
             logToServer("FM: Enviando petición POST fm-delete-file...");
-            fetch(window.location.href, { method: 'POST', body: formData })
-                .then(res => {
-                    logToServer(`FM: Status respuesta borrado: ${res.status}`);
-                    return res.json();
-                })
+            fetch(window.location.pathname, { method: 'POST', body: formData })
+                .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        logToServer(`FM: Archivo ${path} borrado del servidor.`);
-                        element.remove();
+                        logToServer(`FM: Archivo ${path} borrado. Recargando lista.`);
+                        location.reload();
                     } else {
                         logToServer(`FM: Error servidor al borrar: ${data.message}`, 'ERROR');
                         alert("Error: " + data.message);
@@ -149,6 +146,9 @@
             ['dragover', 'dragleave', 'drop'].forEach(evt => {
                 dropZone.addEventListener(evt, (e) => {
                     e.preventDefault();
+                    if (evt === 'dragover') dropZone.classList.add('drag-over');
+                    if (evt === 'dragleave' || evt === 'drop') dropZone.classList.remove('drag-over');
+
                     if (evt === 'drop' && e.dataTransfer.files.length) {
                         logToServer(`FM: Archivo soltado: ${e.dataTransfer.files[0].name}`);
                         this.handleUpload(e.dataTransfer.files[0]);
@@ -166,7 +166,7 @@
 
         handleUpload(file) {
             const fileType = file.type.startsWith('video/') ? 'videos' : 'images';
-            logToServer(`FM: Iniciando subida: ${file.name} | ${file.size} bytes | ${file.type}`);
+            logToServer(`FM: Iniciando subida: ${file.name}`);
             
             const instruction = document.getElementById('upload-instruction');
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
@@ -176,14 +176,11 @@
             formData.append('action', 'fm-upload');
             formData.append('type', fileType);
 
-            fetch(window.location.href, { method: 'POST', body: formData })
-            .then(res => {
-                logToServer(`FM: Status respuesta subida: ${res.status}`);
-                return res.json();
-            })
+            fetch(window.location.pathname, { method: 'POST', body: formData })
+            .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    logToServer(`FM: Subida exitosa. Recargando página.`);
+                    logToServer(`FM: Subida exitosa. Recargando.`);
                     location.reload();
                 } else {
                     logToServer(`FM: Subida fallida: ${data.message}`, 'ERROR');
@@ -199,6 +196,7 @@
         }
     };
 
+    // Resto de funciones (prepareEdit, resetForm, DOMContentLoaded) permanecen igual
     window.prepareEdit = (data) => {
         logToServer(`UI: Preparando formulario para edición. ID Entidad: ${data.id}`);
         const container = document.querySelector('.side-form');
@@ -220,36 +218,25 @@
     };
 
     window.resetForm = () => {
-        logToServer('UI: Reset de formulario solicitado.');
         location.reload();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        logToServer('APP: DOM Cargado.');
         fileManager.init();
         const form = document.getElementById('main-entity-form');
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                logToServer('APP: Enviando formulario principal...');
-                fetch(window.location.href, { method: 'POST', body: new FormData(form) })
-                    .then(res => {
-                        logToServer(`APP: Status formulario: ${res.status}`);
-                        return res.json();
-                    })
+                fetch(window.location.pathname, { method: 'POST', body: new FormData(form) })
+                    .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            logToServer('APP: Formulario guardado con éxito.');
                             location.reload();
                         } else {
-                            logToServer(`APP: Error al guardar formulario: ${data.message}`, 'ERROR');
                             alert('Error al guardar: ' + data.message);
                         }
                     })
-                    .catch(err => {
-                        logToServer(`APP: Error de red en formulario: ${err.message}`, 'ERROR');
-                        alert('Error de red.');
-                    });
+                    .catch(() => alert('Error de red.'));
             });
         }
     });
