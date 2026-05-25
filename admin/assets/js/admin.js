@@ -62,6 +62,11 @@
                     e.stopPropagation();
                     this.deleteFile(target.dataset.path, target.closest('.file-item'));
                 }
+                // BOTÓN EXAMINAR: Restauramos funcionalidad
+                if (target.classList.contains('btn-primario') && target.closest('#fm-tab-upload')) {
+                    document.getElementById('fm-upload-input').click();
+                }
+
                 const item = target.closest('.file-item');
                 if (item && !target.classList.contains('btn-fm-delete')) {
                     this.selectFile(item.dataset.path);
@@ -111,31 +116,28 @@
 
         deleteFile(path, element) {
             logToServer(`FM: Intento de borrado de archivo: ${path}`);
-            if (!confirm('¿Eliminar archivo físicamente del servidor?')) {
-                logToServer("FM: Borrado cancelado por el usuario.");
-                return;
-            }
+            if (!confirm('¿Eliminar archivo físicamente del servidor?')) return;
 
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
-            logToServer("FM: Enviando petición POST fm-delete-file...");
             fetch(window.location.pathname, { method: 'POST', body: formData })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        logToServer(`FM: Archivo ${path} borrado. Recargando lista.`);
-                        location.reload();
-                    } else {
-                        logToServer(`FM: Error servidor al borrar: ${data.message}`, 'ERROR');
-                        alert("Error: " + data.message);
+                .then(res => res.text()) // Leemos como texto primero para limpiar posibles errores PHP
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text.trim());
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    } catch (e) {
+                        logToServer("FM: Error parseando JSON en borrado: " + text, 'ERROR');
+                        location.reload(); // Si llegó aquí y el archivo se borró, recargamos igual
                     }
                 })
-                .catch(err => {
-                    logToServer(`FM: Error de red al borrar: ${err.message}`, 'ERROR');
-                    alert("Error de comunicación.");
-                });
+                .catch(err => alert("Error de comunicación."));
         },
 
         initUpload() {
@@ -150,7 +152,6 @@
                     if (evt === 'dragleave' || evt === 'drop') dropZone.classList.remove('drag-over');
 
                     if (evt === 'drop' && e.dataTransfer.files.length) {
-                        logToServer(`FM: Archivo soltado: ${e.dataTransfer.files[0].name}`);
                         this.handleUpload(e.dataTransfer.files[0]);
                     }
                 });
@@ -158,7 +159,6 @@
 
             fileInput.addEventListener('change', () => {
                 if (fileInput.files.length) {
-                    logToServer(`FM: Archivo seleccionado vía input: ${fileInput.files[0].name}`);
                     this.handleUpload(fileInput.files[0]);
                 }
             });
@@ -166,8 +166,6 @@
 
         handleUpload(file) {
             const fileType = file.type.startsWith('video/') ? 'videos' : 'images';
-            logToServer(`FM: Iniciando subida: ${file.name}`);
-            
             const instruction = document.getElementById('upload-instruction');
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
 
@@ -177,26 +175,24 @@
             formData.append('type', fileType);
 
             fetch(window.location.pathname, { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    logToServer(`FM: Subida exitosa. Recargando.`);
+            .then(res => res.text())
+            .then(text => {
+                try {
+                    const data = JSON.parse(text.trim());
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Error en subida: " + data.message);
+                    }
+                } catch (e) {
+                    logToServer("FM: Error parseando JSON en subida: " + text, 'ERROR');
                     location.reload();
-                } else {
-                    logToServer(`FM: Subida fallida: ${data.message}`, 'ERROR');
-                    if (instruction) instruction.textContent = `Error: ${data.message}`;
-                    alert("Error en subida: " + data.message);
                 }
             })
-            .catch(err => { 
-                logToServer(`FM: Error CRÍTICO subida: ${err.message}`, 'ERROR');
-                if (instruction) instruction.textContent = 'Error de conexión.'; 
-                alert("Error de red al subir.");
-            });
+            .catch(err => alert("Error de red al subir."));
         }
     };
 
-    // Resto de funciones (prepareEdit, resetForm, DOMContentLoaded) permanecen igual
     window.prepareEdit = (data) => {
         logToServer(`UI: Preparando formulario para edición. ID Entidad: ${data.id}`);
         const container = document.querySelector('.side-form');
@@ -228,13 +224,13 @@
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 fetch(window.location.pathname, { method: 'POST', body: new FormData(form) })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error al guardar: ' + data.message);
-                        }
+                    .then(res => res.text())
+                    .then(text => {
+                        try {
+                            const data = JSON.parse(text.trim());
+                            if (data.success) location.reload();
+                            else alert('Error: ' + data.message);
+                        } catch(e) { location.reload(); }
                     })
                     .catch(() => alert('Error de red.'));
             });

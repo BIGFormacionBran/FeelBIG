@@ -167,20 +167,27 @@
 }
 
 .btn-secundario {
-    flex: 1;
+    display: inline-flex;
+    text-transform: uppercase;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     padding: 10px 20px;
-    background-color: #999;
+    background-color: var(--color-principal-admin);
     color: white;
     border: none;
     border-radius: 8px;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
+    margin-top: 10px;
     transition: all 0.3s ease;
 }
 
 .btn-secundario:hover {
-    background-color: #777;
+    background-color: var(--color-secundario-admin);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-secundario:active {

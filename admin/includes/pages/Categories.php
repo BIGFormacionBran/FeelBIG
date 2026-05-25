@@ -2,18 +2,15 @@
 require_once __DIR__ . '/../managers/AdminManager.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
-ob_start();
-$admin = new AdminManager();
-
-// Procesar peticiones AJAX locales de admin antes de renderizar HTML
+// 1. PROCESAMIENTO AJAX (Debe ir al principio para evitar salida de texto accidental)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $admin = new AdminManager();
     $admin->handleRequest($_POST);
-    // handleRequest hace echo/json y exit cuando corresponde
+    // handleRequest ya hace ob_clean, eco del JSON y exit;
 }
 
-// Bloque de salida manual eliminado para dejar que AdminManager gestione el flujo AJAX
-ob_end_clean();
-
+// 2. CARGA DE DATOS PARA RENDERIZADO
+$admin = new AdminManager();
 $categorias = $admin->contents->listAllCategoriesOrdered();
 
 $options = ["null" => "-- Categoría Principal --"];
@@ -21,7 +18,7 @@ $options = ["null" => "-- Categoría Principal --"];
 // Aplanar árbol de categorías para usar en el select (con indentación)
 function flatten_categories_for_select($items, &$out, $depth = 0) {
     foreach ($items as $it) {
-        $prefix = $depth > 0 ? str_repeat('  ', $depth) . '└─ ' : '';
+        $prefix = $depth > 0 ? str_repeat('&nbsp;&nbsp;', $depth) . '└─ ' : '';
         $out[$it['id']] = $prefix . ($it['nombre'] ?? '');
         if (!empty($it['children'])) {
             flatten_categories_for_select($it['children'], $out, $depth + 1);
@@ -43,5 +40,7 @@ $config = [
     ]
 ];
 
+// 3. RENDERIZADO DE COMPONENTES
 require_once __DIR__ . '/../components/ListItems.php';
 $admin->renderFileManager();
+?>
