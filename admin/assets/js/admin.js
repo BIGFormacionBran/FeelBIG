@@ -62,7 +62,6 @@
                     e.stopPropagation();
                     this.deleteFile(target.dataset.path, target.closest('.file-item'));
                 }
-                // BOTÓN EXAMINAR: Restauramos funcionalidad
                 if (target.classList.contains('btn-primario') && target.closest('#fm-tab-upload')) {
                     document.getElementById('fm-upload-input').click();
                 }
@@ -123,14 +122,12 @@
             formData.append('path', path);
 
             fetch(window.location.pathname, { method: 'POST', body: formData })
-                .then(res => res.text()) // Leemos como texto primero para limpiar posibles errores PHP
+                .then(res => res.text())
                 .then(text => {
                     try {
-                        // Limpieza de HTML basura: buscamos el último '{' para encontrar el JSON real
                         const jsonStart = text.lastIndexOf('{');
                         const cleanJson = text.substring(jsonStart);
                         const data = JSON.parse(cleanJson);
-                        
                         if (data.success) {
                             location.reload();
                         } else {
@@ -138,7 +135,7 @@
                         }
                     } catch (e) {
                         logToServer("FM: Error parseando JSON en borrado: " + text, 'ERROR');
-                        location.reload(); // Si llegó aquí y el archivo se borró, recargamos igual
+                        location.reload();
                     }
                 })
                 .catch(err => alert("Error de comunicación."));
@@ -182,24 +179,33 @@
             .then(res => res.text())
             .then(text => {
                 try {
-                    // LIMPIEZA CRÍTICA: Tu servidor envía HTML antes del JSON. 
-                    // Extraemos solo la parte del objeto JSON.
                     const jsonStart = text.lastIndexOf('{');
-                    if (jsonStart === -1) throw new Error("No JSON found");
                     const cleanJson = text.substring(jsonStart);
                     const data = JSON.parse(cleanJson);
 
                     if (data.success) {
-                        // Asignamos directamente al input que abrió el manager
+                        // 1. Aplicamos la imagen al input y preview (lo que ya funcionaba)
                         if (state.currentTargetInputId) {
                             const input = document.getElementById(state.currentTargetInputId);
                             if (input) {
                                 input.value = data.path;
                                 ui.updatePreview(data.path, state.currentTargetInputId);
-                                logToServer(`FM: Subida exitosa y aplicada a ${state.currentTargetInputId}`);
                             }
                         }
-                        // Cerramos modal y limpiamos UI
+
+                        // 2. MODIFICACIÓN: Recargamos solo el grid de archivos del servidor
+                        fetch(window.location.pathname)
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newGrid = doc.querySelector('.file-grid');
+                                if (newGrid) {
+                                    document.querySelector('.file-grid').innerHTML = newGrid.innerHTML;
+                                    this.filterGrid(fileType); // Re-aplicamos el filtro activo
+                                }
+                            });
+
                         ui.toggleHidden(state.modal, true);
                         document.getElementById('fm-upload-input').value = "";
                         if (instruction) instruction.textContent = "Arrastra un archivo o haz clic aquí";
@@ -208,7 +214,6 @@
                     }
                 } catch (e) {
                     logToServer("FM: Error parseando JSON en subida: " + text, 'ERROR');
-                    // Si falla el parseo, recargamos para que el grid se actualice al menos
                     location.reload();
                 }
             })
