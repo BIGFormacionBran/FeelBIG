@@ -2,7 +2,6 @@
 require_once __DIR__ . '/MediaManager.php';
 require_once __DIR__ . '/../daos/ContentDao.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
-// Eliminada importación duplicada/incorrecta que causaba conflicto
 
 class AdminContentManager {
     private $adminDao;
@@ -10,8 +9,18 @@ class AdminContentManager {
 
     public function __construct() {
         $this->adminDao = new AdminContentDao();
-        // El publicDao se asume que usa la misma conexión o lógica similar
         $this->publicDao = $this->adminDao; 
+    }
+
+    /**
+     * Función unificada para procesar tanto 'add' como 'edit'
+     */
+    public function processSave(array $postData) {
+        $action = $postData['action'] ?? '';
+        if ($action === 'add') {
+            return $this->add($postData);
+        }
+        return $this->save($postData);
     }
 
     public function add(array $postData) {
@@ -84,13 +93,16 @@ class AdminContentManager {
     public function createCategory($nombre, $idPadre, $imagen) {
         LoggerUtil::info("CONTENT_MANAGER: Creando categoría [$nombre]");
         if (empty($nombre)) return false;
-        return $this->adminDao->insertCategory($nombre, $idPadre, $imagen);
+        // Normalizar id_padre para DB
+        $parentId = ($idPadre === 'null' || $idPadre === '') ? null : (int)$idPadre;
+        return $this->adminDao->insertCategory($nombre, $parentId, $imagen);
     }
 
     public function updateCategory($id, $nombre, $idPadre, $imagen) {
         LoggerUtil::info("CONTENT_MANAGER: Actualizando categoría ID $id");
         if (empty($id) || empty($nombre)) return false;
-        return $this->adminDao->updateCategory((int)$id, $nombre, $idPadre, $imagen);
+        $parentId = ($idPadre === 'null' || $idPadre === '') ? null : (int)$idPadre;
+        return $this->adminDao->updateCategory((int)$id, $nombre, $parentId, $imagen);
     }
 
     public function deleteCategory($id) {
@@ -117,7 +129,6 @@ class AdminContentManager {
     }
 
     public function listAllCategoriesOrdered() {
-        // Corregido: AdminContentDao utiliza listCategories() según la nomenclatura estándar
         return $this->buildTree($this->adminDao->listCategories());
     }
 
@@ -137,7 +148,6 @@ class AdminContentManager {
                 $node = $element;
                 $children = $this->buildTree($elements, $element['id']);
                 if ($children) {
-                    // Asegurar que los hijos estén ordenados por nombre
                     usort($children, function($a, $b) {
                         return strcasecmp($a['nombre'] ?? '', $b['nombre'] ?? '');
                     });
@@ -147,7 +157,6 @@ class AdminContentManager {
             }
         }
 
-        // Ordenar el branch por nombre para consistencia
         usort($branch, function($a, $b) {
             return strcasecmp($a['nombre'] ?? '', $b['nombre'] ?? '');
         });

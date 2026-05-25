@@ -54,8 +54,9 @@ class AdminManager {
 
                 case 'add':
                 case 'edit':
-                    LoggerUtil::info("ADMIN_MANAGER: Guardando entidad (save). Acción: $action");
-                    $res = $this->contents->save($postData);
+                    LoggerUtil::info("ADMIN_MANAGER: Procesando guardado de entidad. Acción: $action");
+                    // Usamos una única función que determine si es add o edit internamente
+                    $res = $this->contents->processSave($postData);
                     $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Datos guardados' : 'Error en base de datos'], $res ? 200 : 400);
                     break;
 
