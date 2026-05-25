@@ -4,11 +4,7 @@ require_once __DIR__ . '/../managers/AdminManager.php';
 ob_start();
 $admin = new AdminManager();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['fm-upload', 'fm-delete-file', 'add', 'edit', 'delete'])) {
-    ob_end_clean();
-    exit;
-}
-
+// Bloque de salida manual eliminado para dejar que AdminManager gestione el flujo AJAX
 ob_end_clean();
 
 $contenidos = $admin->contents->listAllContents();

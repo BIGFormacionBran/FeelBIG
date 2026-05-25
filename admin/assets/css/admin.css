@@ -166,28 +166,6 @@
     gap: 10px;
 }
 
-.btn-primario {
-    flex: 1;
-    padding: 10px 20px;
-    background-color: var(--color-principal);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-primario:hover {
-    background-color: var(--color-secundario-admin);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.btn-primario:active {
-    transform: translateY(0) scale(0.98);
-}
-
 .btn-secundario {
     flex: 1;
     padding: 10px 20px;
