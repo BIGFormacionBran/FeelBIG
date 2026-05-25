@@ -9,7 +9,6 @@ class AdminManager {
     public $media;
 
     public function __construct() {
-        LoggerUtil::info("ADMIN_MANAGER: [INIT] Instanciando AdminManager...");
         $this->contents = new AdminContentManager();
         $this->media = new MediaManager();
     }
@@ -25,43 +24,24 @@ class AdminManager {
                 case 'fm-upload':
                     $type = $postData['type'] ?? 'images';
                     $file = $_FILES['file'] ?? null;
-                    
                     if (!is_array($file) || !isset($file['error'])) {
-                        LoggerUtil::error("ADMIN_MANAGER: No se recibió archivo válido en fm-upload");
-                        if (ob_get_level() > 0) ob_end_clean();
-                        header('Content-Type: application/json; charset=utf-8');
-                        http_response_code(400);
-                        echo json_encode(['success' => false, 'message' => 'No archivo recibido']);
-                        exit(1);
+                        $this->sendJson(['success' => false, 'message' => 'No archivo recibido'], 400);
                     }
-                    
                     $res = ($type === 'videos') ? $this->media->uploadContentVideo($file) : $this->media->uploadContentImage($file);
-                    
-                    if (ob_get_level() > 0) ob_end_clean();
-                    header('Content-Type: application/json; charset=utf-8');
-                    http_response_code($res ? 200 : 400);
-                    echo json_encode(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error en subida']);
-                    exit(0);
+                    $this->sendJson(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error en subida'], $res ? 200 : 400);
+                    break;
 
                 case 'fm-delete-file':
                     $path = $postData['path'] ?? '';
-                    LoggerUtil::info("ADMIN_MANAGER: Eliminando archivo: $path");
-                    
                     $res = $this->media->deletePhysicalFile($path);
-                    if (ob_get_level() > 0) ob_end_clean();
-                    header('Content-Type: application/json; charset=utf-8');
-                    http_response_code($res ? 200 : 400);
-                    echo json_encode(['success' => (bool)$res, 'message' => $res ? 'Eliminado' : 'Error al eliminar']);
-                    exit(0);
+                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Eliminado' : 'Error al eliminar'], $res ? 200 : 400);
+                    break;
 
                 case 'add':
                 case 'edit':
                     $res = $this->contents->save($postData);
-                    if (ob_get_level() > 0) ob_end_clean();
-                    header('Content-Type: application/json; charset=utf-8');
-                    http_response_code($res ? 200 : 400);
-                    echo json_encode(['success' => (bool)$res, 'message' => $res ? 'Guardado' : 'Error al guardar']);
-                    exit(0);
+                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Guardado' : 'Error al guardar'], $res ? 200 : 400);
+                    break;
 
                 case 'delete': 
                     $res = $this->contents->remove($postData);
@@ -73,12 +53,16 @@ class AdminManager {
             }
         } catch (Exception $e) {
             LoggerUtil::error("ADMIN_MANAGER: Error en $action: " . $e->getMessage());
-            if (ob_get_level() > 0) ob_end_clean();
-            header('Content-Type: application/json; charset=utf-8');
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Error del servidor: ' . $e->getMessage()]);
-            exit(1);
+            $this->sendJson(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
+    }
+
+    private function sendJson($data, $code = 200) {
+        while (ob_get_level() > 0) ob_end_clean();
+        http_response_code($code);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($data);
+        exit;
     }
 
     public function renderFileManager() {

@@ -102,26 +102,16 @@
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
-            fetch(window.location.href, { 
-                method: 'POST', 
-                body: formData 
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                    return res.json();
-                })
+            fetch(window.location.href, { method: 'POST', body: formData })
+                .then(res => res.json())
                 .then(data => {
                     if (data.success) {
                         element.remove();
-                        alert('Archivo eliminado correctamente.');
                     } else {
-                        alert("Error: " + (data.message || "No se pudo borrar el archivo"));
+                        alert("Error: " + (data.message || "No se pudo borrar"));
                     }
                 })
-                .catch(err => {
-                    console.error('Error al eliminar:', err);
-                    alert("Error de comunicación con el servidor: " + err.message);
-                });
+                .catch(err => alert("Error de comunicación con el servidor."));
         },
 
         initUpload() {
@@ -145,18 +135,6 @@
 
         handleUpload(file) {
             const instruction = document.getElementById('upload-instruction');
-            
-            // Validar tipo de archivo
-            const validTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/webm'];
-            const validExtensions = ['.jpg', '.jpeg', '.png', '.mp4', '.webm'];
-            const fileExt = '.' + file.name.split('.').pop().toLowerCase();
-            
-            if (!validTypes.includes(file.type) && !validExtensions.includes(fileExt)) {
-                if (instruction) instruction.textContent = `Formato no permitido: ${file.type}. Solo JPG, PNG, MP4, WebM`;
-                console.warn('Tipo de archivo no permitido:', file.type, file.name);
-                return;
-            }
-
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
 
             const formData = new FormData();
@@ -164,28 +142,13 @@
             formData.append('action', 'fm-upload');
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
-            fetch(window.location.href, { 
-                method: 'POST', 
-                body: formData 
+            fetch(window.location.href, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) location.reload();
+                else if (instruction) instruction.textContent = `Error: ${data.message}`;
             })
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        if (instruction) instruction.textContent = `Archivo subido: ${file.name}`;
-                        setTimeout(() => location.reload(), 800);
-                    } else {
-                        const msg = data.message || 'Error desconocido';
-                        if (instruction) instruction.textContent = `Error: ${msg}`;
-                        console.error('Error de subida:', data);
-                    }
-                })
-                .catch(err => {
-                    console.error('Error al subir:', err);
-                    if (instruction) instruction.textContent = `Error: ${err.message}`;
-                });
+            .catch(err => { if (instruction) instruction.textContent = 'Error de conexión.'; });
         }
     };
 
