@@ -5,7 +5,7 @@
         fetch('/includes/ajax/JsLogger.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ message: `[JS_CLIENT]: ${msg}`, level: lvl })
+            body: JSON.stringify({ message: msg, level: lvl })
         }).catch(() => {});
     };
 
@@ -98,20 +98,29 @@
         deleteFile(path, element) {
             if (!confirm('¿Eliminar archivo físicamente del servidor?')) return;
 
+            logToServer(`Iniciando borrado de archivo: ${path}`);
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
             fetch(window.location.href, { method: 'POST', body: formData })
-                .then(res => res.json())
+                .then(res => {
+                    logToServer(`Respuesta servidor borrado: ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
+                        logToServer(`Archivo borrado con éxito: ${path}`);
                         element.remove();
                     } else {
+                        logToServer(`Fallo en borrado servidor: ${data.message}`, 'ERROR');
                         alert("Error: " + (data.message || "No se pudo borrar"));
                     }
                 })
-                .catch(err => alert("Error de comunicación con el servidor."));
+                .catch(err => {
+                    logToServer(`Error red en deleteFile: ${err.message}`, 'ERROR');
+                    alert("Error de comunicación con el servidor.");
+                });
         },
 
         initUpload() {
@@ -134,6 +143,7 @@
         },
 
         handleUpload(file) {
+            logToServer(`Iniciando handleUpload para: ${file.name}`);
             const instruction = document.getElementById('upload-instruction');
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
 
@@ -143,17 +153,22 @@
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
             fetch(window.location.href, { method: 'POST', body: formData })
-            .then(res => res.json())
+            .then(res => {
+                logToServer(`Respuesta servidor upload: ${res.status}`);
+                return res.json();
+            })
             .then(data => {
-                // CORRECCIÓN: Solo recargar si tuvo éxito, si no, mostrar mensaje
                 if (data.success) {
+                    logToServer(`Subida exitosa: ${file.name}`);
                     location.reload();
                 } else {
+                    logToServer(`Fallo subida servidor: ${data.message}`, 'ERROR');
                     if (instruction) instruction.textContent = `Error: ${data.message}`;
                     alert("Error en subida: " + data.message);
                 }
             })
             .catch(err => { 
+                logToServer(`Error red en handleUpload: ${err.message}`, 'ERROR');
                 if (instruction) instruction.textContent = 'Error de conexión.'; 
                 alert("Error de conexión al subir archivo.");
             });
@@ -187,13 +202,22 @@
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
+                logToServer('Enviando formulario principal de entidad...');
                 fetch(window.location.href, { method: 'POST', body: new FormData(form) })
-                    .then(res => res.json()) // CORRECCIÓN: Esperar JSON y validar éxito
+                    .then(res => res.json())
                     .then(data => {
-                        if (data.success) location.reload();
-                        else alert('Error al guardar: ' + data.message);
+                        if (data.success) {
+                            logToServer('Entidad guardada con éxito.');
+                            location.reload();
+                        } else {
+                            logToServer(`Error al guardar entidad: ${data.message}`, 'ERROR');
+                            alert('Error al guardar: ' + data.message);
+                        }
                     })
-                    .catch(err => alert('Error de red: ' + err.message));
+                    .catch(err => {
+                        logToServer(`Error red en submit formulario: ${err.message}`, 'ERROR');
+                        alert('Error de red: ' + err.message);
+                    });
             });
         }
     });
