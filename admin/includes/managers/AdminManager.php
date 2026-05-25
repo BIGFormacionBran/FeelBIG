@@ -58,7 +58,9 @@ class AdminManager {
     }
 
     private function sendJson($data, $code = 200) {
-        while (ob_get_level() > 0) ob_end_clean();
+        // Limpiar cualquier salida previa para evitar "headers already sent"
+        if (ob_get_length()) ob_clean();
+        
         http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data);
