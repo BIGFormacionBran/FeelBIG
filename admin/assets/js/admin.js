@@ -129,7 +129,10 @@
                         const cleanJson = text.substring(jsonStart);
                         const data = JSON.parse(cleanJson);
                         if (data.success) {
-                            location.reload();
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('status', 'success');
+                            url.searchParams.set('message', data.message || 'Archivo eliminado');
+                            window.location.href = url.toString();
                         } else {
                             alert("Error: " + data.message);
                         }
@@ -184,7 +187,6 @@
                     const data = JSON.parse(cleanJson);
 
                     if (data.success) {
-                        // 1. Aplicamos la imagen al input y preview (lo que ya funcionaba)
                         if (state.currentTargetInputId) {
                             const input = document.getElementById(state.currentTargetInputId);
                             if (input) {
@@ -193,7 +195,6 @@
                             }
                         }
 
-                        // 2. MODIFICACIÓN: Recargamos solo el grid de archivos del servidor
                         fetch(window.location.pathname)
                             .then(response => response.text())
                             .then(html => {
@@ -202,7 +203,7 @@
                                 const newGrid = doc.querySelector('.file-grid');
                                 if (newGrid) {
                                     document.querySelector('.file-grid').innerHTML = newGrid.innerHTML;
-                                    this.filterGrid(fileType); // Re-aplicamos el filtro activo
+                                    this.filterGrid(fileType);
                                 }
                             });
 
@@ -255,12 +256,29 @@
                     .then(res => res.text())
                     .then(text => {
                         try {
-                            const data = JSON.parse(text.trim());
-                            if (data.success) location.reload();
-                            else alert('Error: ' + data.message);
-                        } catch(e) { location.reload(); }
+                            const jsonStart = text.lastIndexOf('{');
+                            const cleanJson = text.substring(jsonStart);
+                            const data = JSON.parse(cleanJson);
+                            
+                            const url = new URL(window.location.href);
+                            if (data.success) {
+                                url.searchParams.set('status', 'success');
+                                url.searchParams.set('message', data.message || 'Operación realizada');
+                            } else {
+                                url.searchParams.set('status', 'error');
+                                url.searchParams.set('message', data.message || 'Error en la operación');
+                            }
+                            window.location.href = url.toString();
+                        } catch(e) { 
+                            location.reload(); 
+                        }
                     })
-                    .catch(() => alert('Error de red.'));
+                    .catch(() => {
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('status', 'error');
+                        url.searchParams.set('message', 'Error de red');
+                        window.location.href = url.toString();
+                    });
             });
         }
     });

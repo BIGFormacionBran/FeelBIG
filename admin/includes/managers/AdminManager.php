@@ -49,15 +49,17 @@ class AdminManager {
                     $path = $postData['path'] ?? '';
                     LoggerUtil::info("ADMIN_MANAGER: Procesando fm-delete-file. Ruta: $path");
                     $res = $this->media->deletePhysicalFile($path);
-                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Eliminado' : 'No se pudo eliminar'], $res ? 200 : 400);
+                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Archivo eliminado correctamente' : 'No se pudo eliminar el archivo'], $res ? 200 : 400);
                     break;
 
                 case 'add':
                 case 'edit':
                     LoggerUtil::info("ADMIN_MANAGER: Procesando guardado de entidad. Acción: $action");
-                    // Usamos una única función que determine si es add o edit internamente
                     $res = $this->contents->processSave($postData);
-                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Datos guardados' : 'Error en base de datos'], $res ? 200 : 400);
+                    $this->sendJson([
+                        'success' => (bool)$res, 
+                        'message' => $res ? 'Datos guardados correctamente' : 'Error al guardar en la base de datos'
+                    ], $res ? 200 : 400);
                     break;
 
                 case 'delete': 
