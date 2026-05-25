@@ -128,10 +128,6 @@
     letter-spacing: 0.5px;
 }
 
-.admin-form-group {
-    margin-bottom: 20px;
-}
-
 .admin-label {
     display: block;
     margin-bottom: 8px;
@@ -534,7 +530,7 @@
 .media-selector-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
 .media-preview-box {
