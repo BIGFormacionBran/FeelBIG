@@ -107,8 +107,6 @@
 
 .admin-card.side-form {
     flex: 0 0 380px;
-    position: sticky;
-    top: 100px;
 }
 
 .admin-card.main-list {

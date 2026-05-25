@@ -179,8 +179,19 @@
                 try {
                     const data = JSON.parse(text.trim());
                     if (data.success) {
-                        // MODIFICACIÓN: En lugar de reload, seleccionamos el archivo directamente
-                        this.selectFile(data.path);
+                        // REEMPLAZO: En lugar de solo llamar a selectFile (que busca en el grid),
+                        // actualizamos directamente el input y el preview con el path devuelto.
+                        if (state.currentTargetInputId) {
+                            const input = document.getElementById(state.currentTargetInputId);
+                            if (input) {
+                                input.value = data.path;
+                                ui.updatePreview(data.path, state.currentTargetInputId);
+                            }
+                        }
+                        ui.toggleHidden(state.modal, true);
+                        // Reset del input de subida por si se quiere subir otro luego
+                        document.getElementById('fm-upload-input').value = "";
+                        if (instruction) instruction.textContent = "Arrastra un archivo o haz clic aquí";
                     } else {
                         alert("Error en subida: " + data.message);
                     }
