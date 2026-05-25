@@ -219,15 +219,6 @@
     background-color: #FCFDFE;
 }
 
-.admin-table td.col-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    text-align: right;
-    width: 1%;
-    white-space: nowrap;
-}
-
 .inline-delete {
     display: flex;
 }
