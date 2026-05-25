@@ -558,3 +558,25 @@
     margin-right: 5px;
     font-family: monospace;
 }
+
+.admin-table td.col-actions {
+    text-align: right;
+    width: 1%;
+    white-space: nowrap;
+    padding: 12px 15px;
+}
+
+.action-edit, 
+.inline-delete {
+    display: inline-block !important;
+    vertical-align: middle;
+    margin: 0 3px; 
+}
+
+.inline-delete {
+    margin: 0;
+}
+
+.action-delete-clean {
+    vertical-align: middle;
+}
