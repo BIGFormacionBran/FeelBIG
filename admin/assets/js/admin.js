@@ -9,26 +9,12 @@
         }).catch(() => {});
     };
 
-    // FUNCIÓN NUEVA: Extrae el JSON aislando cualquier basura HTML de PHP
-    const parseSafeJSON = (text) => {
-        try {
-            if (text.includes('---JSON---')) {
-                return JSON.parse(text.split('---JSON---')[1]);
-            }
-            return JSON.parse(text); // Fallback por si viene limpio
-        } catch (e) {
-            console.error("Error parseando JSON:", text);
-            return { success: false, message: "Error interno del servidor (Revisar consola)." };
-        }
-    };
-
     const state = { currentTargetInputId: null, modal: null };
 
     const ui = {
         scrollTo: (el) => el?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
         toggleHidden: (el, force) => el?.classList.toggle('hidden', force),
         updatePreview: (path, targetId) => {
-            logToServer(`Actualizando preview para ${targetId}. Path: ${path}`);
             const previewContainer = document.getElementById(targetId + '-preview');
             if (!previewContainer) return;
             
@@ -43,17 +29,15 @@
                     <div class="video-preview-thumb" style="text-align:center;">
                         <span class="admin-badge badge-category" style="margin-bottom:5px; display:inline-block;">VIDEO</span><br>
                         <img src="/assets/admin/img/video-placeholder.png" style="max-height:50px; width:auto;">
-                    </div>
-                    <small style="display:block; font-size:10px; color:#999; margin-top:4px;">${path.split('/').pop()}</small>`;
+                    </div>`;
             } else {
-                previewContainer.innerHTML = `<img src="/${path}" class="preview-media" alt="Preview" style="max-width:100%; height:auto;">`;
+                previewContainer.innerHTML = `<img src="/${path}" class="preview-media" style="max-width:100%; height:auto;">`;
             }
         }
     };
 
     const fileManager = {
         init() {
-            logToServer("Inicializando File Manager");
             state.modal = document.getElementById('file-manager-modal');
             if (!state.modal) return;
 
@@ -88,10 +72,8 @@
         },
 
         switchTab(btn) {
-            const tabs = state.modal.querySelectorAll('.fm-tab-btn');
-            const contents = state.modal.querySelectorAll('.fm-tab-content');
-            tabs.forEach(b => b.classList.remove('active'));
-            contents.forEach(c => c.classList.add('hidden'));
+            state.modal.querySelectorAll('.fm-tab-btn').forEach(b => b.classList.remove('active'));
+            state.modal.querySelectorAll('.fm-tab-content').forEach(c => c.classList.add('hidden'));
             btn.classList.add('active');
             document.getElementById(btn.dataset.tab)?.classList.remove('hidden');
         },
@@ -120,15 +102,16 @@
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
-            // Fetch en texto plano
             fetch(window.location.href, { method: 'POST', body: formData })
-                .then(res => res.text()) 
-                .then(text => {
-                    const data = parseSafeJSON(text); // Sacamos el json limpio
-                    if (data.success) element.remove();
-                    else alert("Error: " + (data.message || "No se pudo borrar"));
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        element.remove();
+                    } else {
+                        alert("Error: " + (data.message || "No se pudo borrar"));
+                    }
                 })
-                .catch(err => logToServer("Error borrado: " + err.message, "ERROR"));
+                .catch(err => alert("Error de comunicación con el servidor."));
         },
 
         initUpload() {
@@ -159,64 +142,46 @@
             formData.append('action', 'fm-upload');
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
-            // Fetch en texto plano
             fetch(window.location.href, { method: 'POST', body: formData })
-            .then(res => res.text())
-            .then(text => {
-                const data = parseSafeJSON(text); // Sacamos el json limpio
-                if (data.success) setTimeout(() => location.reload(), 500);
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) location.reload();
                 else if (instruction) instruction.textContent = `Error: ${data.message}`;
             })
-            .catch(err => { 
-                logToServer(`ERROR JS UPLOAD: ${err.message}`, 'ERROR');
-                if (instruction) instruction.textContent = 'Error de conexión.'; 
-            });
+            .catch(err => { if (instruction) instruction.textContent = 'Error de conexión.'; });
         }
     };
 
-    const contentForm = {
-        prepareEdit(data) {
-            const container = document.querySelector('.side-form');
-            if (!container) return;
-            const prefix = (container.dataset.entity === 'Contenido') ? 'con-' : 'cat-';
+    window.prepareEdit = (data) => {
+        const container = document.querySelector('.side-form');
+        if (!container) return;
+        const prefix = (container.dataset.entity === 'Contenido') ? 'con-' : 'cat-';
 
-            document.getElementById('form-action').value = 'edit';
-            document.getElementById('form-title').innerText = 'Editando ' + container.dataset.entity;
+        document.getElementById('form-action').value = 'edit';
+        document.getElementById('form-title').innerText = 'Editando ' + container.dataset.entity;
 
-            Object.entries(data).forEach(([key, value]) => {
-                const input = document.getElementById(prefix + key);
-                if (input) {
-                    input.value = (key === 'id_padre' && value === null) ? "null" : (value ?? '');
-                    if (key === 'imagen' || key === 'video') ui.updatePreview(value, prefix + key);
-                }
-            });
-            ui.toggleHidden(document.getElementById('btn-cancel'), false);
-            ui.scrollTo(container);
-        }
+        Object.entries(data).forEach(([key, value]) => {
+            const input = document.getElementById(prefix + key);
+            if (input) {
+                input.value = (key === 'id_padre' && value === null) ? "null" : (value ?? '');
+                if (key === 'imagen' || key === 'video') ui.updatePreview(value, prefix + key);
+            }
+        });
+        ui.toggleHidden(document.getElementById('btn-cancel'), false);
+        ui.scrollTo(container);
     };
 
-    window.prepareEdit = contentForm.prepareEdit;
     window.resetForm = () => location.reload();
 
     document.addEventListener('DOMContentLoaded', () => {
         fileManager.init();
-
         const form = document.getElementById('main-entity-form');
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const formData = new FormData(form);
-                
-                // Fetch en texto plano
-                fetch(window.location.href, { method: 'POST', body: formData })
-                    .then(res => res.text())
-                    .then(text => {
-                        const data = parseSafeJSON(text); // Sacamos el json limpio
-                        location.reload();
-                    })
-                    .catch(err => {
-                        alert('Error al guardar: ' + err.message);
-                    });
+                fetch(window.location.href, { method: 'POST', body: new FormData(form) })
+                    .then(() => location.reload())
+                    .catch(err => alert('Error al guardar: ' + err.message));
             });
         }
     });

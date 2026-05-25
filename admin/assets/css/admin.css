@@ -531,11 +531,6 @@
     font-size: 0.9rem;
 }
 
-.btn-open-filemanager:hover {
-    background: var(--color-secundario-admin);
-    transform: translateY(-2px);
-}
-
 .admin-welcome-hr {
     border: none;
     height: 1px;

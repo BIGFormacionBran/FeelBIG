@@ -27,30 +27,28 @@ class AdminManager {
         try {
             switch ($action) {
                 case 'fm-upload':
-                    while (ob_get_level() > 0) ob_end_clean(); // Limpia basura previa
                     $type = $postData['type'] ?? 'images';
                     $file = $_FILES['file'] ?? null;
                     $res = ($type === 'videos') ? $this->media->uploadContentVideo($file) : $this->media->uploadContentImage($file);
                     
-                    if (!headers_sent()) header('Content-Type: application/json');
-                    echo "---JSON---" . json_encode(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error']) . "---JSON---";
+                    if (ob_get_length()) ob_clean(); // Limpiar basura previa para AJAX
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error']);
                     exit;
 
                 case 'fm-delete-file':
-                    while (ob_get_level() > 0) ob_end_clean(); // Limpia basura previa
                     $res = $this->media->deletePhysicalFile($postData['path'] ?? '');
-                    
-                    if (!headers_sent()) header('Content-Type: application/json');
-                    echo "---JSON---" . json_encode(['success' => $res]) . "---JSON---";
+                    if (ob_get_length()) ob_clean(); // Limpiar basura previa para AJAX
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => (bool)$res]);
                     exit;
 
                 case 'add':
                 case 'edit':
-                    while (ob_get_level() > 0) ob_end_clean(); // Limpia basura previa
                     $res = $this->contents->save($postData);
-                    
-                    if (!headers_sent()) header('Content-Type: application/json');
-                    echo "---JSON---" . json_encode(['success' => (bool)$res]) . "---JSON---";
+                    if (ob_get_length()) ob_clean(); // Limpiar basura previa para AJAX
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => (bool)$res]);
                     exit;
 
                 case 'delete': 
@@ -63,13 +61,10 @@ class AdminManager {
             }
         } catch (Exception $e) {
             LoggerUtil::error("ADMIN_MANAGER: Error en $action: " . $e->getMessage());
-            if (isset($postData['action']) && strpos($postData['action'], 'fm-') === 0) {
-                while (ob_get_level() > 0) ob_end_clean();
-                if (!headers_sent()) header('Content-Type: application/json');
-                echo "---JSON---" . json_encode(['success' => false, 'message' => $e->getMessage()]) . "---JSON---";
-                exit;
-            }
-            return false;
+            if (ob_get_length()) ob_clean();
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            exit;
         }
     }
 
