@@ -134,13 +134,24 @@ class AdminContentManager {
         $branch = [];
         foreach ($elements as $element) {
             if ($element['id_padre'] == $parentId) {
-                $branch[] = $element;
+                $node = $element;
                 $children = $this->buildTree($elements, $element['id']);
                 if ($children) {
-                    $element['children'] = $children;
+                    // Asegurar que los hijos estén ordenados por nombre
+                    usort($children, function($a, $b) {
+                        return strcasecmp($a['nombre'] ?? '', $b['nombre'] ?? '');
+                    });
+                    $node['children'] = $children;
                 }
+                $branch[] = $node;
             }
         }
+
+        // Ordenar el branch por nombre para consistencia
+        usort($branch, function($a, $b) {
+            return strcasecmp($a['nombre'] ?? '', $b['nombre'] ?? '');
+        });
+
         return $branch;
     }
 }

@@ -92,7 +92,7 @@ class FileUtil {
         // Verificar que el archivo existe
         if (file_exists($realPath) && is_file($realPath)) {
             LoggerUtil::info("FILE_UTIL: Archivo localizado en disco: [$realPath]. Ejecutando unlink...");
-            
+
             if (unlink($realPath)) {
                 LoggerUtil::info("FILE_UTIL: Archivo eliminado físicamente del servidor.");
                 return true;
@@ -101,8 +101,9 @@ class FileUtil {
                 return false;
             }
         }
-        
-        LoggerUtil::error("FILE_UTIL: El archivo no existe o no es accesible en [$realPath].");
-        return false;
+
+        // Si el archivo no existe consideramos la operación como exitosa (idempotente)
+        LoggerUtil::info("FILE_UTIL: El archivo no existe en disco: [$realPath]. No hay nada que borrar.");
+        return true;
     }
 }

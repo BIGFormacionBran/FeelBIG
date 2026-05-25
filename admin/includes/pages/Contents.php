@@ -4,10 +4,18 @@ require_once __DIR__ . '/../managers/AdminManager.php';
 ob_start();
 $admin = new AdminManager();
 
+// Procesar peticiones AJAX locales de admin antes de renderizar HTML
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $admin->handleRequest($_POST);
+    // handleRequest hace echo/json y exit cuando corresponde
+}
+
 // Bloque de salida manual eliminado para dejar que AdminManager gestione el flujo AJAX
 ob_end_clean();
 
 $contenidos = $admin->contents->listAllContents();
+
+// Usar categorías ordenadas en árbol
 $categorias = $admin->contents->listAllCategoriesOrdered();
 
 $cat_options = [];

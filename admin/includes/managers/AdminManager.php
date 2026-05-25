@@ -12,10 +12,6 @@ class AdminManager {
         LoggerUtil::info("ADMIN_MANAGER: [INIT] Instanciando AdminManager...");
         $this->contents = new AdminContentManager();
         $this->media = new MediaManager();
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-            $this->handleRequest($_POST);
-        }
     }
 
     public function handleRequest(array $postData) {
