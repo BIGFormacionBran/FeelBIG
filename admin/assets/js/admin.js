@@ -9,6 +9,19 @@
         }).catch(() => {});
     };
 
+    // FUNCIÓN NUEVA: Extrae el JSON aislando cualquier basura HTML de PHP
+    const parseSafeJSON = (text) => {
+        try {
+            if (text.includes('---JSON---')) {
+                return JSON.parse(text.split('---JSON---')[1]);
+            }
+            return JSON.parse(text); // Fallback por si viene limpio
+        } catch (e) {
+            console.error("Error parseando JSON:", text);
+            return { success: false, message: "Error interno del servidor (Revisar consola)." };
+        }
+    };
+
     const state = { currentTargetInputId: null, modal: null };
 
     const ui = {
@@ -107,10 +120,11 @@
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
-            // Enviamos a la URL actual
+            // Fetch en texto plano
             fetch(window.location.href, { method: 'POST', body: formData })
-                .then(res => res.json())
-                .then(data => {
+                .then(res => res.text()) 
+                .then(text => {
+                    const data = parseSafeJSON(text); // Sacamos el json limpio
                     if (data.success) element.remove();
                     else alert("Error: " + (data.message || "No se pudo borrar"));
                 })
@@ -145,10 +159,11 @@
             formData.append('action', 'fm-upload');
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
-            // Enviamos a la URL actual
+            // Fetch en texto plano
             fetch(window.location.href, { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(data => {
+            .then(res => res.text())
+            .then(text => {
+                const data = parseSafeJSON(text); // Sacamos el json limpio
                 if (data.success) setTimeout(() => location.reload(), 500);
                 else if (instruction) instruction.textContent = `Error: ${data.message}`;
             })
@@ -192,10 +207,11 @@
                 e.preventDefault();
                 const formData = new FormData(form);
                 
-                // Enviamos a la URL actual
+                // Fetch en texto plano
                 fetch(window.location.href, { method: 'POST', body: formData })
-                    .then(res => res.json())
-                    .then(data => {
+                    .then(res => res.text())
+                    .then(text => {
+                        const data = parseSafeJSON(text); // Sacamos el json limpio
                         location.reload();
                     })
                     .catch(err => {

@@ -27,31 +27,34 @@ class AdminManager {
         try {
             switch ($action) {
                 case 'fm-upload':
+                    while (ob_get_level() > 0) ob_end_clean(); // Limpia basura previa
                     $type = $postData['type'] ?? 'images';
                     $file = $_FILES['file'] ?? null;
                     $res = ($type === 'videos') ? $this->media->uploadContentVideo($file) : $this->media->uploadContentImage($file);
                     
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error']);
+                    if (!headers_sent()) header('Content-Type: application/json');
+                    echo "---JSON---" . json_encode(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error']) . "---JSON---";
                     exit;
 
                 case 'fm-delete-file':
+                    while (ob_get_level() > 0) ob_end_clean(); // Limpia basura previa
                     $res = $this->media->deletePhysicalFile($postData['path'] ?? '');
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => $res]);
+                    
+                    if (!headers_sent()) header('Content-Type: application/json');
+                    echo "---JSON---" . json_encode(['success' => $res]) . "---JSON---";
                     exit;
 
                 case 'add':
                 case 'edit':
+                    while (ob_get_level() > 0) ob_end_clean(); // Limpia basura previa
                     $res = $this->contents->save($postData);
-                    // Como admin.js envía esto vía fetch, respondemos JSON
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => (bool)$res]);
+                    
+                    if (!headers_sent()) header('Content-Type: application/json');
+                    echo "---JSON---" . json_encode(['success' => (bool)$res]) . "---JSON---";
                     exit;
 
                 case 'delete': 
                     $res = $this->contents->remove($postData);
-                    // Este viene de un formulario normal (ListItems.php), dejamos que continúe para que la página recargue
                     $_GET['status'] = $res ? 'success' : 'error';
                     return $res;
 
@@ -61,8 +64,9 @@ class AdminManager {
         } catch (Exception $e) {
             LoggerUtil::error("ADMIN_MANAGER: Error en $action: " . $e->getMessage());
             if (isset($postData['action']) && strpos($postData['action'], 'fm-') === 0) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                while (ob_get_level() > 0) ob_end_clean();
+                if (!headers_sent()) header('Content-Type: application/json');
+                echo "---JSON---" . json_encode(['success' => false, 'message' => $e->getMessage()]) . "---JSON---";
                 exit;
             }
             return false;
