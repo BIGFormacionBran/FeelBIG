@@ -62,7 +62,6 @@
                     e.stopPropagation();
                     this.deleteFile(target.dataset.path, target.closest('.file-item'));
                 }
-                // BOTÓN EXAMINAR: Restauramos funcionalidad
                 if (target.classList.contains('btn-primario') && target.closest('#fm-tab-upload')) {
                     document.getElementById('fm-upload-input').click();
                 }
@@ -123,7 +122,7 @@
             formData.append('path', path);
 
             fetch(window.location.pathname, { method: 'POST', body: formData })
-                .then(res => res.text()) // Leemos como texto primero para limpiar posibles errores PHP
+                .then(res => res.text())
                 .then(text => {
                     try {
                         const data = JSON.parse(text.trim());
@@ -134,7 +133,7 @@
                         }
                     } catch (e) {
                         logToServer("FM: Error parseando JSON en borrado: " + text, 'ERROR');
-                        location.reload(); // Si llegó aquí y el archivo se borró, recargamos igual
+                        location.reload();
                     }
                 })
                 .catch(err => alert("Error de comunicación."));
@@ -180,7 +179,8 @@
                 try {
                     const data = JSON.parse(text.trim());
                     if (data.success) {
-                        location.reload();
+                        // MODIFICACIÓN: En lugar de reload, seleccionamos el archivo directamente
+                        this.selectFile(data.path);
                     } else {
                         alert("Error en subida: " + data.message);
                     }
