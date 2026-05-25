@@ -93,7 +93,8 @@
     display: flex;
     flex-flow: row;
     align-items: flex-start;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    gap: 30px;
 }
 
 .admin-card {
@@ -110,9 +111,17 @@
     top: 100px;
 }
 
+.admin-card.main-list {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden; 
+    padding: 20px;
+}
+
 .admin-card-title {
     font-weight: 700;
     font-size: 0.9rem;
+    text-align: center;
     text-transform: uppercase;
     color: var(--color-principal);
     margin-bottom: 25px;
@@ -178,37 +187,49 @@
     transform: translateY(0) scale(0.98);
 }
 
-.admin-list-header {
-    display: flex;
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.admin-table thead th {
     background: #F8F9FA;
     padding: 15px;
+    text-align: left;
     font-weight: 700;
     font-size: 0.75rem;
     color: var(--color-texto-muted);
     text-transform: uppercase;
     border-bottom: 2px solid var(--color-border);
-    gap: 15px;
 }
 
-.admin-list-row {
-    padding: 15px;
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    justify-content: space-between;
+.admin-table-row td {
+    padding: 12px 15px;
     border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
 }
 
-.admin-list-row:hover {
+.admin-table-row:hover {
     background-color: #FCFDFE;
 }
 
-.col-actions {
-    width: 200px;
+.admin-table td.col-actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    flex-shrink: 0;
+    text-align: right;
+    width: 1%;
+    white-space: nowrap;
+}
+
+.inline-delete {
+    display: flex;
 }
 
 .action-edit {
@@ -251,10 +272,6 @@
     transform: translateY(0) scale(0.98);
 }
 
-.inline-delete {
-    display: contents;
-}
-
 .admin-status-alert {
     padding: 15px 20px;
     border-radius: var(--radio);
@@ -293,10 +310,6 @@
     align-items: center;
     justify-content: center;
     z-index: 9999;
-}
-
-#file-manager-modal.hidden {
-    display: none !important;
 }
 
 .modal-overlay {
@@ -543,4 +556,14 @@
     text-align: center;
     text-decoration: none;
     border-radius: 6px;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.tree-indent {
+    color: #ccc;
+    margin-right: 5px;
+    font-family: monospace;
 }

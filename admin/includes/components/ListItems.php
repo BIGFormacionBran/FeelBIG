@@ -71,54 +71,58 @@
 
         <div class="admin-card main-list">
             <div class="admin-card-title">Registros</div>
-            <div class="admin-list-header">
-                <?php foreach($config['fields'] as $f): ?>
-                    <?php if($f['list'] ?? false): ?>
-                        <div class="col-generic"><?php echo $f['label']; ?></div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-                <div class="col-actions">Acciones</div>
-            </div>
+            
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <?php foreach($config['fields'] as $f): ?>
+                                <?php if($f['list'] ?? false): ?>
+                                    <th><?php echo $f['label']; ?></th>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            function renderTreeRows($items, $config, $prefix, $depth = 0) {
+                                foreach($items as $row): ?>
+                                    <tr class="admin-table-row" data-depth="<?php echo $depth; ?>">
+                                        <?php foreach($config['fields'] as $id => $f): ?>
+                                            <?php if($f['list'] ?? false): ?>
+                                                <td>
+                                                    <?php
+                                                        if($id === 'nombre' && $depth > 0) {
+                                                            echo '<span class="tree-indent">└─ </span>';
+                                                        }
+                                                        echo htmlspecialchars($row[$id] ?? '');
+                                                    ?>
+                                                </td>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
 
-            <div class="admin-list-body">
-                <?php
-                    function renderTreeRows($items, $config, $prefix, $depth = 0) {
-                        foreach($items as $row): ?>
-                            <div class="admin-list-row" data-depth="<?php echo $depth; ?>">
-                                <?php foreach($config['fields'] as $id => $f): ?>
-                                    <?php if($f['list'] ?? false): ?>
-                                        <div class="col-generic">
-                                            <?php
-                                                if($id === 'nombre') {
-                                                    if($depth > 0) {
-                                                        echo '<span style="margin-left: ' . ($depth * 15) . 'px; color: #999;">└─ </span>';
-                                                    }
-                                                }
-                                                echo htmlspecialchars($row[$id] ?? '');
-                                            ?>
-                                        </div>
+                                        <td class="col-actions">
+                                            <button type="button" class="action-edit btn-trigger"
+                                                    onclick='prepareEdit(<?php echo json_encode($row, JSON_HEX_APOS); ?>)'>Editar</button>
+
+                                            <form method="POST" class="inline-delete" onsubmit="return confirm('¿Eliminar registro?')">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="entity_type" value="<?php echo $config['entity']; ?>">
+                                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                <button type="submit" class="action-delete-clean">Borrar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <?php if(!empty($row['children'])): ?>
+                                        <?php renderTreeRows($row['children'], $config, $prefix, $depth + 1); ?>
                                     <?php endif; ?>
-                                <?php endforeach; ?>
-
-                                <div class="col-actions">
-                                    <button type="button" class="action-edit btn-trigger"
-                                            onclick='prepareEdit(<?php echo json_encode($row, JSON_HEX_APOS); ?>)'>Editar</button>
-
-                                    <form method="POST" class="inline-delete" onsubmit="return confirm('¿Eliminar registro?')">
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="entity_type" value="<?php echo $config['entity']; ?>">
-                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                        <button type="submit" class="action-delete-clean">Borrar</button>
-                                    </form>
-                                </div>
-                            </div>
-                            <?php if(!empty($row['children'])): ?>
-                                <?php renderTreeRows($row['children'], $config, $prefix, $depth + 1); ?>
-                            <?php endif; ?>
-                        <?php endforeach;
-                    }
-                    renderTreeRows($config['data'], $config, $prefix);
-                ?>
+                                <?php endforeach;
+                            }
+                            renderTreeRows($config['data'], $config, $prefix);
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
