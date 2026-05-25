@@ -25,10 +25,14 @@
 
     const initGoogleAuth = () => {
         const statusMsg   = document.getElementById('google-status-msg');
-        const inputCode = document.getElementById('inputCodigo'); // Variable en inglés
+        const inputCode = document.getElementById('inputCodigo'); 
         let sessionDetected = false;
 
-        const MY_CLIENT_ID = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com";
+        const host = window.location.hostname;
+        const KEY_TESTING = "329236128668-fdvbaj10dklgcde11qj8os2mstdmirlv.apps.googleusercontent.com";
+        const KEY_PRODUCTION = "329236128668-umbleoejc8smj50l1d7r5ni6coehlt24.apps.googleusercontent.com";
+
+        const MY_CLIENT_ID = (host === 'feelbigpre.bigformacion.com') ? KEY_TESTING : KEY_PRODUCTION;
 
         if (!window.location.pathname.includes('register-confirm')) {
             return;
@@ -48,7 +52,7 @@
                 sessionDetected = true;
                 
                 const formData = new FormData();
-                formData.append('google_token', response.credential);
+                formData.append('googleToken', response.credential);
                 formData.append('ajax_verify', 'true');
 
                 fetch('/ProcessConfirmation.php', { // Ruta actualizada

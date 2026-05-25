@@ -27,7 +27,9 @@ class MailUtil {
             $mail->isHTML(true);
             $mail->Subject = $subject;
 
-            $logoUrl = "https://feelbigpre.bigformacion.com/assets/img/logo.png";
+            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https://" : "http://";
+            $host = $_SERVER['HTTP_HOST'];
+            $logoUrl = $protocol . $host . "/assets/img/logo.png";
 
             $htmlHeader = "
             <div style='background-color: #d3d3d3; padding: 40px 10px; font-family: sans-serif; border-radius: 12px;'>
