@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/MediaManager.php';
 require_once __DIR__ . '/../daos/ContentDao.php';
+require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 // Eliminada importación duplicada/incorrecta que causaba conflicto
 
 class AdminContentManager {
