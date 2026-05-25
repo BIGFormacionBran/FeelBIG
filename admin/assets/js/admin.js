@@ -47,11 +47,9 @@
             state.modal.addEventListener('click', (e) => {
                 const target = e.target;
                 if (target.id === 'fm-close-x' || target.classList.contains('modal-overlay')) {
-                    logToServer("Cerrando modal");
                     ui.toggleHidden(state.modal, true);
                 }
                 if (target.classList.contains('fm-tab-btn')) {
-                    logToServer(`Cambiando a pestaña: ${target.dataset.tab}`);
                     this.switchTab(target);
                 }
                 if (target.classList.contains('btn-fm-delete')) {
@@ -68,7 +66,6 @@
                 btn.addEventListener('click', () => {
                     state.currentTargetInputId = btn.dataset.target;
                     const type = state.currentTargetInputId.toLowerCase().includes('video') ? 'videos' : 'images';
-                    logToServer(`Abriendo FM para input: ${state.currentTargetInputId}, Filtro: ${type}`);
                     this.filterGrid(type);
                     ui.toggleHidden(state.modal, false);
                 });
@@ -93,7 +90,6 @@
         },
 
         selectFile(path) {
-            logToServer(`Archivo seleccionado: ${path} para input: ${state.currentTargetInputId}`);
             if (state.currentTargetInputId) {
                 const input = document.getElementById(state.currentTargetInputId);
                 if (input) {
@@ -105,20 +101,20 @@
         },
 
         deleteFile(path, element) {
-            logToServer(`Intento de borrado físico: ${path}`);
-            if (!confirm('¿Eliminar archivo?')) return;
+            if (!confirm('¿Eliminar archivo físicamente del servidor?')) return;
 
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
-            fetch('/admin/ajax.php', { method: 'POST', body: formData })
+            // Enviamos a la URL actual
+            fetch(window.location.href, { method: 'POST', body: formData })
                 .then(res => res.json())
                 .then(data => {
-                    logToServer(`Respuesta borrado: ${JSON.stringify(data)}`);
                     if (data.success) element.remove();
-                    else alert("Error: " + data.message);
-                });
+                    else alert("Error: " + (data.message || "No se pudo borrar"));
+                })
+                .catch(err => logToServer("Error borrado: " + err.message, "ERROR"));
         },
 
         initUpload() {
@@ -130,22 +126,17 @@
                 dropZone.addEventListener(evt, (e) => {
                     e.preventDefault();
                     if (evt === 'drop' && e.dataTransfer.files.length) {
-                        logToServer(`Archivo dropeado: ${e.dataTransfer.files[0].name}`);
                         this.handleUpload(e.dataTransfer.files[0]);
                     }
                 });
             });
 
             fileInput.addEventListener('change', () => {
-                if (fileInput.files.length) {
-                    logToServer(`Archivo seleccionado via input: ${fileInput.files[0].name}`);
-                    this.handleUpload(fileInput.files[0]);
-                }
+                if (fileInput.files.length) this.handleUpload(fileInput.files[0]);
             });
         },
 
         handleUpload(file) {
-            logToServer(`Iniciando Fetch Upload: ${file.name}, Size: ${file.size}, Type: ${file.type}`);
             const instruction = document.getElementById('upload-instruction');
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
 
@@ -154,29 +145,22 @@
             formData.append('action', 'fm-upload');
             formData.append('type', file.type.startsWith('video/') ? 'videos' : 'images');
 
-            fetch('/admin/ajax.php', { method: 'POST', body: formData })
-            .then(res => {
-                logToServer(`Status HTTP Upload: ${res.status}`);
-                return res.json();
-            })
+            // Enviamos a la URL actual
+            fetch(window.location.href, { method: 'POST', body: formData })
+            .then(res => res.json())
             .then(data => {
-                logToServer(`Respuesta JSON Upload: ${JSON.stringify(data)}`);
-                if (data.success) {
-                    setTimeout(() => location.reload(), 500);
-                } else {
-                    instruction.textContent = `Error: ${data.message}`;
-                }
+                if (data.success) setTimeout(() => location.reload(), 500);
+                else if (instruction) instruction.textContent = `Error: ${data.message}`;
             })
             .catch(err => { 
-                logToServer(`ERROR CRITICO JS UPLOAD: ${err.message}`, 'ERROR');
-                instruction.textContent = 'Error de conexión.'; 
+                logToServer(`ERROR JS UPLOAD: ${err.message}`, 'ERROR');
+                if (instruction) instruction.textContent = 'Error de conexión.'; 
             });
         }
     };
 
     const contentForm = {
         prepareEdit(data) {
-            logToServer(`Preparando edición. Datos recibidos: ${JSON.stringify(data)}`);
             const container = document.querySelector('.side-form');
             if (!container) return;
             const prefix = (container.dataset.entity === 'Contenido') ? 'con-' : 'cat-';
@@ -197,10 +181,7 @@
     };
 
     window.prepareEdit = contentForm.prepareEdit;
-    window.resetForm = (btn) => {
-        logToServer("Reset form click");
-        location.reload();
-    };
+    window.resetForm = () => location.reload();
 
     document.addEventListener('DOMContentLoaded', () => {
         fileManager.init();
@@ -209,18 +190,16 @@
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                logToServer('Enviando formulario: ' + form.id);
-
                 const formData = new FormData(form);
-                fetch('/admin/ajax.php', { method: 'POST', body: formData })
+                
+                // Enviamos a la URL actual
+                fetch(window.location.href, { method: 'POST', body: formData })
                     .then(res => res.json())
                     .then(data => {
-                        logToServer(`Respuesta formulario: ${JSON.stringify(data)}`);
                         location.reload();
                     })
                     .catch(err => {
-                        logToServer(`ERROR formulario: ${err.message}`, 'ERROR');
-                        alert('Error: ' + err.message);
+                        alert('Error al guardar: ' + err.message);
                     });
             });
         }

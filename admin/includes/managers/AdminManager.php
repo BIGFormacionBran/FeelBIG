@@ -14,81 +14,44 @@ class AdminManager {
         $this->media = new MediaManager();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-            LoggerUtil::info("ADMIN_MANAGER: [TRIGGER] Petición POST detectada automáticamente en el constructor. Acción solicitada: " . $_POST['action']);
             $this->handleRequest($_POST);
         }
     }
 
     public function handleRequest(array $postData) {
         $action = $postData['action'] ?? null;
-        if (!$action) {
-            LoggerUtil::error("ADMIN_MANAGER: [ERROR] Se llamó a handleRequest pero no hay 'action' en el POST.");
-            return null;
-        }
+        if (!$action) return null;
 
-        LoggerUtil::info("ADMIN_MANAGER: [PROCESO] Ejecutando acción [$action]. Payload: " . json_encode($postData));
-
-        if (in_array($action, ['fm-upload', 'fm-delete-file'])) {
-            LoggerUtil::info("ADMIN_MANAGER: [AJAX-INTERCEPT] Acción de File Manager detectada. Limpiando buffers de salida...");
-            
-            // Limpieza total del buffer para garantizar JSON puro
-            while (ob_get_level() > 0) {
-                ob_end_clean();
-            }
-            
-            header('Content-Type: application/json');
-            
-            try {
-                if ($action === 'fm-upload') {
-                    $type = $postData['type'] ?? 'images';
-                    
-                    if (empty($_FILES['file'])) {
-                        LoggerUtil::error("ADMIN_MANAGER: [UPLOAD-ERROR] Archivo no recibido en \$_FILES.");
-                        echo json_encode(['success' => false, 'message' => 'No se recibió ningún archivo.']);
-                        exit;
-                    }
-
-                    $method = ($type === 'videos') ? 'uploadContentVideo' : 'uploadContentImage';
-                    $res = $this->media->$method($_FILES['file']);
-                    
-                    if ($res) {
-                        LoggerUtil::info("ADMIN_MANAGER: [UPLOAD-EXITO] Archivo en: $res");
-                        echo json_encode(['success' => true, 'path' => $res]);
-                    } else {
-                        echo json_encode(['success' => false, 'message' => 'Error al procesar la subida física.']);
-                    }
-                } else {
-                    $path = $postData['path'] ?? '';
-                    $res = FileUtil::delete($path);
-                    if ($res) {
-                        LoggerUtil::info("ADMIN_MANAGER: [DELETE-EXITO] Archivo borrado. Limpiando referencias...");
-                        $this->contents->clearReferences($path);
-                        echo json_encode(['success' => true]);
-                    } else {
-                        echo json_encode(['success' => false, 'message' => 'No se pudo eliminar el archivo del servidor.']);
-                    }
-                }
-            } catch (Exception $e) {
-                LoggerUtil::error("ADMIN_MANAGER: [AJAX-CRITICAL] " . $e->getMessage());
-                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-            }
-            exit; 
-        }
+        LoggerUtil::info("ADMIN_MANAGER: [PROCESO] Ejecutando acción [$action]");
 
         try {
             switch ($action) {
-                case 'add':    
-                    $res = $this->contents->add($postData);
-                    $_GET['status'] = $res ? 'success' : 'error';
-                    return $res;
+                case 'fm-upload':
+                    $type = $postData['type'] ?? 'images';
+                    $file = $_FILES['file'] ?? null;
+                    $res = ($type === 'videos') ? $this->media->uploadContentVideo($file) : $this->media->uploadContentImage($file);
+                    
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error']);
+                    exit;
 
-                case 'edit':   
+                case 'fm-delete-file':
+                    $res = $this->media->deletePhysicalFile($postData['path'] ?? '');
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => $res]);
+                    exit;
+
+                case 'add':
+                case 'edit':
                     $res = $this->contents->save($postData);
-                    $_GET['status'] = $res ? 'success' : 'error';
-                    return $res;
+                    // Como admin.js envía esto vía fetch, respondemos JSON
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => (bool)$res]);
+                    exit;
 
                 case 'delete': 
                     $res = $this->contents->remove($postData);
+                    // Este viene de un formulario normal (ListItems.php), dejamos que continúe para que la página recargue
                     $_GET['status'] = $res ? 'success' : 'error';
                     return $res;
 
@@ -96,14 +59,18 @@ class AdminManager {
                     return null;
             }
         } catch (Exception $e) {
-            LoggerUtil::error("ADMIN_MANAGER: [CRUD-CRITICAL] " . $e->getMessage());
-            $_GET['status'] = 'error';
+            LoggerUtil::error("ADMIN_MANAGER: Error en $action: " . $e->getMessage());
+            if (isset($postData['action']) && strpos($postData['action'], 'fm-') === 0) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                exit;
+            }
             return false;
         }
     }
 
     public function renderFileManager() {
-        $admin = $this; 
+        $admin = $this;
         include __DIR__ . '/../components/Files.php';
     }
 }

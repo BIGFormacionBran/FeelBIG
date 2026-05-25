@@ -53,6 +53,12 @@ class MediaManager {
         return FileUtil::upload($file, 'videos'); 
     }
     
+    // Nuevo método para borrar un archivo físico directamente por su ruta
+    public function deletePhysicalFile($path) {
+        LoggerUtil::info("MEDIA_MANAGER: Borrado directo solicitado para: $path");
+        return FileUtil::delete($path);
+    }
+
     public function deleteContentFiles($imagePath = null, $videoPath = null) {
         LoggerUtil::info("MEDIA_MANAGER: Solicitud de borrado de archivos específicos: IMG[$imagePath], VID[$videoPath]");
         if ($imagePath) FileUtil::delete($imagePath);
