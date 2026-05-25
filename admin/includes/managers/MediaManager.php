@@ -6,19 +6,23 @@ class MediaManager {
 
     public function listPhysicalFiles(string $type = 'images'): array {
         $basePath = __DIR__ . '/../../../assets/uploads/' . $type . '/';
-        LoggerUtil::info("MEDIA_MANAGER: Escaneando archivos físicos tipo [$type] en [$basePath]");
+        LoggerUtil::info("MEDIA_MANAGER: Escaneando directorio: $basePath");
 
         if (!is_dir($basePath)) {
-            LoggerUtil::error("MEDIA_MANAGER: Directorio no existe: $basePath");
+            LoggerUtil::error("MEDIA_MANAGER: Directorio base no existe: $basePath");
             return [];
         }
 
         $files = [];
         $years = array_diff(scandir($basePath), ['.', '..']);
+        LoggerUtil::info("MEDIA_MANAGER: Años encontrados: " . implode(", ", $years));
         
         foreach ($years as $year) {
             $yearPath = $basePath . $year . '/';
-            if (!is_dir($yearPath)) continue;
+            if (!is_dir($yearPath)) {
+                LoggerUtil::info("MEDIA_MANAGER: Saltando item (no es dir): $year");
+                continue;
+            }
             
             $months = array_diff(scandir($yearPath), ['.', '..']);
             foreach ($months as $month) {
@@ -26,7 +30,7 @@ class MediaManager {
                 if (!is_dir($monthPath)) continue;
 
                 $actualFiles = array_diff(scandir($monthPath), ['.', '..']);
-                LoggerUtil::info("MEDIA_MANAGER: Carpeta $year/$month -> " . count($actualFiles) . " archivos encontrados.");
+                LoggerUtil::info("MEDIA_MANAGER: Accediendo a $year/$month -> " . count($actualFiles) . " archivos.");
 
                 foreach ($actualFiles as $f) {
                     $pathForDb = 'assets/uploads/' . $type . '/' . $year . '/' . $month . '/' . $f;
@@ -39,30 +43,35 @@ class MediaManager {
                 }
             }
         }
-        LoggerUtil::info("MEDIA_MANAGER: Escaneo completado. Total: " . count($files) . " archivos.");
+        LoggerUtil::info("MEDIA_MANAGER: Escaneo finalizado. Total acumulado: " . count($files) . " archivos.");
         return array_reverse($files); 
     }
 
     public function uploadContentImage($file) { 
-        LoggerUtil::info("MEDIA_MANAGER: Petición de subida de IMAGEN detectada.");
+        LoggerUtil::info("MEDIA_MANAGER: Redirigiendo subida de IMAGEN a FileUtil.");
         return FileUtil::upload($file, 'images'); 
     }
 
     public function uploadContentVideo($file) { 
-        LoggerUtil::info("MEDIA_MANAGER: Petición de subida de VIDEO detectada.");
+        LoggerUtil::info("MEDIA_MANAGER: Redirigiendo subida de VIDEO a FileUtil.");
         return FileUtil::upload($file, 'videos'); 
     }
     
-    // Nuevo método para borrar un archivo físico directamente por su ruta
     public function deletePhysicalFile($path) {
-        LoggerUtil::info("MEDIA_MANAGER: Borrado directo solicitado para: $path");
+        LoggerUtil::info("MEDIA_MANAGER: Redirigiendo solicitud de borrado físico a FileUtil. Ruta: $path");
         return FileUtil::delete($path);
     }
 
     public function deleteContentFiles($imagePath = null, $videoPath = null) {
-        LoggerUtil::info("MEDIA_MANAGER: Solicitud de borrado de archivos específicos: IMG[$imagePath], VID[$videoPath]");
-        if ($imagePath) FileUtil::delete($imagePath);
-        if ($videoPath) FileUtil::delete($videoPath);
+        LoggerUtil::info("MEDIA_MANAGER: Borrado múltiple iniciado. IMG: [$imagePath], VID: [$videoPath]");
+        if ($imagePath) {
+            LoggerUtil::info("MEDIA_MANAGER: Borrando imagen...");
+            FileUtil::delete($imagePath);
+        }
+        if ($videoPath) {
+            LoggerUtil::info("MEDIA_MANAGER: Borrando vídeo...");
+            FileUtil::delete($videoPath);
+        }
         return true;
     }
 }

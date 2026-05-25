@@ -15,8 +15,12 @@
         scrollTo: (el) => el?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
         toggleHidden: (el, force) => el?.classList.toggle('hidden', force),
         updatePreview: (path, targetId) => {
+            logToServer(`UI: Actualizando preview para ID: ${targetId} con ruta: ${path}`);
             const previewContainer = document.getElementById(targetId + '-preview');
-            if (!previewContainer) return;
+            if (!previewContainer) {
+                logToServer(`UI: No se encontró el contenedor preview "${targetId}-preview"`, 'ERROR');
+                return;
+            }
             
             if (!path || path === "null" || path === "") {
                 previewContainer.innerHTML = '<span class="text-muted">Sin archivo</span>';
@@ -38,12 +42,17 @@
 
     const fileManager = {
         init() {
+            logToServer("FM: Inicializando eventos del Gestor de Archivos.");
             state.modal = document.getElementById('file-manager-modal');
-            if (!state.modal) return;
+            if (!state.modal) {
+                logToServer("FM: No se encontró el modal #file-manager-modal en el DOM", "ERROR");
+                return;
+            }
 
             state.modal.addEventListener('click', (e) => {
                 const target = e.target;
                 if (target.id === 'fm-close-x' || target.classList.contains('modal-overlay')) {
+                    logToServer("FM: Cerrando modal.");
                     ui.toggleHidden(state.modal, true);
                 }
                 if (target.classList.contains('fm-tab-btn')) {
@@ -63,6 +72,7 @@
                 btn.addEventListener('click', () => {
                     state.currentTargetInputId = btn.dataset.target;
                     const type = state.currentTargetInputId.toLowerCase().includes('video') ? 'videos' : 'images';
+                    logToServer(`FM: Abriendo gestor para input: ${state.currentTargetInputId} (Filtro: ${type})`);
                     this.filterGrid(type);
                     ui.toggleHidden(state.modal, false);
                 });
@@ -72,6 +82,7 @@
         },
 
         switchTab(btn) {
+            logToServer(`FM: Cambiando a pestaña: ${btn.dataset.tab}`);
             state.modal.querySelectorAll('.fm-tab-btn').forEach(b => b.classList.remove('active'));
             state.modal.querySelectorAll('.fm-tab-content').forEach(c => c.classList.add('hidden'));
             btn.classList.add('active');
@@ -79,53 +90,54 @@
         },
 
         filterGrid(type) {
+            logToServer(`FM: Filtrando grid por tipo: ${type}`);
             state.modal.querySelectorAll('.file-item').forEach(item => {
                 ui.toggleHidden(item, item.dataset.type !== type);
             });
         },
 
         selectFile(path) {
-            logToServer(`Seleccionando archivo del gestor: ${path}`);
+            logToServer(`FM: Archivo seleccionado: ${path}`);
             if (state.currentTargetInputId) {
                 const input = document.getElementById(state.currentTargetInputId);
                 if (input) {
                     input.value = path;
                     ui.updatePreview(path, state.currentTargetInputId);
-                    logToServer(`Input "${state.currentTargetInputId}" actualizado con la ruta del archivo.`);
+                    logToServer(`FM: Valor de "${state.currentTargetInputId}" actualizado.`);
                 }
             }
             ui.toggleHidden(state.modal, true);
         },
 
         deleteFile(path, element) {
-            logToServer(`Usuario intentando eliminar archivo: ${path}`);
+            logToServer(`FM: Intento de borrado de archivo: ${path}`);
             if (!confirm('¿Eliminar archivo físicamente del servidor?')) {
-                logToServer(`Eliminación cancelada por el usuario: ${path}`);
+                logToServer("FM: Borrado cancelado por el usuario.");
                 return;
             }
 
-            logToServer(`Confirmación aceptada. Enviando petición de borrado para: ${path}`);
             const formData = new FormData();
             formData.append('action', 'fm-delete-file');
             formData.append('path', path);
 
+            logToServer("FM: Enviando petición POST fm-delete-file...");
             fetch(window.location.href, { method: 'POST', body: formData })
                 .then(res => {
-                    logToServer(`Servidor respondió a borrado HTTP status: ${res.status}`);
+                    logToServer(`FM: Status respuesta borrado: ${res.status}`);
                     return res.json();
                 })
                 .then(data => {
                     if (data.success) {
-                        logToServer(`BORRADO EXITOSO - El archivo ${path} ha sido eliminado del servidor.`);
+                        logToServer(`FM: Archivo ${path} borrado del servidor.`);
                         element.remove();
                     } else {
-                        logToServer(`BORRADO FALLIDO - El servidor devolvió error: ${data.message || 'Error desconocido'}`, 'ERROR');
-                        alert("Error: " + (data.message || "No se pudo borrar"));
+                        logToServer(`FM: Error servidor al borrar: ${data.message}`, 'ERROR');
+                        alert("Error: " + data.message);
                     }
                 })
                 .catch(err => {
-                    logToServer(`ERROR CRÍTICO (Red) al intentar borrar ${path}: ${err.message}`, 'ERROR');
-                    alert("Error de comunicación con el servidor.");
+                    logToServer(`FM: Error de red al borrar: ${err.message}`, 'ERROR');
+                    alert("Error de comunicación.");
                 });
         },
 
@@ -138,7 +150,7 @@
                 dropZone.addEventListener(evt, (e) => {
                     e.preventDefault();
                     if (evt === 'drop' && e.dataTransfer.files.length) {
-                        logToServer(`Archivo soltado (drag&drop): ${e.dataTransfer.files[0].name}`);
+                        logToServer(`FM: Archivo soltado: ${e.dataTransfer.files[0].name}`);
                         this.handleUpload(e.dataTransfer.files[0]);
                     }
                 });
@@ -146,7 +158,7 @@
 
             fileInput.addEventListener('change', () => {
                 if (fileInput.files.length) {
-                    logToServer(`Archivo seleccionado vía input: ${fileInput.files[0].name}`);
+                    logToServer(`FM: Archivo seleccionado vía input: ${fileInput.files[0].name}`);
                     this.handleUpload(fileInput.files[0]);
                 }
             });
@@ -154,7 +166,7 @@
 
         handleUpload(file) {
             const fileType = file.type.startsWith('video/') ? 'videos' : 'images';
-            logToServer(`Iniciando proceso de subida. Archivo: ${file.name}, Tamaño: ${file.size} bytes, Tipo: ${file.type}`);
+            logToServer(`FM: Iniciando subida: ${file.name} | ${file.size} bytes | ${file.type}`);
             
             const instruction = document.getElementById('upload-instruction');
             if (instruction) instruction.textContent = `Subiendo ${file.name}...`;
@@ -164,33 +176,31 @@
             formData.append('action', 'fm-upload');
             formData.append('type', fileType);
 
-            logToServer(`Enviando POST multipart/form-data a ${window.location.href} con acción fm-upload`);
-
             fetch(window.location.href, { method: 'POST', body: formData })
             .then(res => {
-                logToServer(`Servidor respondió a subida HTTP status: ${res.status}`);
+                logToServer(`FM: Status respuesta subida: ${res.status}`);
                 return res.json();
             })
             .then(data => {
                 if (data.success) {
-                    logToServer(`SUBIDA EXITOSA - Archivo guardado: ${file.name}. Recargando interfaz...`);
+                    logToServer(`FM: Subida exitosa. Recargando página.`);
                     location.reload();
                 } else {
-                    logToServer(`SUBIDA FALLIDA - Servidor rechazó el archivo ${file.name}. Mensaje: ${data.message}`, 'ERROR');
+                    logToServer(`FM: Subida fallida: ${data.message}`, 'ERROR');
                     if (instruction) instruction.textContent = `Error: ${data.message}`;
                     alert("Error en subida: " + data.message);
                 }
             })
             .catch(err => { 
-                logToServer(`ERROR CRÍTICO (Red) durante la subida de ${file.name}: ${err.message}`, 'ERROR');
+                logToServer(`FM: Error CRÍTICO subida: ${err.message}`, 'ERROR');
                 if (instruction) instruction.textContent = 'Error de conexión.'; 
-                alert("Error de conexión al subir archivo.");
+                alert("Error de red al subir.");
             });
         }
     };
 
     window.prepareEdit = (data) => {
-        logToServer(`Preparando edición de entidad. ID: ${data.id || 'N/A'}`);
+        logToServer(`UI: Preparando formulario para edición. ID Entidad: ${data.id}`);
         const container = document.querySelector('.side-form');
         if (!container) return;
         const prefix = (container.dataset.entity === 'Contenido') ? 'con-' : 'cat-';
@@ -210,36 +220,35 @@
     };
 
     window.resetForm = () => {
-        logToServer('Reseteando formulario (reload)');
+        logToServer('UI: Reset de formulario solicitado.');
         location.reload();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        logToServer('DOM cargado - Inicializando gestor de archivos.');
+        logToServer('APP: DOM Cargado.');
         fileManager.init();
         const form = document.getElementById('main-entity-form');
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                logToServer('Enviando formulario principal de entidad al servidor...');
-                
+                logToServer('APP: Enviando formulario principal...');
                 fetch(window.location.href, { method: 'POST', body: new FormData(form) })
                     .then(res => {
-                        logToServer(`Respuesta servidor (Form principal) HTTP: ${res.status}`);
+                        logToServer(`APP: Status formulario: ${res.status}`);
                         return res.json();
                     })
                     .then(data => {
                         if (data.success) {
-                            logToServer('ENTIDAD ACTUALIZADA - Cambios guardados correctamente.');
+                            logToServer('APP: Formulario guardado con éxito.');
                             location.reload();
                         } else {
-                            logToServer(`ENTIDAD NO ACTUALIZADA - Error del servidor: ${data.message}`, 'ERROR');
+                            logToServer(`APP: Error al guardar formulario: ${data.message}`, 'ERROR');
                             alert('Error al guardar: ' + data.message);
                         }
                     })
                     .catch(err => {
-                        logToServer(`ERROR CRÍTICO (Red) al enviar formulario principal: ${err.message}`, 'ERROR');
-                        alert('Error de red: ' + err.message);
+                        logToServer(`APP: Error de red en formulario: ${err.message}`, 'ERROR');
+                        alert('Error de red.');
                     });
             });
         }

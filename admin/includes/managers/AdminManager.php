@@ -15,71 +15,89 @@ class AdminManager {
 
     public function handleRequest(array $postData) {
         $action = $postData['action'] ?? null;
-        if (!$action) return null;
+        if (!$action) {
+            LoggerUtil::info("ADMIN_MANAGER: Request recibido sin 'action'. Saltando procesamiento.");
+            return null;
+        }
 
-        LoggerUtil::info("ADMIN_MANAGER: [PROCESO] Iniciando acción [$action]");
-        LoggerUtil::info("ADMIN_MANAGER: Datos recibidos: " . json_encode($postData));
+        LoggerUtil::info("ADMIN_MANAGER: [INICIO ACCIÓN] -> $action");
+        LoggerUtil::info("ADMIN_MANAGER: POST Payload: " . json_encode($postData));
 
         try {
             switch ($action) {
                 case 'fm-upload':
                     $type = $postData['type'] ?? 'images';
                     $file = $_FILES['file'] ?? null;
+                    LoggerUtil::info("ADMIN_MANAGER: Procesando fm-upload. Tipo: $type");
+
                     if (!is_array($file) || !isset($file['error'])) {
-                        LoggerUtil::error("ADMIN_MANAGER: Error en upload - No se recibió el archivo correctamente.");
+                        LoggerUtil::error("ADMIN_MANAGER: Error - El array \$_FILES['file'] no llegó o está incompleto.");
                         $this->sendJson(['success' => false, 'message' => 'No archivo recibido'], 400);
                     }
+
                     $res = ($type === 'videos') ? $this->media->uploadContentVideo($file) : $this->media->uploadContentImage($file);
-                    $this->sendJson(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido' : 'Error en subida'], $res ? 200 : 400);
+                    
+                    LoggerUtil::info("ADMIN_MANAGER: Resultado de subida: " . ($res ? "Éxito ($res)" : "Fallo"));
+                    $this->sendJson([
+                        'success' => (bool)$res, 
+                        'path' => $res, 
+                        'message' => $res ? 'Subido correctamente' : 'Error en transferencia física'
+                    ], $res ? 200 : 400);
                     break;
 
                 case 'fm-delete-file':
                     $path = $postData['path'] ?? '';
-                    LoggerUtil::info("ADMIN_MANAGER: Intentando borrar archivo: $path");
+                    LoggerUtil::info("ADMIN_MANAGER: Procesando fm-delete-file. Ruta: $path");
                     $res = $this->media->deletePhysicalFile($path);
-                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Eliminado' : 'Error al eliminar'], $res ? 200 : 400);
+                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Eliminado' : 'No se pudo eliminar'], $res ? 200 : 400);
                     break;
 
                 case 'add':
                 case 'edit':
+                    LoggerUtil::info("ADMIN_MANAGER: Guardando entidad (save). Acción: $action");
                     $res = $this->contents->save($postData);
-                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Guardado' : 'Error al guardar'], $res ? 200 : 400);
+                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Datos guardados' : 'Error en base de datos'], $res ? 200 : 400);
                     break;
 
                 case 'delete': 
+                    LoggerUtil::info("ADMIN_MANAGER: Eliminando entidad de DB.");
                     $res = $this->contents->remove($postData);
                     $_GET['status'] = $res ? 'success' : 'error';
                     return $res;
 
                 default: 
-                    LoggerUtil::info("ADMIN_MANAGER: Acción [$action] no reconocida para respuesta JSON.");
+                    LoggerUtil::info("ADMIN_MANAGER: Acción [$action] no tiene handler específico.");
                     return null;
             }
         } catch (Exception $e) {
-            LoggerUtil::error("ADMIN_MANAGER: EXCEPCIÓN en $action: " . $e->getMessage());
-            $this->sendJson(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+            LoggerUtil::error("ADMIN_MANAGER: EXCEPCIÓN DETECTADA: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
+            $this->sendJson(['success' => false, 'message' => 'Error interno: ' . $e->getMessage()], 500);
         }
     }
 
     private function sendJson($data, $code = 200) {
-        // Limpiamos cualquier salida previa (HTML de index.php o espacios en blanco)
         if (ob_get_length()) {
+            LoggerUtil::info("ADMIN_MANAGER: Limpiando buffer de salida (ob_clean). Había contenido previo.");
             ob_clean(); 
         }
         
         if (!headers_sent()) {
             http_response_code($code);
             header('Content-Type: application/json; charset=utf-8');
+            LoggerUtil::info("ADMIN_MANAGER: Headers enviados. HTTP $code.");
         } else {
-            LoggerUtil::error("ADMIN_MANAGER: Error Crítico - Headers ya enviados. No se pudo establecer código $code.");
+            LoggerUtil::error("ADMIN_MANAGER: Error - Headers ya enviados. Posible salida de texto antes de sendJson.");
         }
 
-        echo json_encode($data);
-        LoggerUtil::info("ADMIN_MANAGER: Respuesta JSON enviada y ejecución finalizada (exit).");
+        $json = json_encode($data);
+        LoggerUtil::info("ADMIN_MANAGER: Payload de respuesta: $json");
+        echo $json;
+        LoggerUtil::info("ADMIN_MANAGER: Finalizando ejecución (exit).");
         exit;
     }
 
     public function renderFileManager() {
+        LoggerUtil::info("ADMIN_MANAGER: Renderizando componente Files.php");
         $admin = $this;
         include __DIR__ . '/../components/Files.php';
     }
