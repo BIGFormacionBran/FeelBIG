@@ -26,13 +26,15 @@ function renderIndividualPage($item = null) {
 }
 
 function renderIndividualViewUtil($data) {
-    $imageSource = $data['img'] ?? null;
-    $videoSource = $data['video'] ?? null; 
+    // Aseguramos que si el string es solo espacios o está vacío, sea null
+    $imageSource = (!empty(trim($data['img']))) ? $data['img'] : null;
+    $videoSource = (!empty(trim($data['video']))) ? $data['video'] : null; 
+    
     $externalLink = $data['enlace_externo'] ?? null;
     $contentBody = !empty($data['description']) ? $data['description'] : $data['description_short'];
 
-    // Lógica: Si hay video E imagen, usamos grid-dual. Si falta uno, grid-single.
-    $mediaClass = (!empty($videoSource) && !empty($imageSource)) ? 'grid-dual' : 'grid-single';
+    // Lógica Estricta de Grid: Solo es dual si AMBOS existen y no están vacíos
+    $mediaClass = ($videoSource && $imageSource) ? 'grid-dual' : 'grid-single';
 ?>
     <div class="view-detail-main">
         <div class="content-article-container">
@@ -47,8 +49,10 @@ function renderIndividualViewUtil($data) {
                 <?php endif; ?>
             </div>
 
+            <?php if ($videoSource || $imageSource): ?>
             <div class="article-media-container <?php echo $mediaClass; ?>">
-                <?php if (!empty($videoSource)): ?>
+                
+                <?php if ($videoSource): ?>
                     <div class="media-wrapper video-wrapper">
                         <?php if(strpos($videoSource, 'youtube.com') !== false || strpos($videoSource, 'youtu.be') !== false): 
                             $embed = str_replace(['watch?v=', 'youtu.be/'], ['embed/', 'youtube.com/embed/'], $videoSource); ?>
@@ -59,12 +63,14 @@ function renderIndividualViewUtil($data) {
                     </div>
                 <?php endif; ?>
 
-                <?php if (!empty($imageSource)): ?>
+                <?php if ($imageSource): ?>
                     <div class="media-wrapper image-wrapper">
                         <img src="<?php echo $imageSource; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
                     </div>
                 <?php endif; ?>
+
             </div>
+            <?php endif; ?>
 
             <div class="article-content-body">
                 <div class="text-area">
