@@ -765,63 +765,68 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     animation: fadeIn 0.5s ease;
 }
 
-/* Encabezado */
+/* Encabezado: Título y Badge */
 .article-header {
-    text-align: left; /* Alineado a la izquierda suele quedar más profesional en lectura larga */
+    text-align: left;
     margin-bottom: 40px;
     border-bottom: 2px solid var(--color-fondo);
-    padding-bottom: 20px;
+    padding-bottom: 25px;
 }
 
 .article-mini-badge {
     display: inline-block;
     background: var(--color-principal);
     color: white;
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 4px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
     margin-bottom: 15px;
 }
 
 .article-title {
-    font-size: 40px;
+    font-size: 42px;
     font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 10px;
+    line-height: 1.1;
+    margin-bottom: 12px;
     color: var(--color-texto);
+    letter-spacing: -0.5px;
 }
 
 .article-meta {
     font-size: 14px;
     color: var(--color-texto-muted);
+    font-weight: 500;
 }
 
-/* Media (Video/Imagen) */
+/* Media: Video e Imagen bien organizados */
 .article-media-container {
-    margin-bottom: 40px;
+    margin-bottom: 45px;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 30px;
 }
 
 .media-wrapper {
     width: 100%;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    background: #f9f9f9;
+    background: #000;
+    box-shadow: var(--shadow-sm);
 }
 
 .image-wrapper img {
     width: 100%;
     display: block;
     height: auto;
+    object-fit: cover;
 }
 
 .video-wrapper {
     position: relative;
-    padding-bottom: 56.25%; 
+    padding-bottom: 56.25%; /* Ratio 16:9 */
     height: 0;
 }
 
@@ -832,27 +837,40 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     left: 0;
     width: 100%;
     height: 100%;
+    border: none;
 }
 
-/* Cuerpo de texto */
+/* Cuerpo de texto y descripción larga */
 .article-content-body .text-area {
-    font-size: 18px;
+    font-size: 19px;
     line-height: 1.8;
-    color: var(--color-texto-muted);
+    color: #333; /* Un poco más oscuro para mejorar la legibilidad */
 }
 
-/* Botón de acción */
+/* Estilos para etiquetas dentro de la descripción (Base de Datos) */
+.article-content-body .text-area p {
+    margin-bottom: 25px;
+}
+
+.article-content-body .text-area strong {
+    color: var(--color-texto);
+}
+
+/* Botón de acción final */
 .article-actions {
     margin-top: 50px;
-    padding-top: 30px;
+    padding-top: 35px;
     border-top: 1px solid var(--color-border);
+    text-align: center;
 }
 
 .btn-full-action {
     display: inline-flex;
     width: auto !important;
-    padding: 15px 35px !important;
+    min-width: 280px;
+    padding: 18px 40px !important;
     font-size: 14px !important;
+    border-radius: 50px !important; /* Estilo píldora más moderno */
 }
 
 /* --- RESPONSIVE --- */
@@ -867,7 +885,10 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     .btn-nav-feelbig { display: none; } 
     .card-row { flex-direction: column; text-align: center; padding: 20px; }    
     .card-row-img { width: 100%; height: 180px; }
-    .card-row-action { width: 100%; }    
+    .card-row-action { width: 100%; }   
     .content-article-container { padding: 30px 20px; }
-    .article-title { font-size: 28px; }
+    .article-title { font-size: 30px; }
+    .view-detail-main { margin: 20px auto; }
+    .article-content-body .text-area { font-size: 17px; }
+    .btn-full-action { width: 100% !important; }
 }

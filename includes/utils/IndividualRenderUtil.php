@@ -22,13 +22,14 @@ function renderIndividualPage($item = null) {
         }
     }
 
-    echo "<div class='error-container'><h2>Contenido no encontrado</h2><a href='/home'>Volver al inicio</a></div>";
+    echo "<div class='view-detail-main'><div class='content-article-container' style='text-align:center;'><h2>Contenido no encontrado</h2><a href='/home' class='btn-primario'>Volver al inicio</a></div></div>";
 }
 
 function renderIndividualViewUtil($data) {
     $imageSource = $data['img'] ?? null;
     $videoSource = $data['video'] ?? null; 
     $externalLink = $data['enlace_externo'] ?? null;
+    $contentBody = !empty($data['description']) ? $data['description'] : $data['description_short'];
 ?>
     <div class="view-detail-main">
         <div class="content-article-container">
@@ -46,8 +47,9 @@ function renderIndividualViewUtil($data) {
             <div class="article-media-container">
                 <?php if (!empty($videoSource)): ?>
                     <div class="media-wrapper video-wrapper">
-                        <?php if(strpos($videoSource, 'youtube.com') !== false || strpos($videoSource, 'youtu.be') !== false): ?>
-                            <iframe src="<?php echo str_replace('watch?v=', 'embed/', $videoSource); ?>" frameborder="0" allowfullscreen></iframe>
+                        <?php if(strpos($videoSource, 'youtube.com') !== false || strpos($videoSource, 'youtu.be') !== false): 
+                            $embed = str_replace(['watch?v=', 'youtu.be/'], ['embed/', 'youtube.com/embed/'], $videoSource); ?>
+                            <iframe src="<?php echo $embed; ?>" frameborder="0" allowfullscreen></iframe>
                         <?php else: ?>
                             <video controls src="<?php echo $videoSource; ?>"></video>
                         <?php endif; ?>
@@ -63,7 +65,7 @@ function renderIndividualViewUtil($data) {
 
             <div class="article-content-body">
                 <div class="text-area">
-                    <?php echo $data['description']; ?>
+                    <?php echo $contentBody; ?>
                 </div>
 
                 <?php if (!empty($externalLink)): ?>
