@@ -22,46 +22,61 @@ function renderIndividualPage($item = null) {
         }
     }
 
-    echo "<div class='error-container'><h2>Contenido no disponible</h2><a href='/home'>Volver al inicio</a></div>";
+    echo "<div class='error-container'><h2>Contenido no encontrado</h2><a href='/home'>Volver al inicio</a></div>";
 }
 
 function renderIndividualViewUtil($data) {
-    $imageSource = $data['img'];
+    $imageSource = $data['img'] ?? null;
+    $videoSource = $data['video'] ?? null; 
     $externalLink = $data['enlace_externo'] ?? null;
 ?>
-    <article class="content-detail-article">
-        <header class="detail-hero">
-            <div class="hero-image-container">
-                <img src="<?php echo $imageSource; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>" class="hero-main-img">
-                <div class="hero-overlay"></div>
-            </div>
+    <div class="view-detail-main">
+        <div class="content-article-container">
             
-            <div class="hero-content-wrapper">
+            <div class="article-header">
                 <?php if (!empty($data['badge'])): ?>
-                    <span class="detail-category-tag"><?php echo htmlspecialchars($data['badge']); ?></span>
+                    <div class="article-mini-badge"><?php echo htmlspecialchars($data['badge']); ?></div>
                 <?php endif; ?>
-                <h1 class="detail-main-title"><?php echo htmlspecialchars($data['name']); ?></h1>
+                <div class="article-title"><?php echo htmlspecialchars($data['name']); ?></div>
                 <?php if (!empty($data['date'])): ?>
-                    <time class="detail-pub-date">Publicado el <?php echo date('d M, Y', strtotime($data['date'])); ?></time>
+                    <div class="article-meta">Publicado el <?php echo date('d/m/Y', strtotime($data['date'])); ?></div>
                 <?php endif; ?>
             </div>
-        </header>
 
-        <div class="detail-body-container">
-            <div class="detail-rich-text text-area">
-                <?php echo $data['description']; ?>
+            <div class="article-media-container">
+                <?php if (!empty($videoSource)): ?>
+                    <div class="media-wrapper video-wrapper">
+                        <?php if(strpos($videoSource, 'youtube.com') !== false || strpos($videoSource, 'youtu.be') !== false): ?>
+                            <iframe src="<?php echo str_replace('watch?v=', 'embed/', $videoSource); ?>" frameborder="0" allowfullscreen></iframe>
+                        <?php else: ?>
+                            <video controls src="<?php echo $videoSource; ?>"></video>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($imageSource)): ?>
+                    <div class="media-wrapper image-wrapper">
+                        <img src="<?php echo $imageSource; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
+                    </div>
+                <?php endif; ?>
             </div>
 
-            <?php if (!empty($externalLink)): ?>
-                <footer class="detail-footer-actions">
-                    <div class="cta-separator"></div>
-                    <a href="<?php echo $externalLink; ?>" target="_blank" rel="noopener" class="btn-primario btn-xl">
-                        <span>ACCEDER AL RECURSO COMPLETO</span>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                    </a>
-                </footer>
-            <?php endif; ?>
+            <div class="article-content-body">
+                <div class="text-area">
+                    <?php echo $data['description']; ?>
+                </div>
+
+                <?php if (!empty($externalLink)): ?>
+                    <div class="article-actions">
+                        <a href="<?php echo $externalLink; ?>" target="_blank" rel="noopener" class="btn-primario btn-full-action">
+                            <span>ACCEDER AL CONTENIDO</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:10px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                        </a>
+                    </div>
+                <?php endif; ?>
+            </div>
+
         </div>
-    </article>
+    </div>
 <?php
 }
