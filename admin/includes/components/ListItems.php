@@ -106,12 +106,14 @@
                                             <button type="button" class="action-edit btn-trigger"
                                                     onclick='prepareEdit(<?php echo json_encode($row, JSON_HEX_APOS); ?>)'>Editar</button>
 
+                                            <?php if($config['can_delete'] ?? false): ?>
                                             <form method="POST" class="inline-delete" onsubmit="return confirm('¿Eliminar registro?')">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="entity_type" value="<?php echo $config['entity']; ?>">
                                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                                 <button type="submit" class="action-delete-clean">Borrar</button>
                                             </form>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                     <?php if(!empty($row['children'])): ?>

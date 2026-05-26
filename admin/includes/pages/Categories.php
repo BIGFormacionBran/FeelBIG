@@ -2,20 +2,15 @@
 require_once __DIR__ . '/../managers/AdminManager.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
-// 1. PROCESAMIENTO AJAX (Debe ir al principio para evitar salida de texto accidental)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $admin = new AdminManager();
     $admin->handleRequest($_POST);
-    // handleRequest ya hace ob_clean, eco del JSON y exit;
 }
 
-// 2. CARGA DE DATOS PARA RENDERIZADO
 $admin = new AdminManager();
 $categorias = $admin->contents->listAllCategoriesOrdered();
-
 $options = ["null" => "-- Categoría Principal --"];
 
-// Aplanar árbol de categorías para usar en el select (con indentación)
 function flatten_categories_for_select($items, &$out, $depth = 0) {
     foreach ($items as $it) {
         $prefix = $depth > 0 ? str_repeat('&nbsp;&nbsp;', $depth) . '└─ ' : '';
@@ -29,10 +24,11 @@ function flatten_categories_for_select($items, &$out, $depth = 0) {
 flatten_categories_for_select($categorias, $options, 0);
 
 $config = [
-    'title'  => 'Gestión de Categorías',
-    'entity' => 'Categoría',
-    'data'   => $categorias,
-    'fields' => [
+    'title'      => 'Gestión de Categorías',
+    'entity'     => 'Categoría',
+    'data'       => $categorias,
+    'can_delete' => true,
+    'fields'     => [
         'id'       => ['label' => 'ID',       'type' => 'hidden', 'list' => true],
         'nombre'   => ['label' => 'Nombre',   'type' => 'text',   'list' => true, 'required' => true],
         'id_padre' => ['label' => 'Padre',    'type' => 'select', 'options' => $options, 'list' => false],
@@ -40,7 +36,6 @@ $config = [
     ]
 ];
 
-// 3. RENDERIZADO DE COMPONENTES
 require_once __DIR__ . '/../components/ListItems.php';
 $admin->renderFileManager();
 ?>

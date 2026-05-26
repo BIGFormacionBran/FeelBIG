@@ -4,22 +4,16 @@ require_once __DIR__ . '/../managers/AdminManager.php';
 ob_start();
 $admin = new AdminManager();
 
-// Procesar peticiones AJAX locales de admin antes de renderizar HTML
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $admin->handleRequest($_POST);
 }
 
-// Bloque de salida manual eliminado para dejar que AdminManager gestione el flujo AJAX
 ob_end_clean();
 
 $contenidos = $admin->contents->listAllContents();
-
-// Usar categorías ordenadas en árbol
 $categorias = $admin->contents->listAllCategoriesOrdered();
-
 $cat_options = [];
 
-// Aplanar árbol de categorías para usar en el select de contenidos (con indentación)
 function flatten_categories_for_contents($items, &$out, $depth = 0) {
     foreach ($items as $it) {
         $prefix = $depth > 0 ? str_repeat('&nbsp;&nbsp;', $depth) . '└─ ' : '';
@@ -33,10 +27,11 @@ function flatten_categories_for_contents($items, &$out, $depth = 0) {
 flatten_categories_for_contents($categorias, $cat_options);
 
 $config = [
-    'title'  => 'Gestión de Contenidos',
-    'entity' => 'Contenido',
-    'data'   => $contenidos,
-    'fields' => [
+    'title'      => 'Gestión de Contenidos',
+    'entity'     => 'Contenido',
+    'data'       => $contenidos,
+    'can_delete' => true,
+    'fields'     => [
         'id'                => ['label' => 'ID',           'type' => 'hidden',   'list' => true],
         'nombre'            => ['label' => 'Título',       'type' => 'text',     'list' => true, 'required' => true],
         'categoria_nombre'  => ['label' => 'Categoría',    'type' => 'none',     'list' => true],

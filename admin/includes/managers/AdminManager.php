@@ -1,15 +1,18 @@
 <?php
 require_once __DIR__ . '/ContentManager.php';
+require_once __DIR__ . '/UserManager.php'; // Añadido para el nuevo manager
 require_once __DIR__ . '/MediaManager.php';
 require_once __DIR__ . '/../utils/FileUtil.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class AdminManager {
     public $contents;
+    public $users; // Añadido
     public $media;
 
     public function __construct() {
         $this->contents = new AdminContentManager();
+        $this->users = new AdminUserManager(); // Añadido
         $this->media = new MediaManager();
     }
 
@@ -55,7 +58,12 @@ class AdminManager {
                 case 'add':
                 case 'edit':
                     LoggerUtil::info("ADMIN_MANAGER: Procesando guardado de entidad. Acción: $action");
-                    $res = $this->contents->processSave($postData);
+                    // Cambio: Lógica para discernir entre usuario y contenido
+                    if (($postData['entity_type'] ?? '') === 'Usuario') {
+                        $res = $this->users->save($postData);
+                    } else {
+                        $res = $this->contents->processSave($postData);
+                    }
                     $this->sendJson([
                         'success' => (bool)$res, 
                         'message' => $res ? 'Datos guardados correctamente' : 'Error al guardar en la base de datos'
@@ -64,7 +72,12 @@ class AdminManager {
 
                 case 'delete': 
                     LoggerUtil::info("ADMIN_MANAGER: Eliminando entidad de DB.");
-                    $res = $this->contents->remove($postData);
+                    // Cambio: Lógica para discernir entre usuario y contenido
+                    if (($postData['entity_type'] ?? '') === 'Usuario') {
+                        $res = $this->users->remove($postData);
+                    } else {
+                        $res = $this->contents->remove($postData);
+                    }
                     $_GET['status'] = $res ? 'success' : 'error';
                     return $res;
 
