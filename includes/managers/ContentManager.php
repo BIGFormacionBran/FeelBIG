@@ -83,7 +83,6 @@ class ContentManager {
             'video'             => $row['video'] ?? null,
             'badge'             => $row['clasificacion'],
             'description_short' => $row['descripcion_breve'],
-            'description'       => $row['descripcion'], // Mapeado para vista detalle
             'enlace_externo'    => $row['enlace_externo'] ?? null,
             'date'              => $row['fecha_publicacion']
         ];

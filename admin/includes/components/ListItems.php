@@ -27,16 +27,13 @@
                     <?php elseif(in_array($f['type'], ['text', 'number', 'date'])): ?>
                         <div class="admin-form-group">
                             <label class="admin-label"><?php echo $f['label']; ?>:</label>
-                            <input type="<?php echo $f['type']; ?>" name="<?php echo $id; ?>"
-                                   id="<?php echo $prefix . $id; ?>" class="admin-input"
-                                   <?php echo ($f['required'] ?? false) ? 'required' : ''; ?>>
+                            <input type="<?php echo $f['type']; ?>" name="<?php echo $id; ?>" id="<?php echo $prefix . $id; ?>" class="admin-input" <?php echo ($f['required'] ?? false) ? 'required' : ''; ?>>
                         </div>
 
                     <?php elseif($f['type'] === 'textarea'): ?>
                         <div class="admin-form-group">
                             <label class="admin-label"><?php echo $f['label']; ?>:</label>
-                            <textarea name="<?php echo $id; ?>" id="<?php echo $prefix . $id; ?>"
-                                      class="admin-input admin-textarea-small"></textarea>
+                            <textarea name="<?php echo $id; ?>" id="<?php echo $prefix . $id; ?>" class="admin-input admin-textarea-small"></textarea>
                         </div>
 
                     <?php elseif($f['type'] === 'select'): ?>
@@ -57,8 +54,7 @@
                                 <div id="<?php echo $prefix . $id; ?>-preview" class="media-preview-box">
                                     <span class="text-muted">Sin archivo</span>
                                 </div>
-                                <button type="button" class="btn-open-filemanager btn-primario"
-                                        data-target="<?php echo $prefix . $id; ?>">Seleccionar</button>
+                                <button type="button" class="btn-open-filemanager btn-primario" data-target="<?php echo $prefix . $id; ?>">Seleccionar</button>
                             </div>
                         </div>
                     <?php endif; ?>
