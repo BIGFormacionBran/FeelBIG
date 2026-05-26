@@ -9,14 +9,14 @@ class ContentDao {
     }
 
     public function getHomeStructure() {
-        $sql = "SELECT id, nombre FROM CATEGORIA 
+        $sql = "SELECT id, nombre, imagen FROM CATEGORIA 
                 WHERE id_padre IS NULL 
                 ORDER BY id ASC";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllCategories() {
-        $sql = "SELECT id, nombre, id_padre FROM CATEGORIA ORDER BY nombre ASC";
+        $sql = "SELECT id, nombre, id_padre, imagen FROM CATEGORIA ORDER BY nombre ASC";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 

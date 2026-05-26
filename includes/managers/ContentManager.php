@@ -68,7 +68,7 @@ class ContentManager {
             'id'    => $category['id'],
             'name'  => $category['nombre'],
             'type'  => 'category',
-            'img'   => 'default_category.png', 
+            'img'   => !empty($category['imagen']) ? $category['imagen'] : 'assets/img/default_category.png', 
             'badge' => 'Sección',
             'slug'  => str_replace(' ', '-', strtolower($category['nombre']))
         ];
