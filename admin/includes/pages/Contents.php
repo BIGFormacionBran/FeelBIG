@@ -43,6 +43,8 @@ $config = [
         'categoria_nombre'  => ['label' => 'Categoría',    'type' => 'none',     'list' => true],
         'id_categoria'      => ['label' => 'Asignar Cat.', 'type' => 'select',   'options' => $cat_options, 'list' => false, 'required' => true],
         'clasificacion'     => ['label' => 'Clasificación','type' => 'text',     'list' => true],
+        'enlace_externo'    => ['label' => 'Enlace Externo','type' => 'text',    'list' => false],
+        'fecha_publicacion' => ['label' => 'Fecha Pub.',   'type' => 'date',     'list' => true],
         'imagen'            => ['label' => 'Portada',      'type' => 'media',    'list' => false],
         'video'             => ['label' => 'Video',        'type' => 'media',    'list' => false],
         'descripcion_breve' => ['label' => 'Descripción',  'type' => 'textarea', 'list' => false]

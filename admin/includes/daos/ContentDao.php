@@ -73,7 +73,8 @@ class AdminContentDao {
                     id_categoria = ?, 
                     imagen = ?, 
                     nombre = ?, 
-                    video = ? 
+                    video = ?,
+                    fecha_publicacion = ? 
                 WHERE id = ?";
         
         $stmt = $this->db->prepare($sql);
@@ -88,6 +89,7 @@ class AdminContentDao {
             $datos['imagen'] ?? null,
             $datos['nombre'] ?? null,
             $datos['video'] ?? null,
+            $datos['fecha_publicacion'] ?? date('Y-m-d'),
             (int)$id
         ]);
     }
