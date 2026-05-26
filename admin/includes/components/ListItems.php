@@ -70,14 +70,14 @@
         <div class="admin-card main-list">
             <div class="admin-card-title">Registros</div>
             
-            <div class="admin-search-box" style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
-                <form method="GET" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
-                    <div class="admin-form-group" style="margin: 0; flex: 1; min-width: 200px;">
+            <div class="admin-search-box">
+                <form method="GET" class="admin-search-form">
+                    <div class="admin-form-group admin-search-input-wrapper">
                         <input type="text" name="search" class="admin-input" placeholder="Buscar..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
                     </div>
                     
                     <?php if ($entity === 'Contenido'): ?>
-                        <div class="admin-form-group" style="margin: 0;">
+                        <div class="admin-form-group margin-0">
                             <select name="filter_cat" class="admin-select">
                                 <option value="">Todas las categorías</option>
                                 <?php foreach($cat_options as $val => $lab): ?>
@@ -87,7 +87,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <div class="admin-form-group" style="margin: 0;">
+                    <div class="admin-form-group margin-0">
                         <select name="order" class="admin-select">
                             <option value="ASC" <?php echo (($_GET['order'] ?? '') == 'ASC') ? 'selected' : ''; ?>>Ascendente</option>
                             <option value="DESC" <?php echo (($_GET['order'] ?? '') == 'DESC') ? 'selected' : ''; ?>>Descendente</option>
@@ -95,7 +95,6 @@
                     </div>
 
                     <button type="submit" class="btn-primario">Filtrar</button>
-                    <a href="?" class="btn-secundario" style="text-decoration: none; line-height: 35px; padding: 0 15px;">Limpiar</a>
                 </form>
             </div>
 

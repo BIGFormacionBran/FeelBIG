@@ -600,3 +600,29 @@
 .action-delete-clean {
     vertical-align: middle;
 }
+
+/* Nuevos estilos extraídos de ListItems.php */
+
+.admin-search-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.admin-search-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.admin-search-input-wrapper {
+    margin: 0;
+    flex: 1;
+    min-width: 200px;
+}
+
+.margin-0 {
+    margin: 0 !important;
+}
