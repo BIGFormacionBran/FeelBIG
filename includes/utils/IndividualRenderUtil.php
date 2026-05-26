@@ -27,8 +27,8 @@ function renderIndividualPage($item = null) {
 
 function renderIndividualViewUtil($data) {
     // Aseguramos que si el string es solo espacios o está vacío, sea null
-    $imageSource = (!empty(trim($data['img']))) ? $data['img'] : null;
-    $videoSource = (!empty(trim($data['video']))) ? $data['video'] : null; 
+    $imageSource = (!empty(trim($data['img'] ?? ''))) ? $data['img'] : null;
+    $videoSource = (!empty(trim($data['video'] ?? ''))) ? $data['video'] : null; 
     
     $externalLink = $data['enlace_externo'] ?? null;
     $contentBody = !empty($data['description']) ? $data['description'] : $data['description_short'];

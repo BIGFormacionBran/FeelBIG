@@ -42,12 +42,12 @@
 
     const fileManager = {
         init() {
-            logToServer("FM: Inicializando eventos del Gestor de Archivos.");
             state.modal = document.getElementById('file-manager-modal');
             if (!state.modal) {
-                logToServer("FM: No se encontró el modal #file-manager-modal en el DOM", "ERROR");
                 return;
             }
+
+            logToServer("FM: Inicializando eventos del Gestor de Archivos.");
 
             state.modal.addEventListener('click', (e) => {
                 const target = e.target;
