@@ -21,9 +21,4 @@ class AdminUserDao {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([(int)$id_tipo_cuenta, (int)$id]);
     }
-
-    public function deleteUser($id) {
-        $stmt = $this->db->prepare("DELETE FROM USUARIO WHERE id = ?");
-        return $stmt->execute([(int)$id]);
-    }
 }

@@ -1,18 +1,18 @@
 <?php
 require_once __DIR__ . '/ContentManager.php';
-require_once __DIR__ . '/UserManager.php'; // Añadido para el nuevo manager
+require_once __DIR__ . '/UserManager.php';
 require_once __DIR__ . '/MediaManager.php';
 require_once __DIR__ . '/../utils/FileUtil.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class AdminManager {
     public $contents;
-    public $users; // Añadido
+    public $users;
     public $media;
 
     public function __construct() {
         $this->contents = new AdminContentManager();
-        $this->users = new AdminUserManager(); // Añadido
+        $this->users = new AdminUserManager();
         $this->media = new MediaManager();
     }
 
@@ -31,89 +31,59 @@ class AdminManager {
                 case 'fm-upload':
                     $type = $postData['type'] ?? 'images';
                     $file = $_FILES['file'] ?? null;
-                    LoggerUtil::info("ADMIN_MANAGER: Procesando fm-upload. Tipo: $type");
-
                     if (!is_array($file) || !isset($file['error'])) {
-                        LoggerUtil::error("ADMIN_MANAGER: Error - El array \$_FILES['file'] no llegó o está incompleto.");
                         $this->sendJson(['success' => false, 'message' => 'No archivo recibido'], 400);
                     }
-
                     $res = ($type === 'videos') ? $this->media->uploadContentVideo($file) : $this->media->uploadContentImage($file);
-                    
-                    LoggerUtil::info("ADMIN_MANAGER: Resultado de subida: " . ($res ? "Éxito ($res)" : "Fallo"));
-                    $this->sendJson([
-                        'success' => (bool)$res, 
-                        'path' => $res, 
-                        'message' => $res ? 'Subido correctamente' : 'Error en transferencia física'
-                    ], $res ? 200 : 400);
+                    $this->sendJson(['success' => (bool)$res, 'path' => $res, 'message' => $res ? 'Subido correctamente' : 'Error en transferencia'], $res ? 200 : 400);
                     break;
 
                 case 'fm-delete-file':
                     $path = $postData['path'] ?? '';
-                    LoggerUtil::info("ADMIN_MANAGER: Procesando fm-delete-file. Ruta: $path");
                     $res = $this->media->deletePhysicalFile($path);
-                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Archivo eliminado correctamente' : 'No se pudo eliminar el archivo'], $res ? 200 : 400);
+                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Archivo eliminado' : 'Error al eliminar'], $res ? 200 : 400);
                     break;
 
                 case 'add':
                 case 'edit':
-                    LoggerUtil::info("ADMIN_MANAGER: Procesando guardado de entidad. Acción: $action");
-                    // Cambio: Lógica para discernir entre usuario y contenido
                     if (($postData['entity_type'] ?? '') === 'Usuario') {
                         $res = $this->users->save($postData);
                     } else {
                         $res = $this->contents->processSave($postData);
                     }
-                    $this->sendJson([
-                        'success' => (bool)$res, 
-                        'message' => $res ? 'Datos guardados correctamente' : 'Error al guardar en la base de datos'
-                    ], $res ? 200 : 400);
+                    $this->sendJson(['success' => (bool)$res, 'message' => $res ? 'Guardado correctamente' : 'Error en DB'], $res ? 200 : 400);
                     break;
 
                 case 'delete': 
-                    LoggerUtil::info("ADMIN_MANAGER: Eliminando entidad de DB.");
-                    // Cambio: Lógica para discernir entre usuario y contenido
                     if (($postData['entity_type'] ?? '') === 'Usuario') {
-                        $res = $this->users->remove($postData);
+                        // Los usuarios no se eliminan
+                        return false;
                     } else {
                         $res = $this->contents->remove($postData);
+                        $_GET['status'] = $res ? 'success' : 'error';
+                        return $res;
                     }
-                    $_GET['status'] = $res ? 'success' : 'error';
-                    return $res;
 
                 default: 
-                    LoggerUtil::info("ADMIN_MANAGER: Acción [$action] no tiene handler específico.");
                     return null;
             }
         } catch (Exception $e) {
-            LoggerUtil::error("ADMIN_MANAGER: EXCEPCIÓN DETECTADA: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
-            $this->sendJson(['success' => false, 'message' => 'Error interno: ' . $e->getMessage()], 500);
+            LoggerUtil::error("ADMIN_MANAGER: EXCEPCIÓN: " . $e->getMessage());
+            $this->sendJson(['success' => false, 'message' => 'Error interno'], 500);
         }
     }
 
     private function sendJson($data, $code = 200) {
-        if (ob_get_length()) {
-            LoggerUtil::info("ADMIN_MANAGER: Limpiando buffer de salida (ob_clean). Había contenido previo.");
-            ob_clean(); 
-        }
-        
+        if (ob_get_length()) ob_clean(); 
         if (!headers_sent()) {
             http_response_code($code);
             header('Content-Type: application/json; charset=utf-8');
-            LoggerUtil::info("ADMIN_MANAGER: Headers enviados. HTTP $code.");
-        } else {
-            LoggerUtil::error("ADMIN_MANAGER: Error - Headers ya enviados. Posible salida de texto antes de sendJson.");
         }
-
-        $json = json_encode($data);
-        LoggerUtil::info("ADMIN_MANAGER: Payload de respuesta: $json");
-        echo $json;
-        LoggerUtil::info("ADMIN_MANAGER: Finalizando ejecución (exit).");
+        echo json_encode($data);
         exit;
     }
 
     public function renderFileManager() {
-        LoggerUtil::info("ADMIN_MANAGER: Renderizando componente Files.php");
         $admin = $this;
         include __DIR__ . '/../components/Files.php';
     }

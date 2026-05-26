@@ -25,11 +25,4 @@ class AdminUserManager {
         LoggerUtil::info("ADMIN_USER_MANAGER: Actualizando tipo de cuenta a $id_tipo para usuario ID $id");
         return $this->adminUserDao->updateUserType($id, $id_tipo);
     }
-
-    public function remove(array $postData) {
-        $id = $postData['id'] ?? null;
-        if (!$id) return false;
-        LoggerUtil::info("ADMIN_USER_MANAGER: Eliminando usuario ID $id");
-        return $this->adminUserDao->deleteUser($id);
-    }
 }
