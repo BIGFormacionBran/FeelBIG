@@ -30,6 +30,9 @@ function renderIndividualViewUtil($data) {
     $videoSource = $data['video'] ?? null; 
     $externalLink = $data['enlace_externo'] ?? null;
     $contentBody = !empty($data['description']) ? $data['description'] : $data['description_short'];
+
+    // Clase condicional para detectar si van juntos o separados
+    $mediaClass = (!empty($videoSource) && !empty($imageSource)) ? 'grid-dual' : 'grid-single';
 ?>
     <div class="view-detail-main">
         <div class="content-article-container">
@@ -44,7 +47,7 @@ function renderIndividualViewUtil($data) {
                 <?php endif; ?>
             </div>
 
-            <div class="article-media-container">
+            <div class="article-media-container <?php echo $mediaClass; ?>">
                 <?php if (!empty($videoSource)): ?>
                     <div class="media-wrapper video-wrapper">
                         <?php if(strpos($videoSource, 'youtube.com') !== false || strpos($videoSource, 'youtu.be') !== false): 
