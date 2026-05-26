@@ -19,9 +19,19 @@ $contenidos = $admin->contents->listAllContents();
 $categorias = $admin->contents->listAllCategoriesOrdered();
 
 $cat_options = [];
-foreach ($categorias as $c) {
-    $cat_options[$c['id']] = $c['nombre'];
+
+// Aplanar árbol de categorías para usar en el select de contenidos (con indentación)
+function flatten_categories_for_contents($items, &$out, $depth = 0) {
+    foreach ($items as $it) {
+        $prefix = $depth > 0 ? str_repeat('&nbsp;&nbsp;', $depth) . '└─ ' : '';
+        $out[$it['id']] = $prefix . ($it['nombre'] ?? '');
+        if (!empty($it['children'])) {
+            flatten_categories_for_contents($it['children'], $out, $depth + 1);
+        }
+    }
 }
+
+flatten_categories_for_contents($categorias, $cat_options);
 
 $config = [
     'title'  => 'Gestión de Contenidos',

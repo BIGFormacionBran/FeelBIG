@@ -50,14 +50,17 @@ class AdminContentDao {
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
+        
+        $id_cat = (isset($datos['id_categoria']) && is_numeric($datos['id_categoria'])) ? (int)$datos['id_categoria'] : null;
+
         return $stmt->execute([
             $datos['clasificacion'] ?? null,
             $datos['descripcion_breve'] ?? null,
             $datos['enlace_externo'] ?? null,
-            $datos['fecha_publicacion'],
-            (int)$datos['id_categoria'],
+            $datos['fecha_publicacion'] ?? date('Y-m-d'),
+            $id_cat,
             $datos['imagen'] ?? null,
-            $datos['nombre'],
+            $datos['nombre'] ?? null,
             $datos['video'] ?? null
         ]);
     }
@@ -74,13 +77,16 @@ class AdminContentDao {
                 WHERE id = ?";
         
         $stmt = $this->db->prepare($sql);
+        
+        $id_cat = (isset($datos['id_categoria']) && is_numeric($datos['id_categoria'])) ? (int)$datos['id_categoria'] : null;
+
         return $stmt->execute([
             $datos['clasificacion'] ?? null,
             $datos['descripcion_breve'] ?? null,
             $datos['enlace_externo'] ?? null,
-            (int)$datos['id_categoria'],
+            $id_cat,
             $datos['imagen'] ?? null,
-            $datos['nombre'],
+            $datos['nombre'] ?? null,
             $datos['video'] ?? null,
             (int)$id
         ]);
@@ -98,7 +104,6 @@ class AdminContentDao {
         $stmt = $this->db->prepare("UPDATE CONTENIDO SET video = NULL WHERE video = ?");
         $stmt->execute([$path]);
         
-        // Nueva limpieza para la imagen de categoría
         $stmt = $this->db->prepare("UPDATE CATEGORIA SET imagen = NULL WHERE imagen = ?");
         return $stmt->execute([$path]);
     }
