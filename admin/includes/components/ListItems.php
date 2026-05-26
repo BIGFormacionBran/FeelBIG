@@ -8,7 +8,9 @@
     <div class="admin-flex-layout">
         <?php
             $entity = $config['entity'];
-            $prefix = ($entity === 'Contenido') ? 'con-' : 'cat-';
+            $prefix = 'cat-';
+            if ($entity === 'Contenido') $prefix = 'con-';
+            if ($entity === 'Usuario') $prefix = 'usr-';
         ?>
 
         <div class="admin-card side-form" data-entity="<?php echo $entity; ?>">

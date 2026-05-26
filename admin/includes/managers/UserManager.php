@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../daos/AdminUserDao.php';
+require_once __DIR__ . '/../daos/UserDao.php';
 require_once __DIR__ . '/../../../includes/utils/LoggerUtil.php';
 
 class AdminUserManager {

@@ -226,7 +226,10 @@
         logToServer(`UI: Preparando formulario para edición. ID Entidad: ${data.id}`);
         const container = document.querySelector('.side-form');
         if (!container) return;
-        const prefix = (container.dataset.entity === 'Contenido') ? 'con-' : 'cat-';
+        
+        let prefix = 'cat-';
+        if (container.dataset.entity === 'Contenido') prefix = 'con-';
+        if (container.dataset.entity === 'Usuario') prefix = 'usr-';
 
         document.getElementById('form-action').value = 'edit';
         document.getElementById('form-title').innerText = 'Editando ' + container.dataset.entity;
