@@ -9,6 +9,7 @@
         <div class="admin-grid-shortcuts">
             <a href="/admin/categories" class="btn-primario">Gestionar Categorías</a>
             <a href="/admin/contents" class="btn-primario">Gestionar Contenidos</a>
+            <a href="/admin/users" class="btn-primario">Gestionar Usuarios</a>
         </div>
     </div>
 </div>
