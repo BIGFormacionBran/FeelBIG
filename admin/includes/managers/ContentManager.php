@@ -113,7 +113,7 @@ class AdminContentManager {
     public function createContent(array $datos) {
         LoggerUtil::info("CONTENT_MANAGER: Creando nuevo contenido.");
         if (empty($datos['nombre'])) return false;
-        $datos['fecha_creacion'] = date('Y-m-d');
+        // Se elimina la línea de fecha_creacion manual, el DAO se ocupa
         return $this->adminDao->insertContent($datos);
     }
 

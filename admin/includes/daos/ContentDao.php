@@ -57,7 +57,7 @@ class AdminContentDao {
             $datos['clasificacion'] ?? null,
             $datos['descripcion_breve'] ?? null,
             $datos['enlace_externo'] ?? null,
-            $datos['fecha_publicacion'] ?? date('Y-m-d'),
+            date('Y-m-d'),
             $id_cat,
             $datos['imagen'] ?? null,
             $datos['nombre'] ?? null,
@@ -73,8 +73,7 @@ class AdminContentDao {
                     id_categoria = ?, 
                     imagen = ?, 
                     nombre = ?, 
-                    video = ?,
-                    fecha_publicacion = ? 
+                    video = ? 
                 WHERE id = ?";
         
         $stmt = $this->db->prepare($sql);
@@ -89,7 +88,6 @@ class AdminContentDao {
             $datos['imagen'] ?? null,
             $datos['nombre'] ?? null,
             $datos['video'] ?? null,
-            $datos['fecha_publicacion'] ?? date('Y-m-d'),
             (int)$id
         ]);
     }
