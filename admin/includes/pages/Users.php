@@ -7,7 +7,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $admin->handleRequest($_POST);
 }
 
-$usuarios = $admin->users->listAllUsers();
+// Capturamos el término de búsqueda si existe
+$searchTerm = $_GET['search'] ?? '';
+$usuarios = $admin->users->listAllUsers($searchTerm);
 
 $role_options = [
     "1" => "ADMIN",

@@ -13,7 +13,11 @@
 
     const ui = {
         scrollTo: (el) => el?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-        toggleHidden: (el, force) => el?.classList.toggle('hidden', force),
+        toggleHidden: (el, force) => {
+            if(!el) return;
+            if(force) el.classList.add('display-none');
+            else el.classList.remove('display-none');
+        },
         updatePreview: (path, targetId) => {
             logToServer(`UI: Actualizando preview para ID: ${targetId} con ruta: ${path}`);
             const previewContainer = document.getElementById(targetId + '-preview');
@@ -88,9 +92,9 @@
         switchTab(btn) {
             logToServer(`FM: Cambiando a pestaña: ${btn.dataset.tab}`);
             state.modal.querySelectorAll('.fm-tab-btn').forEach(b => b.classList.remove('active'));
-            state.modal.querySelectorAll('.fm-tab-content').forEach(c => c.classList.add('hidden'));
+            state.modal.querySelectorAll('.fm-tab-content').forEach(c => c.classList.add('display-none'));
             btn.classList.add('active');
-            document.getElementById(btn.dataset.tab)?.classList.remove('hidden');
+            document.getElementById(btn.dataset.tab)?.classList.remove('display-none');
         },
 
         filterGrid(type) {
@@ -222,7 +226,7 @@
         }
     };
 
-    window.prepareEdit = (data) => {
+    const prepareEdit = (data) => {
         logToServer(`UI: Preparando formulario para edición. ID Entidad: ${data.id}`);
         const container = document.querySelector('.side-form');
         if (!container) return;
@@ -245,12 +249,30 @@
         ui.scrollTo(container);
     };
 
-    window.resetForm = () => {
-        location.reload();
-    };
-
     document.addEventListener('DOMContentLoaded', () => {
         fileManager.init();
+
+        // Listener para botones Editar (Delegación de eventos)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('action-edit')) {
+                const data = JSON.parse(e.target.dataset.row);
+                prepareEdit(data);
+            }
+            
+            if (e.target.id === 'btn-cancel') {
+                location.reload();
+            }
+        });
+
+        // Listener para confirmación de borrado
+        document.querySelectorAll('.inline-delete').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                if (!confirm('¿Eliminar registro?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
         const form = document.getElementById('main-entity-form');
         if (form) {
             form.addEventListener('submit', (e) => {
