@@ -31,7 +31,7 @@ function renderIndividualViewUtil($data) {
     $externalLink = $data['enlace_externo'] ?? null;
     $contentBody = !empty($data['description']) ? $data['description'] : $data['description_short'];
 
-    // Clase condicional para detectar si van juntos o separados
+    // Lógica: Si hay video E imagen, usamos grid-dual. Si falta uno, grid-single.
     $mediaClass = (!empty($videoSource) && !empty($imageSource)) ? 'grid-dual' : 'grid-single';
 ?>
     <div class="view-detail-main">

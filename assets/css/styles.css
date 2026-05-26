@@ -765,7 +765,6 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     animation: fadeIn 0.5s ease;
 }
 
-/* Encabezado: Título y Badge */
 .article-header {
     text-align: left;
     margin-bottom: 40px;
@@ -809,13 +808,13 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     align-items: stretch;
 }
 
-/* Si ambos existen: comparten mitad y mitad */
+/* COMPORTAMIENTO LADO A LADO (Si hay ambos) */
 .grid-dual .media-wrapper {
     flex: 1;
     width: 50%;
 }
 
-/* Si solo existe uno: ocupa todo el ancho */
+/* COMPORTAMIENTO SOLO UNO (Si falta video o imagen) */
 .grid-single .media-wrapper {
     width: 100%;
 }
@@ -837,11 +836,11 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 .video-wrapper {
     position: relative;
-    padding-bottom: 56.25%; /* Ratio 16:9 básico */
+    padding-bottom: 56.25%; /* Proporción 16:9 */
     height: 0;
 }
 
-/* Ajustes de proporción para que no se deforme en paralelo */
+/* Ajuste específico para que el video tenga altura en modo dual */
 .grid-dual .video-wrapper {
     padding-bottom: 0; 
     height: auto;
@@ -864,22 +863,15 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     aspect-ratio: 16/9;
 }
 
-/* Cuerpo de texto y descripción larga */
 .article-content-body .text-area {
     font-size: 19px;
     line-height: 1.8;
     color: #333;
 }
 
-.article-content-body .text-area p {
-    margin-bottom: 25px;
-}
+.article-content-body .text-area p { margin-bottom: 25px; }
+.article-content-body .text-area strong { color: var(--color-texto); }
 
-.article-content-body .text-area strong {
-    color: var(--color-texto);
-}
-
-/* Botón de acción final */
 .article-actions {
     margin-top: 50px;
     padding-top: 35px;
