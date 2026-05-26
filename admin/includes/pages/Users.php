@@ -22,11 +22,12 @@ $role_options = [
 ];
 
 $config = [
-    'title'      => 'Gestión de Usuarios',
-    'entity'     => 'Usuario',
-    'data'       => $usuarios,
-    'can_delete' => false,
-    'fields'     => [
+    'title'       => 'Gestión de Usuarios',
+    'entity'      => 'Usuario',
+    'data'        => $usuarios,
+    'can_delete'  => false,
+    'show_search' => true,
+    'fields'      => [
         'id'                 => ['label' => 'ID',           'type' => 'hidden', 'list' => true],
         'nombre'             => ['label' => 'Nombre',       'type' => 'none',   'list' => true],
         'correo'             => ['label' => 'Email',        'type' => 'none',   'list' => true],

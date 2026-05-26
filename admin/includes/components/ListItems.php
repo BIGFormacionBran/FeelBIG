@@ -70,6 +70,7 @@
         <div class="admin-card main-list">
             <div class="admin-card-title">Registros</div>
             
+            <?php if ($config['show_search'] ?? false): ?>
             <div class="admin-search-box">
                 <form method="GET" class="admin-search-form">
                     <div class="admin-form-group admin-search-input-wrapper">
@@ -97,6 +98,7 @@
                     <button type="submit" class="btn-primario">Filtrar</button>
                 </form>
             </div>
+            <?php endif; ?>
 
             <div class="table-responsive">
                 <table class="admin-table">

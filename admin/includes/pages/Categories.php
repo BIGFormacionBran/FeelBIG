@@ -24,11 +24,12 @@ function flatten_categories_for_select($items, &$out, $depth = 0) {
 flatten_categories_for_select($categorias, $options, 0);
 
 $config = [
-    'title'      => 'Gestión de Categorías',
-    'entity'     => 'Categoría',
-    'data'       => $categorias,
-    'can_delete' => true,
-    'fields'     => [
+    'title'       => 'Gestión de Categorías',
+    'entity'      => 'Categoría',
+    'data'        => $categorias,
+    'can_delete'  => true,
+    'show_search' => false,
+    'fields'      => [
         'id'       => ['label' => 'ID',       'type' => 'hidden', 'list' => true],
         'nombre'   => ['label' => 'Nombre',   'type' => 'text',   'list' => true, 'required' => true],
         'id_padre' => ['label' => 'Padre',    'type' => 'select', 'options' => $options, 'list' => false],

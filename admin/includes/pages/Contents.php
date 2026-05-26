@@ -27,11 +27,12 @@ function flatten_categories_for_contents($items, &$out, $depth = 0) {
 flatten_categories_for_contents($categorias, $cat_options);
 
 $config = [
-    'title'      => 'Gestión de Contenidos',
-    'entity'     => 'Contenido',
-    'data'       => $contenidos,
-    'can_delete' => true,
-    'fields'     => [
+    'title'       => 'Gestión de Contenidos',
+    'entity'      => 'Contenido',
+    'data'        => $contenidos,
+    'can_delete'  => true,
+    'show_search' => false,
+    'fields'      => [
         'id'                => ['label' => 'ID',           'type' => 'hidden',   'list' => true],
         'nombre'            => ['label' => 'Título',       'type' => 'text',     'list' => true, 'required' => true],
         'categoria_nombre'  => ['label' => 'Categoría',    'type' => 'none',     'list' => true],
@@ -47,3 +48,4 @@ $config = [
 
 require_once __DIR__ . '/../components/ListItems.php';
 $admin->renderFileManager();
+?>
