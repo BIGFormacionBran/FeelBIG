@@ -27,15 +27,38 @@ function renderIndividualPage($item = null) {
 
 function renderIndividualViewUtil($data) {
     $imageSource = $data['img'];
+    $externalLink = $data['enlace_externo'] ?? null;
 ?>
-    <div class="creiss-single-wrapper">
-        <h1 class="creiss-title"><?php echo htmlspecialchars($data['name']); ?></h1>
-        <div class="creiss-featured-image">
-            <img src="<?php echo $imageSource; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
-        </div>
-        <div class="creiss-body-content">
-            <div class="text-area"><?php echo $data['description']; ?></div>
-            <a href="javascript:history.back()" class="btn-primario">VOLVER</a>
+    <div class="detail-page-wrapper">
+        <div class="detail-card">
+            <div class="detail-image-section">
+                <img src="<?php echo $imageSource; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
+                <?php if (!empty($data['badge'])): ?>
+                    <span class="detail-badge"><?php echo htmlspecialchars($data['badge']); ?></span>
+                <?php endif; ?>
+            </div>
+            
+            <div class="detail-info-section">
+                <div class="detail-header">
+                    <h1 class="detail-title"><?php echo htmlspecialchars($data['name']); ?></h1>
+                    <?php if (!empty($data['date'])): ?>
+                        <span class="detail-date"><?php echo date('d/m/Y', strtotime($data['date'])); ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="detail-description text-area">
+                    <?php echo $data['description']; ?>
+                </div>
+
+                <?php if (!empty($externalLink)): ?>
+                    <div class="detail-actions">
+                        <a href="<?php echo $externalLink; ?>" target="_blank" rel="noopener" class="btn-primario btn-cta">
+                            ACCEDER AL CONTENIDO
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:8px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                        </a>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 <?php
