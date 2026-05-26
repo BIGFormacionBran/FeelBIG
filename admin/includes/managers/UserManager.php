@@ -9,8 +9,8 @@ class AdminUserManager {
         $this->adminUserDao = new AdminUserDao();
     }
 
-    public function listAllUsers() {
-        return $this->adminUserDao->getAllUsers();
+    public function listAllUsers(array $filters = []) {
+        return $this->adminUserDao->getAllUsers($filters);
     }
 
     public function save(array $postData) {

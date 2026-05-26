@@ -7,9 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $admin->handleRequest($_POST);
 }
 
-// Capturamos el término de búsqueda si existe
-$searchTerm = $_GET['search'] ?? '';
-$usuarios = $admin->users->listAllUsers($searchTerm);
+// Capturamos filtros
+$filters = [
+    'search' => $_GET['search'] ?? '',
+    'order'  => $_GET['order'] ?? 'ASC'
+];
+
+$usuarios = $admin->users->listAllUsers($filters);
 
 $role_options = [
     "1" => "ADMIN",

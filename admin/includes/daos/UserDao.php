@@ -8,12 +8,25 @@ class AdminUserDao {
         $this->db = DbUtil::getConnection();
     }
 
-    public function getAllUsers() {
+    public function getAllUsers(array $filters = []) {
         $sql = "SELECT u.*, t.nombre as tipo_cuenta_nombre 
                 FROM USUARIO u 
                 LEFT JOIN TIPO_CUENTA t ON u.id_tipo_cuenta = t.id 
-                ORDER BY u.id ASC";
-        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+                WHERE 1=1";
+        
+        $params = [];
+        if (!empty($filters['search'])) {
+            $sql .= " AND (u.nombre LIKE ? OR u.correo LIKE ?)";
+            $params[] = "%".$filters['search']."%";
+            $params[] = "%".$filters['search']."%";
+        }
+
+        $order = (isset($filters['order']) && $filters['order'] === 'DESC') ? 'DESC' : 'ASC';
+        $sql .= " ORDER BY u.id $order";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function updateUserType($id, $id_tipo_cuenta) {
