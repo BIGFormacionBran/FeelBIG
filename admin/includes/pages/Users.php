@@ -29,7 +29,7 @@ $config = [
     'show_search' => true,
     'fields'      => [
         'id'                 => ['label' => 'ID',           'type' => 'hidden', 'list' => true],
-        'nombre'             => ['label' => 'Nombre',       'type' => 'none',   'list' => true],
+        'nombre'             => ['label' => 'Nombre',       'type' => 'readonly', 'list' => true],
         'correo'             => ['label' => 'Email',        'type' => 'none',   'list' => true],
         'tipo_cuenta_nombre' => ['label' => 'Tipo Actual',  'type' => 'none',   'list' => true],
         'id_tipo_cuenta'     => ['label' => 'Cambiar Tipo', 'type' => 'select', 'options' => $role_options, 'list' => false, 'required' => true]

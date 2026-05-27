@@ -24,6 +24,12 @@
                     <?php if($f['type'] === 'hidden'): ?>
                         <input type="hidden" name="<?php echo $id; ?>" id="<?php echo $prefix . $id; ?>">
 
+                    <?php elseif($f['type'] === 'readonly'): ?>
+                        <div class="admin-form-group">
+                            <label class="admin-label"><?php echo $f['label']; ?>:</label>
+                            <input type="text" id="<?php echo $prefix . $id; ?>" class="admin-input" readonly style="background-color: #f0f0f0; cursor: not-allowed;">
+                        </div>
+
                     <?php elseif(in_array($f['type'], ['text', 'number', 'date'])): ?>
                         <div class="admin-form-group">
                             <label class="admin-label"><?php echo $f['label']; ?>:</label>
