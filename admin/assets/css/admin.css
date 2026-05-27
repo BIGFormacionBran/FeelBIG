@@ -1,6 +1,7 @@
 :root {
     --color-principal-admin: #D71539;
     --color-secundario-admin: #D21A1A;
+    --color-verde-admin: #15D7B3;
     --color-principal-admin-soft: #F9BEC9;
 }
 
@@ -629,4 +630,8 @@
 
 .display-none {
     display: none;
+}
+
+#btn-save {
+    background-color: var(--color-verde-admin);
 }
