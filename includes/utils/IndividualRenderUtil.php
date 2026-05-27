@@ -56,16 +56,22 @@ function renderIndividualViewUtil($data) {
                     <div class="media-wrapper video-wrapper">
                         <?php if(strpos($videoSource, 'youtube.com') !== false || strpos($videoSource, 'youtu.be') !== false): 
                             $embed = str_replace(['watch?v=', 'youtu.be/'], ['embed/', 'youtube.com/embed/'], $videoSource); ?>
-                            <iframe src="<?php echo $embed; ?>" frameborder="0" allowfullscreen></iframe>
+                            <iframe 
+                                src="<?php echo $embed; ?>" 
+                                frameborder="0" 
+                                allowfullscreen 
+                                loading="lazy" 
+                                title="YouTube video player">
+                            </iframe>
                         <?php else: ?>
-                            <video controls src="<?php echo $videoSource; ?>"></video>
+                            <video controls preload="metadata" src="<?php echo $videoSource; ?>"></video>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if ($imageSource): ?>
                     <div class="media-wrapper image-wrapper">
-                        <img src="<?php echo $imageSource; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>">
+                        <img src="<?php echo $imageSource; ?>" alt="<?php echo htmlspecialchars($data['name']); ?>" loading="lazy">
                     </div>
                 <?php endif; ?>
 
