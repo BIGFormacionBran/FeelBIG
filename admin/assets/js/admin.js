@@ -222,6 +222,7 @@
         }
     };
 
+    // Funciones globales expuestas al window
     window.prepareEdit = (data) => {
         logToServer(`UI: Preparando formulario para edición. ID Entidad: ${data.id}`);
         const container = document.querySelector('.side-form');
@@ -241,7 +242,9 @@
                 if (key === 'imagen' || key === 'video') ui.updatePreview(value, prefix + key);
             }
         });
-        ui.toggleHidden(document.getElementById('btn-cancel'), false);
+        
+        const btnCancel = document.getElementById('btn-cancel');
+        if(btnCancel) btnCancel.classList.remove('display-none');
         ui.scrollTo(container);
     };
 
